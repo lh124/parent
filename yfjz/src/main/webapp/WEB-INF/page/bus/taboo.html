@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<form class="form-horizontal" id="taboo">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">儿童编码</div>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" v-model="tChildTaboo.chilCode" id="chilCodett" readonly placeholder=""/>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">儿童姓名</div>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="chilNamett" readonly placeholder=""/>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">接种禁忌<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+        <div class="col-sm-10">
+            <select v-model="tChildTaboo.istaCode" class="form-control selectpicker"  data-live-search="true"  id="istaCode"   name="istaCode" >
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">检测日期</div>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" v-model="tChildTaboo.istaCheckDate" id="istaCheckDate" placeholder=""/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label"></div>
+        <input type="button" class="btn btn-primary" onclick="savetaboo()" value="确定"/>
+        &nbsp;&nbsp;<input type="button" class="btn btn-warning" onclick="colsebtn()" value="关闭"/>
+    </div>
+</form>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/noabnormal.js"></script>
+</html>

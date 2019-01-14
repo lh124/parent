@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.ChildServiceStatisticsDao">
+
+    <select id="queryRegisterList" resultType="map">
+        SELECT DISTINCT
+        (select remark from t_queue_no_operate WHERE fk_queue_no_id=queue.id AND operate_type='CANCEL') as cancel,
+        queue.step,
+        queue.child_code as childId,
+        queue.no_text as number,
+        queue.child_name as childName ,
+        queue.create_time AS printCodeTime,
+        info.bio_cn_sortname AS registerVaccine,
+        reg.batchnum,
+        reg.fk_vaccine_code as vaccineCode,
+        reg.create_doctor_name AS registerDoctor,
+        reg.create_time as registerTime
+        FROM
+        t_queue_no queue
+        LEFT JOIN t_bus_register reg ON queue.child_code = reg.fk_child_code
+        <![CDATA[ AND (	TO_DAYS( reg.create_time ) >= TO_DAYS( #{startDate} )
+        AND TO_DAYS( reg.create_time ) <= TO_DAYS( #{endDate} ) )
+        ]]>
+        LEFT JOIN t_vac_info info on reg.fk_vaccine_code=info.bio_code
+        WHERE
+        <![CDATA[  TO_DAYS(queue.create_time)>=TO_DAYS(#{startDate})
+          and TO_DAYS(queue.create_time)<=TO_DAYS(#{endDate})
+         ]]>
+        <if test="childName!=null">
+          AND   queue.child_name like concat("%",#{childName},"%")
+        </if>
+        HAVING childId is not null
+        ORDER BY childId
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryInoculateList" resultType="map">
+        SELECT
+            inoc_date AS inoculateTime,
+            inoc_nurse AS inoculateDoctor,
+            info.bio_cn_sortname AS inoculateVaccine,
+            inoc_batchno AS inoculateBatchnum,
+            inoc_time AS inoculateTimes,
+            leave_time AS leaveTime,
+            inoc_bact_code AS inocCode,
+            chil_code as childCode
+        FROM
+            t_child_inoculate child
+            JOIN t_vac_info info ON child.inoc_bact_code = info.bio_code
+        WHERE
+            chil_code = #{childCode} AND
+            <![CDATA[  TO_DAYS(child.inoc_date)>=TO_DAYS(#{startDate})
+             and TO_DAYS(child.inoc_date)<=TO_DAYS(#{endDate})
+            ]]>
+    </select>
+    <select id="queryTotal" resultType="int">
+        SELECT DISTINCT
+        count(queue.id)
+        FROM
+        t_queue_no queue
+        LEFT JOIN t_bus_register reg ON queue.child_code = reg.fk_child_code
+        JOIN t_vac_info info on reg.fk_vaccine_code=info.bio_code
+        WHERE
+        <!--<![CDATA[  TO_DAYS(queue.create_time)>=TO_DAYS(#{startDate})-->
+          <!--and TO_DAYS(queue.create_time)<=TO_DAYS(#{endDate})-->
+         <!--]]>-->
+        <![CDATA[  TO_DAYS(queue.create_time)>=TO_DAYS(#{startDate})
+          and TO_DAYS(queue.create_time)<=TO_DAYS(#{endDate})
+         ]]>
+        <![CDATA[
+          AND TO_DAYS(reg.create_time)>=TO_DAYS(#{startDate})
+          and TO_DAYS(reg.create_time)<=TO_DAYS(#{endDate})
+         ]]>
+        <if test="childName!=null">
+            AND   queue.child_name like concat("%",#{childName},"%")
+        </if>
+        ORDER BY  queue.child_code
+    </select>
+</mapper>

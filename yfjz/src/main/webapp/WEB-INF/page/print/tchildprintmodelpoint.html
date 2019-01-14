@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>儿童打印接种记录模板坐标</title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			#if($shiro.hasPermission("tchildprintmodelpoint:save"))
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			#end
+			#if($shiro.hasPermission("tchildprintmodelpoint:update"))
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			#end
+			#if($shiro.hasPermission("tchildprintmodelpoint:delete"))
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			#end
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种疫苗</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.bioName" placeholder="接种疫苗"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗唯一标识名</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.ename" placeholder="疫苗唯一标识名"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种日期X</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.inoculateDatex" placeholder="接种日期X"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种日期Y</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.inoculateDatey" placeholder="接种日期Y"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种部位X</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.textx" placeholder="接种部位X"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种部位Y</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.texty" placeholder="接种部位Y"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗批号X</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.batchnumx" placeholder="疫苗批号X"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗批号Y</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.batchnumy" placeholder="疫苗批号Y"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">生产企业X坐标</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.factoryNamex" placeholder="生产企业X坐标"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">生产企业X坐标</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.factoryNamey" placeholder="生产企业X坐标"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种单位X坐标</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.departnamex" placeholder="接种单位X坐标"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种单位Y坐标</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.departnamey" placeholder="接种单位Y坐标"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种医生X</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.doctorx" placeholder="接种医生X"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种医生Y坐标</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.doctory" placeholder="接种医生Y坐标"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">失效期坐标X</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.expirationDatex" placeholder="失效期坐标X"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">失效期坐标Y</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.expirationDatey" placeholder="失效期坐标Y"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">打印选择类型</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.printtype" placeholder="打印选择类型"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">状态,0正常,1停用</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.status" placeholder="状态,0正常,1停用"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">删除状态：0：正常；1：删除</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.deleteStatus" placeholder="删除状态：0：正常；1：删除"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">更新时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildPrintModelPoint.updateTime" placeholder="更新时间"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/print/tchildprintmodelpoint.js?_${date.systemTime}"></script>
+</body>
+</html>

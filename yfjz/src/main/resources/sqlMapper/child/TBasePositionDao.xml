@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.TBasePositionDao">
+
+    <!-- 可根据自己需要-->
+    <sql id="allColumnsAlias">
+		id as id ,province_id as provinceId ,province_name as provinceName ,city_id as cityId ,city_name as cityName ,county_id as countyId ,county_name as countyName ,hosptial_id as hosptialId ,hosptial_name as hosptialName ,town_id as townId ,town_name as townName 
+	</sql>
+    <!-- 可根据自己需要-->
+    <sql id="allColumns">
+		id ,province_id ,province_name ,city_id ,city_name ,county_id ,county_name ,hosptial_id ,hosptial_name ,town_id ,town_name 
+	</sql>
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yfjz.entity.child.TBasePositionEntity" id="tBasePositionMap">
+        <result property="id" column="id"/>
+        <result property="provinceId" column="province_id"/>
+        <result property="provinceName" column="province_name"/>
+        <result property="cityId" column="city_id"/>
+        <result property="cityName" column="city_name"/>
+        <result property="countyId" column="county_id"/>
+        <result property="countyName" column="county_name"/>
+        <result property="hosptialId" column="hosptial_id"/>
+        <result property="hosptialName" column="hosptial_name"/>
+        <result property="townId" column="town_id"/>
+        <result property="townName" column="town_name"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="io.yfjz.entity.child.TBasePositionEntity">
+        select <include refid="allColumns"></include> from t_base_position where id = #{value}
+    </select>
+
+    <select id="queryHosptial" resultType="io.yfjz.entity.child.TBasePositionEntity">
+        select <include refid="allColumns"></include> from t_base_position where hosptial_id = #{value}
+    </select>
+
+    <select id="queryList" resultType="io.yfjz.entity.child.TBasePositionEntity">
+        select <include refid="allColumns"></include> from t_base_position
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryprovince" resultType="Map">
+        SELECT DISTINCT province_id AS id, province_name AS name FROM t_base_position
+        <where>
+            <if test="province_id!=null and province_id != ''">
+                and province_id = #{province_id}
+            </if>
+        </where>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="querycity" resultType="Map">
+        SELECT DISTINCT city_id AS id, city_name AS name FROM t_base_position
+        <where>
+            <if test="province_id!=null and province_id!=''">
+                province_id = #{provinceId}
+            </if>
+            <if test="city_id!=null and city_id!=''">
+                city_id = #{city_id}
+            </if>
+        </where>
+
+    </select>
+    <select id="querycounty" resultType="Map">
+        SELECT DISTINCT county_id AS id, county_name AS name FROM t_base_position
+        <where>
+            <if test="cityId!=null and cityId!=''">
+                city_id = #{cityId}
+            </if>
+            <if test="country_id!=null and country_id!=''">
+                county_id = #{country_id}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="gethospital" resultType="Map">
+        select id , name  from sys_depart where  LENGTH(id)>= 10
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="querytown" resultType="Map">
+        SELECT DISTINCT town_id AS id, town_name AS name FROM t_base_position
+        <where>
+            <if test="countyId!=null and countyId!=''">
+                county_id = #{countyId}
+            </if>
+            <if test="town_id!=null and town_id!=''">
+                town_id = #{town_id}
+            </if>
+        </where>
+
+    </select>
+    <select id="queryTotal" resultType="int">
+		select count(*) from t_base_position
+	</select>
+
+    <insert id="save" parameterType="io.yfjz.entity.child.TBasePositionEntity">
+        insert into t_base_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            `id`,
+            <if test="provinceId != null">`province_id` , </if>
+            <if test="provinceName != null">`province_name` , </if>
+            <if test="cityId != null">`city_id` , </if>
+            <if test="cityName != null">`city_name` , </if>
+            <if test="countyId != null">`county_id` , </if>
+            <if test="countyName != null">`county_name` , </if>
+            <if test="hosptialId != null">`hosptial_id` , </if>
+            <if test="hosptialName != null">`hosptial_name` , </if>
+            <if test="townId != null">`town_id` , </if>
+            <if test="townName != null">`town_name` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            uuid(),
+            <if test="provinceId != null">#{provinceId} , </if>
+            <if test="provinceName != null">#{provinceName} , </if>
+            <if test="cityId != null">#{cityId} , </if>
+            <if test="cityName != null">#{cityName} , </if>
+            <if test="countyId != null">#{countyId} , </if>
+            <if test="countyName != null">#{countyName} , </if>
+            <if test="hosptialId != null">#{hosptialId} , </if>
+            <if test="hosptialName != null">#{hosptialName} , </if>
+            <if test="townId != null">#{townId} , </if>
+            <if test="townName != null">#{townName} </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.child.TBasePositionEntity">
+        update t_base_position
+        <set>
+            <if test="provinceId != null">`province_id` = #{provinceId}, </if>
+            <if test="provinceName != null">`province_name` = #{provinceName}, </if>
+            <if test="cityId != null">`city_id` = #{cityId}, </if>
+            <if test="cityName != null">`city_name` = #{cityName}, </if>
+            <if test="countyId != null">`county_id` = #{countyId}, </if>
+            <if test="countyName != null">`county_name` = #{countyName}, </if>
+            <if test="hosptialId != null">`hosptial_id` = #{hosptialId}, </if>
+            <if test="hosptialName != null">`hosptial_name` = #{hosptialName}, </if>
+            <if test="townId != null">`town_id` = #{townId}, </if>
+            <if test="townName != null">`town_name` = #{townName}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from t_base_position where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from t_base_position where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

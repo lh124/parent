@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.bus.ReturnDao">
+
+    <select id="queryStockList" resultType="map">
+        SELECT
+            info.id AS infoId,
+            USER.real_name as username,
+            store.NAME AS storeName,
+            info.fk_store_id AS storeId,
+            base.product_name AS productName,
+            base.id AS baseId,
+            base.batchnum,
+            base.factory_name AS factoryName,
+            info.amount,
+            base.price,
+            DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+            info.person_amount AS personAmount,
+            info.use_amount AS useAmount,
+            info.person_amount AS personAmount,
+            info.receive_amount AS receiveAmount,
+            base.conversion,
+            base.type,
+            equip.`name` AS equipmentName,
+            equip.id AS equipId
+        FROM
+            t_mgr_stock_info info
+            LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+            LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+            LEFT JOIN t_mgr_equipment equip ON info.fk_equipment_id = equip.id
+            LEFT JOIN sys_user USER ON info.fk_create_user_id = USER.user_id
+        <include refid="whereBase"/>
+        ORDER BY
+            base.type  ,base.fk_vaccine_code
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryStockTotal" resultType="int">
+        SELECT
+          count(info.id)
+        FROM
+        t_mgr_stock_info info
+        LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+        LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+        LEFT JOIN t_mgr_equipment equip ON info.fk_equipment_id = equip.id
+        LEFT JOIN sys_user USER ON info.fk_create_user_id = USER.user_id
+        <include refid="whereBase"/>
+    </select>
+    <sql id="whereBase">
+        <where>
+            <![CDATA[  to_days(base.expiry_date) > to_days(now()) ]]>  and base.status=0
+            <if test="searchProductName != null and searchProductName!=-1 ">
+                AND  base.fk_vaccine_code=#{searchProductName}
+            </if>
+            <if test="searchFactoryName != null and searchFactoryName!=-1 ">
+                AND  base.factory_id=#{searchFactoryName}
+            </if>
+            <if test="searchBatch != null">
+                AND  base.batchnum like concat('%',#{searchBatch},'%')
+            </if>
+            <if test="searchDate != null">
+                AND  base.expiry_date &lt;= #{searchDate}
+            </if>
+            <if test="searchType != null">
+                AND  base.`type` = #{searchType}
+            </if>
+            <if test="storeId != null">
+                AND  info.fk_store_id = #{storeId}
+            </if>
+            <if test="type!=null and type!=''">
+                AND info.person_amount>0
+            </if>
+        </where>
+    </sql>
+</mapper>

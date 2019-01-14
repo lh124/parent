@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>接种规划映射关系表</title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<!--<div class="grid-btn">
+			#if($shiro.hasPermission("trulereplace:save"))
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			#end
+			#if($shiro.hasPermission("trulereplace:update"))
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			#end
+			#if($shiro.hasPermission("trulereplace:delete"))
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			#end
+		</div>-->
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">规划疫苗剂次</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleReplaceOther.className" placeholder="规划疫苗剂次" disabled="disabled"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗</div>
+			   	<div class="col-sm-10">
+			      <input id="bioclassid" type="text" class="form-control" v-model="tRuleReplace.bioClassId" placeholder="疫苗" data-toggle="modal" data-target="#myModal"/>
+					<input id="biocode" type="hidden"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种剂次</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleReplace.agentTimes" placeholder="接种剂次"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">替代类别</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleReplace.replaceType" placeholder="替代类别：0，一对一替代，其他int类型为该值的疫苗同时替代"/>
+			    </div>
+			</div>
+
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">开始替代月龄</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleReplace.startMonth" placeholder="开始替代月龄"/>
+			    </div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">结束替代月龄</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRuleReplace.endMonth" placeholder="结束替代月龄"/>
+				</div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">间隔的天数</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleReplace.intervalDay" placeholder="与上一几次间隔的天数"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+<!--选择疫苗弹出框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: 650px;">
+			<div class="modal-header">
+				疫苗信息
+			</div>
+			<div class="modal-body" style="width: 650px">
+				<input type="text" class="form-control" id="searchName"  placeholder="请输入关键字查询" style="width: 200px" oninput="searchName()"/>
+				<table id="vaccine"></table>
+				<div id="vaccinePager"></div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+<script src="${rc.contextPath}/statics/js/rule/trulereplace.js?_${date.systemTime}"></script>
+</body>
+</html>

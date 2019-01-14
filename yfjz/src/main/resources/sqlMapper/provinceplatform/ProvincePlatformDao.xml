@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.yfjz.dao.provinceplatform.ProvincePlatformDao">
+	<parameterMap id="hashmap" type="java.util.HashMap"></parameterMap>
+
+	<select id="queryObject" resultType="io.yfjz.entity.provinceplatform.Child">
+		select * from t_child_info where chil_code = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.provinceplatform.Child">
+		select * from t_child_info
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_info
+	</select>
+
+	<insert id="saveChild" parameterType="io.yfjz.entity.provinceplatform.Child">
+		insert into t_child_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="chilCode != null"> `chil_code`,</if>
+			<if test="chilName != null">`chil_name` , </if>
+			<if test="chilSex != null">`chil_sex` , </if>
+			<if test="chilBirthday != null">`chil_birthday` , </if>
+			<if test="chilBirthweight != null">`chil_birthweight` , </if>
+			<if test="chilNatiId != null">`chil_nati_id` , </if>
+			<if test="chilCardno != null">`chil_cardno` , </if>
+			<if test="chilNo != null">`chil_no` , </if>
+			<if test="chilBirthno != null">`chil_birthno` , </if>
+			<if test="chilMother != null">`chil_mother` , </if>
+			<if test="chilFather != null">`chil_father` , </if>
+			<if test="chilCommittee != null">`chil_committee` , </if>
+			<if test="chilHabiaddress != null">`chil_habiaddress` , </if>
+			<if test="chilAddress != null">`chil_address` , </if>
+			<if test="chilTel != null">`chil_tel` , </if>
+			<if test="chilMobile != null">`chil_mobile` , </if>
+			<if test="chilCarddate != null">`chil_carddate` , </if>
+			<if test="chilHealthno != null">`chil_healthno` , </if>
+			<if test="chilResidenceclient != null">`chil_residenceclient` , </if>
+			<if test="chilResidence != null">`chil_residence` , </if>
+			<if test="chilAccount != null">`chil_account` , </if>
+			<if test="chilHabiId != null">`chil_habi_id` , </if>
+			<if test="chilInoctype != null">`chil_inoctype` , </if>
+			<if test="chilSensitivity != null">`chil_sensitivity` , </if>
+			<if test="chilMotherhb != null">`chil_motherhb` , </if>
+			<if test="chilMotherhiv != null">`chil_motherhiv` , </if>
+			<if test="chilHere != null">`chil_here` , </if>
+			<if test="chilLeavedate != null">`chil_leavedate` , </if>
+			<if test="chilLeave != null">`chil_leave` , </if>
+			<if test="chilLeaveremark != null">`chil_leaveremark` , </if>
+			<if test="chilCurdepartment != null">`chil_curdepartment` , </if>
+			<if test="chilPredepartment != null">`chil_predepartment` , </if>
+			<if test="chilCreatecounty != null">`chil_createcounty` , </if>
+			<if test="chilCreatesite != null">`chil_createsite` , </if>
+			<if test="chilCreatedate != null">`chil_createdate` , </if>
+			<if test="chilCreateman != null">`chil_createman` , </if>
+			<if test="chilUnitimmu != null">`chil_unitimmu` , </if>
+			<if test="chilBirthhospital != null">`chil_birthhospital` , </if>
+			<if test="chilBirthhospitalname != null">`chil_birthhospitalname` , </if>
+			<if test="chilBcgScar != null">`chil_bcg_scar` , </if>
+			<if test="chilMotherno != null">`chil_motherno` , </if>
+			<if test="chilFatherno != null">`chil_fatherno` , </if>
+			<if test="chilProvince != null">`chil_province` , </if>
+			<if test="chilEditDate != null">`chil_edit_date` , </if>
+			<if test="createCardTime != null">`create_card_time` , </if>
+			`type` ,
+			`syncstatus` ,
+			`status` ,
+			<if test="createUserId != null">`create_user_id` , </if>
+			<if test="createUserName != null">`create_user_name` , </if>
+			`create_time` ,
+			<if test="remark != null">`remark` </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="chilCode != null">#{chilCode},</if>
+			<if test="chilName != null">#{chilName} , </if>
+			<if test="chilSex != null">#{chilSex} , </if>
+			<if test="chilBirthday != null">#{chilBirthday} , </if>
+			<if test="chilBirthweight != null">#{chilBirthweight} , </if>
+			<if test="chilNatiId != null">#{chilNatiId} , </if>
+			<if test="chilCardno != null">#{chilCardno} , </if>
+			<if test="chilNo != null">#{chilNo} , </if>
+			<if test="chilBirthno != null">#{chilBirthno} , </if>
+			<if test="chilMother != null">#{chilMother} , </if>
+			<if test="chilFather != null">#{chilFather} , </if>
+			<if test="chilCommittee != null">#{chilCommittee} , </if>
+			<if test="chilHabiaddress != null">#{chilHabiaddress} , </if>
+			<if test="chilAddress != null">#{chilAddress} , </if>
+			<if test="chilTel != null">#{chilTel} , </if>
+			<if test="chilMobile != null">#{chilMobile} , </if>
+			<if test="chilCarddate != null">#{chilCarddate} , </if>
+			<if test="chilHealthno != null">#{chilHealthno} , </if>
+			<if test="chilResidenceclient != null">#{chilResidenceclient} , </if>
+			<if test="chilResidence != null">#{chilResidence} , </if>
+			<if test="chilAccount != null">#{chilAccount} , </if>
+			<if test="chilHabiId != null">#{chilHabiId} , </if>
+			<if test="chilInoctype != null">#{chilInoctype} , </if>
+			<if test="chilSensitivity != null">#{chilSensitivity} , </if>
+			<if test="chilMotherhb != null">#{chilMotherhb} , </if>
+			<if test="chilMotherhiv != null">#{chilMotherhiv} , </if>
+			<if test="chilHere != null">#{chilHere} , </if>
+			<if test="chilLeavedate != null">#{chilLeavedate} , </if>
+			<if test="chilLeave != null">#{chilLeave} , </if>
+			<if test="chilLeaveremark != null">#{chilLeaveremark} , </if>
+			<if test="chilCurdepartment != null">#{chilCurdepartment} , </if>
+			<if test="chilPredepartment != null">#{chilPredepartment} , </if>
+			<if test="chilCreatecounty != null">#{chilCreatecounty} , </if>
+			<if test="chilCreatesite != null">#{chilCreatesite} , </if>
+			<if test="chilCreatedate != null">#{chilCreatedate} , </if>
+			<if test="chilCreateman != null">#{chilCreateman} , </if>
+			<if test="chilUnitimmu != null">#{chilUnitimmu} , </if>
+			<if test="chilBirthhospital != null">#{chilBirthhospital} , </if>
+			<if test="chilBirthhospitalname != null">#{chilBirthhospitalname} , </if>
+			<if test="chilBcgScar != null">#{chilBcgScar} , </if>
+			<if test="chilMotherno != null">#{chilMotherno} , </if>
+			<if test="chilFatherno != null">#{chilFatherno} , </if>
+			<if test="chilProvince != null">#{chilProvince} , </if>
+			<if test="chilEditDate != null">#{chilEditDate} , </if>
+			<if test="createCardTime != null">#{createCardTime} , </if>
+			1 ,
+			1 ,
+			0 ,
+			<if test="createUserId != null">#{createUserId} , </if>
+			<if test="createUserName != null">#{createUserName} , </if>
+			now() ,
+			<if test="remark != null">#{remark} </if>
+		</trim>
+	</insert>
+
+	<update id="updateChild" parameterType="io.yfjz.entity.provinceplatform.Child">
+		update t_child_info
+		<set>
+			<if test="chilName != null">`chil_name` = #{chilName}, </if>
+			<if test="chilSex != null">`chil_sex` = #{chilSex}, </if>
+			<if test="chilBirthday != null">`chil_birthday` = #{chilBirthday}, </if>
+			<if test="chilBirthweight != null">`chil_birthweight` = #{chilBirthweight}, </if>
+			<if test="chilNatiId != null">`chil_nati_id` = #{chilNatiId}, </if>
+			<if test="chilCardno != null">`chil_cardno` = #{chilCardno}, </if>
+			<if test="chilNo != null">`chil_no` = #{chilNo}, </if>
+			<if test="chilBirthno != null">`chil_birthno` = #{chilBirthno}, </if>
+			<if test="chilMother != null">`chil_mother` = #{chilMother}, </if>
+			<if test="chilFather != null">`chil_father` = #{chilFather}, </if>
+			<if test="chilCommittee != null">`chil_committee` = #{chilCommittee}, </if>
+			<if test="chilHabiaddress != null">`chil_habiaddress` = #{chilHabiaddress}, </if>
+			<if test="chilAddress != null">`chil_address` = #{chilAddress}, </if>
+			<if test="chilTel != null">`chil_tel` = #{chilTel}, </if>
+			<if test="chilMobile != null">`chil_mobile` = #{chilMobile}, </if>
+			<if test="chilCarddate != null">`chil_carddate` = #{chilCarddate}, </if>
+			<if test="chilHealthno != null">`chil_healthno` = #{chilHealthno}, </if>
+			<if test="chilResidenceclient != null">`chil_residenceclient` = #{chilResidenceclient}, </if>
+			<if test="chilResidence != null">`chil_residence` = #{chilResidence}, </if>
+			<if test="chilAccount != null">`chil_account` = #{chilAccount}, </if>
+			<if test="chilHabiId != null">`chil_habi_id` = #{chilHabiId}, </if>
+			<if test="chilInoctype != null">`chil_inoctype` = #{chilInoctype}, </if>
+			<if test="chilSensitivity != null">`chil_sensitivity` = #{chilSensitivity}, </if>
+			<if test="chilMotherhb != null">`chil_motherhb` = #{chilMotherhb}, </if>
+			<if test="chilMotherhiv != null">`chil_motherhiv` = #{chilMotherhiv}, </if>
+			<if test="chilHere != null">`chil_here` = #{chilHere}, </if>
+			<if test="chilLeavedate != null and chilLeavedate.trim()!=''">`chil_leavedate` = #{chilLeavedate}, </if>
+			<if test="chilLeave != null">`chil_leave` = #{chilLeave}, </if>
+			<if test="chilLeaveremark != null">`chil_leaveremark` = #{chilLeaveremark}, </if>
+			<if test="chilCurdepartment != null">`chil_curdepartment` = #{chilCurdepartment}, </if>
+			<if test="chilPredepartment != null">`chil_predepartment` = #{chilPredepartment}, </if>
+			<if test="chilCreatecounty != null">`chil_createcounty` = #{chilCreatecounty}, </if>
+			<if test="chilCreatesite != null">`chil_createsite` = #{chilCreatesite}, </if>
+			<if test="chilCreatedate != null">`chil_createdate` = #{chilCreatedate}, </if>
+			<if test="chilCreateman != null">`chil_createman` = #{chilCreateman}, </if>
+			<if test="chilUnitimmu != null">`chil_unitimmu` = #{chilUnitimmu}, </if>
+			<if test="chilBirthhospital != null">`chil_birthhospital` = #{chilBirthhospital}, </if>
+			<if test="chilBirthhospitalname != null">`chil_birthhospitalname` = #{chilBirthhospitalname}, </if>
+			<if test="chilBcgScar != null">`chil_bcg_scar` = #{chilBcgScar}, </if>
+			<if test="chilMotherno != null">`chil_motherno` = #{chilMotherno}, </if>
+			<if test="chilFatherno != null">`chil_fatherno` = #{chilFatherno}, </if>
+			<if test="chilProvince != null">`chil_province` = #{chilProvince}, </if>
+			<if test="chilEditDate != null">`chil_edit_date` = #{chilEditDate}, </if>
+			<if test="createCardTime != null">`create_card_time` = #{createCardTime}, </if>
+			`type` = 1,
+			`syncstatus` = 1,
+			`status` = 0,
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserName != null">`create_user_name` = #{createUserName}, </if>
+			`update_time` = now(),
+			<if test="remark != null">`remark` = #{remark}</if>
+		</set>
+		where chil_code = #{chilCode}
+	</update>
+	<update id="updateSyncstatus" parameterType="string">
+		UPDATE t_child_info SET syncstatus=1 where chil_code=#{childCode};
+		UPDATE t_child_infection SET syncstatus=1 where chil_code=#{childCode};
+		UPDATE t_child_abnormal SET syncstatus=1 where chil_code=#{childCode};
+		UPDATE t_child_taboo SET syncstatus=1 where chil_code=#{childCode};
+		UPDATE t_child_move SET syncstatus=1 where chil_code=#{childCode};
+		UPDATE t_child_inoculate SET syncstatus=1 where chil_code=#{childCode};
+		UPDATE t_child_allergy SET syncstatus=1 where chil_code=#{childCode};
+	</update>
+	<delete id="delete">
+		delete from t_child_info where chil_code = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from t_child_info where chil_code in
+		<foreach item="chilCode" collection="array" open="(" separator="," close=")">
+			#{chilCode}
+		</foreach>
+	</delete>
+
+	<!--保存过敏史到本地-->
+	<insert id="saveAllergy" parameterType="io.yfjz.entity.provinceplatform.Child">
+		insert into t_child_allergy(
+		id,
+		describes,
+		chil_code,
+		check_date,
+		`type`,
+		syncstatus,
+		status
+		) values (
+		uuid(),
+		#{child_sensitivity},
+		#{chilCode},
+		null,
+		1,
+		1,
+		0
+		)
+	</insert>
+
+	<select id="findAllergyByCondition" parameterType="io.yfjz.entity.provinceplatform.Child" resultType="java.lang.Integer">
+		SELECT count(1) from t_child_allergy
+		where
+		describes=#{chil_sensitivity}
+		and chil_code = #{CHILDCODE} and deletestatus = 0
+
+	</select>
+
+	<!--查询本地相同的接种数据-->
+	<select id="findInoculateByCondition" parameterType="io.yfjz.entity.provinceplatform.Inoculation" resultType="java.lang.Integer">
+		SELECT count(1) from t_child_inoculate
+		WHERE inoc_bact_code = #{inocBactCode}
+		and inoc_property = #{inocProperty}
+		and  inoc_time = #{inocTime}
+		and chil_code = #{childCode}
+		and delete_status = 0
+
+	</select>
+
+	<insert id="saveLocalInoculations" parameterType="io.yfjz.entity.provinceplatform.Inoculation">
+
+		insert into t_child_inoculate
+		(
+		id,
+		`chil_code`,
+	  `inoc_bact_code`,
+	  `inoc_property` ,
+	  `inoc_time`,
+	  `inoc_date`,
+	  `inoc_depa_code`,
+	  `inoc_reinforce` ,
+	  `inoc_batchno`,
+	  `inoc_opinion` ,
+	  `inoc_union_code`,
+	  `inoc_validdate`,
+	  `inoc_corp_code` ,
+	  `inoc_regulatory_code`,
+	  `inoc_pay` ,
+	  `inoc_free`,
+	  `inoc_depa_id` ,
+	  `inoc_county` ,
+	  `inoc_nationcode` ,
+	  `inoc_inpl_id` ,
+	  `inoc_nurse` ,
+	  `inoc_vcn_kind` ,
+	  `zxhs` ,
+	  `inoc_useticket`,
+	  `inoc_modify_code` ,
+	  `inoc_editdate`,
+	  `type`,
+	  `syncstatus`,
+	  `status`,
+	  `create_time`
+		)VALUES(
+		uuid(),
+		#{childCode},
+	    #{inocBactCode},
+	  #{inocProperty},
+	  #{inocTime},
+	  #{inocDate},
+	  #{inocDepaCode},
+	  #{inocReinforce} ,
+	  #{inocBatchno},
+	  #{inocOpinion} ,
+	  #{inocUnionCode},
+	  #{inocValiddate},
+	  #{inocCorpCode},
+	  #{inocRegulatoryCode},
+	  #{inocPay} ,
+	  #{inocFree},
+	  #{inocDepaId} ,
+	  #{inocCounty} ,
+	  #{inocNationcode} ,
+	  #{inocInplId} ,
+	  #{inocNurse},
+	  #{inocVcnKind} ,
+	  #{zxhs},
+	  #{inocUseticket},
+	  #{inocModifyCode} ,
+	  #{inocEditdate},
+		1,
+		1,
+		0,
+		now()
+		)
+	</insert>
+<!--更新接种记录-->
+	<update id="updateLocalInoculations" parameterType="io.yfjz.entity.provinceplatform.Inoculation">
+		UPDATE t_child_inoculate
+		<set>
+			<if test="inocDate != null" >
+				inoc_date = #{inocDate},
+			</if>
+			<if test="inocBatchno != null and inocBatchno != ''">
+				inoc_batchno = #{inocBatchno},
+			</if>
+			<if test="inocCorpCode != null and inocCorpCode != ''">
+				inoc_corp_code = #{inocCorpCode},
+			</if>
+			<if test="inocCounty != null and inocCounty != ''">
+				inoc_county = #{inocCounty},
+			</if>
+			<if test="inocDepaCode != null and inocDepaCode != ''" >
+				inoc_depa_code = #{inocDepaCode},
+			</if>
+			<if test="inocDepaId != null and inocDepaId != ''">
+				inoc_depa_id = #{inocDepaId},
+			</if>
+			<if test="inocEditdate != null ">
+				inoc_editdate = #{inocEditdate},
+			</if>
+			<if test="inocFree != null and inocFree != ''">
+				inoc_free = #{inocFree},
+			</if>
+
+			<if test="inocInplId != null and inocInplId != ''" >
+				inoc_inpl_id =  #{inocInplId},
+			</if>
+			<if test="inocNationcode != null and inocNationcode != ''">
+				inoc_nationcode = #{inocNationcode},
+			</if>
+			<if test="inocNurse != null and inocNurse != ''">
+				inoc_nurse = #{inocNurse},
+			</if>
+			<if test="inocOpinion != null and inocOpinion != ''">
+				inoc_opinion = #{inocOpinion},
+			</if>
+			<if test="inocPay != null and inocPay != ''" >
+				inoc_pay = #{inocPay},
+			</if>
+			<if test="inocProperty != null and inocProperty != ''">
+				inoc_property = #{inocProperty},
+			</if>
+
+			<if test="inocReinforce != null and inocReinforce != ''">
+				inoc_reinforce = #{inocReinforce},
+			</if>
+
+			<if test="inocTime != null and inocTime != ''" >
+				inoc_time = #{inocTime},
+			</if>
+			<if test="inocUnionCode != null and inocUnionCode != ''">
+				inoc_union_code = #{inocUnionCode},
+			</if>
+			<if test="inocUseticket != null and inocUseticket != ''">
+				inoc_useticket = #{inocUseticket},
+			</if>
+			<if test="inocValiddate != null ">
+				inoc_validdate = #{inocValiddate},
+			</if>
+			<if test="inocVcnKind != null and inocVcnKind != ''" >
+				inoc_vcn_kind = #{inocVcnKind},
+			</if>
+			<if test="zxhs != null and zxhs != ''">
+				zxhs = #{zxhs},
+			</if>
+
+			`type` = 1,
+			syncstatus = 1,
+			status = 0
+
+		</set>
+		where  chil_code=#{childCode} and inoc_property = #{inocProperty} and inoc_time= #{inocTime} and inoc_bact_code = #{inocBactCode}
+
+	</update>
+
+	<!--查询本地相同的变更记录数据-->
+	<select id="findMoveByCondition" parameterType="io.yfjz.entity.provinceplatform.ChildHere" resultType="java.lang.Integer">
+		SELECT count(1) from t_child_move
+		<where>
+			<if test="changedate != null">
+				and TO_DAYS(chhe_changedate)=TO_DAYS(#{changedate})
+			</if>
+			<if test="chheChilId != null and chheChilId != ''">
+				and chhe_chil_id=#{chheChilId}
+			</if>
+			<if test="chheDepaId != null and chheDepaId != ''">
+				and chhe_depa_id=#{chheDepaId}
+			</if>
+			and chil_code = #{childCode}
+		</where>
+
+	</select>
+<!--保存变更记录-->
+	<insert id="saveMove" parameterType="io.yfjz.entity.provinceplatform.ChildHere">
+		insert into t_child_move
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			id,
+			<if test="changedate != null">
+				chhe_changedate,
+			</if>
+			<if test="chheChilProvince != null and  chheChilProvince != ''">
+				chhe_chil_province,
+			</if>
+			<if test="chheChilProvinceremark != null and chheChilProvinceremark !=''">
+				chhe_chil_provinceremark,
+			</if>
+			<if test="chheDepaId != null and  chheDepaId != ''">
+				chhe_depa_id,
+			</if>
+			<if test="chheHere != null and chheHere != null">
+				chhe_here,
+			</if>
+			<if test="chhePrehere != null and chhePrehere!=''">
+				chhe_prehere,
+			</if>
+			<if test="childCode != null and childCode != ''">
+				chil_code,
+			</if>
+			<if test="chheChilId != null and chheChilId !=''">
+				chhe_chil_id
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="changedate != null ">
+				#{changedate},
+			</if>
+			<if test="chheChilProvince != null and chheChilProvince != ''">
+				#{chheChilProvince},
+			</if>
+			<if test="chheChilProvinceremark != null and chheChilProvinceremark != ''">
+				#{chheChilProvinceremark},
+			</if>
+
+			<if test="chheDepaId != null and chheDepaId != ''">
+				#{chheDepaId},
+			</if>
+			<if test="chheHere != null and chheHere != ''">
+				#{chheHere},
+			</if>
+			<if test="chhePrehere != null and chhePrehere != ''">
+				#{chhePrehere},
+			</if>
+			<if test="childCode != null and childCode != ''">
+				#{childCode},
+			</if>
+			<if test="chheChilId != null and chheChilId != ''">
+				#{chheChilId}
+			</if>
+		</trim>
+	</insert>
+
+	<!--查询本地相同的传染病数据-->
+	<select id="findInfectionByCondition" parameterType="io.yfjz.entity.provinceplatform.Infection" resultType="java.lang.Integer">
+		SELECT count(1) from t_child_infection
+		<where>
+			<if test="infeDate != null">
+				and infe_date=#{infeDate}
+			</if>
+			<if test="infeCode != null and infeCode != ''">
+				and infe_code=#{infeCode}
+			</if>
+		</where>
+		and chil_code = #{childCode}
+	</select>
+	<!--保存传染病到本地-->
+	<insert id="saveInfection" parameterType="io.yfjz.entity.provinceplatform.Infection">
+		insert into t_child_infection (
+		id,
+		chil_code,
+		infe_code,
+		infe_date,
+		`type`,
+		syncstatus,
+		status
+		) values (
+		uuid(),
+		#{childCode},
+		#{infeCode},
+		#{infeDate},
+		1,
+		1,
+		0
+		)
+	</insert>
+	<!--查询本地相同的异常反应数据-->
+	<select id="findAbnormalByCondition" parameterType="io.yfjz.entity.provinceplatform.Aefi" resultType="java.lang.Integer">
+		SELECT count(1) from t_child_abnormal
+		<where>
+			<if test="aefiDate != null ">
+				and aefi_date=#{aefiDate}
+			</if>
+			<if test="aefiBactCode != null and aefiBactCode != ''">
+				and aefi_bact_code=#{aefiBactCode}
+			</if>
+			<if test="aefiCode != null and aefiCode != ''">
+				and aefi_code=#{aefiCode}
+			</if>
+
+				and chil_code=#{childCode}
+
+		</where>
+
+	</select>
+
+	<!--保存异常反应到本地-->
+	<insert id="saveAbnormal" parameterType="io.yfjz.entity.provinceplatform.Aefi">
+		insert into t_child_abnormal (
+		id,
+		aefi_bact_code,
+		aefi_date,
+		aefi_code,
+		chil_code,
+		`type`,
+		syncstatus
+
+		) values (
+		uuid(),
+		#{aefiBactCode},
+		#{aefiDate},
+		#{aefiCode},
+		#{childCode},
+		1,
+		1
+		)
+	</insert>
+	<select id="queryMigrations" parameterType="java.util.HashMap" resultType="int">
+		select count(id)
+		from t_child_elsewhere
+		<where>
+			1=1
+			<if test="migr_childcode!=null">
+				and migr_childcode = #{migr_childcode}
+			</if>
+			<if test="migr_date!=null">
+				and TO_DAYS(migr_date) = TO_DAYS(#{migr_date})
+			</if>
+			<if test="migr_vacc_state!=null">
+				and migr_vacc_state = #{migr_vacc_state}
+			</if>
+		</where>
+	</select>
+<!--异地接种儿童保存-->
+	<insert id="saveMigrations" parameterType="java.util.HashMap">
+		insert into t_child_elsewhere
+		(
+		id,
+		migr_childcode,
+		migr_date,
+		migr_depa_code,
+		migr_serverdate,
+		migr_vacc_state
+
+		)
+		values
+		(
+		uuid(),
+		#{migr_childcode},
+		#{migr_date},
+		#{migr_depa_code},
+		#{migr_serverdate},
+		#{migr_vacc_state}
+		)
+
+	</insert>
+	<!--查询本地相同的禁忌数据-->
+	<select id="findTabooByCondition" parameterType="io.yfjz.entity.provinceplatform.Istabu" resultType="java.lang.Integer">
+		SELECT count(1) from t_child_taboo
+		<where>
+			<if test="istaCode != null and istaCode != ''">
+				and ista_code=#{istaCode}
+			</if>
+
+				and chil_code=#{chilCode}
+
+		</where>
+
+	</select>
+
+	<!--保存禁忌-->
+	<insert id="saveTaboo" parameterType="io.yfjz.entity.provinceplatform.Istabu">
+		insert into t_child_taboo (
+		id,
+		ista_code,
+		chil_code,
+		`type`,
+		syncstatus
+		) values (
+		uuid(),
+		#{istaCode},
+		#{chilCode},
+		1,
+		1
+		)
+	</insert>
+	<!--根据县国标查询具体地址 create by 田金海-->
+	<select id="selectByCurrentAddress" resultType="hashmap">
+		select DISTINCT province_id,province_name,city_id,city_name,county_id,county_name,town_id,town_name  from t_base_position
+		<include refid="countywhere"/>
+	</select>
+	<sql id="countywhere">
+		<where>
+			<if test="countyId!=null and countyId!=''">
+				and county_id = #{countyId}
+			</if>
+		</where>
+	</sql>
+
+
+
+
+
+</mapper>
+

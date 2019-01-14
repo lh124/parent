@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童傳染病信息表</title>
+	#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp_infection" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+
+			<!--<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>-->
+
+			<!--<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+
+		</div>
+	    <table id="infectionGrid"></table>
+	    <div id="infectionGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="infection">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">儿童编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfection.chilCode" readonly placeholder=""/>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">儿童姓名</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control"  id="chilName" readonly placeholder=""/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">传染病</div>
+			   	<div class="col-sm-10">
+					<select v-model="tChildInfection.infeCode" class="form-control"  id="infeCode" name="infeCode" >
+
+					</select>
+<!--
+					<input type="text" class="form-control" v-model="tChildInfection.infeCode" id="infeCode" name="infeCode" placeholder=""/>
+-->
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">发病日期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfection.infeDate" id="infeDate" name="infeDate" data-date-format="yyyy-mm-dd 00:00:00" placeholder=""/>
+			    </div>
+			</div>
+									<!--<div class="form-group">
+
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfection.createUserId" placeholder="创建人id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfection.createUserName" placeholder="创建人名字"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfection.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">机构编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfection.orgId" placeholder="机构编码"/>
+			    </div>
+			</div>-->
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/medical/tchildinfection.js?_${date.systemTime}"></script>
+
+
+<script>
+    $(function () {
+        //日期插件
+        $('#datetimepicker,#infeDate').datetimepicker(
+            {
+                format: 'yyyy-mm-dd 00:00:00',
+                autoclose: true,
+                todayBtn: true,
+                startView: 'month',
+                minView:'month',
+                language:  'zh-CN'
+            }
+        );
+
+
+
+    })
+</script>
+
+</body>
+</html>

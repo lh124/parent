@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8" />
+	#parse("sys/header.html")
+	<script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('userName')";
+	</script>
+	<title>从省免疫规划信息系统查询</title>
+</head>
+<body>
+	<div id="cc" class="easyui-layout" style="width:100%;height:100%;" data-options="fit:true">
+	
+		<!-- 查询条件 -->
+	    <div data-options="region:'north',title:'查询条件',split:true" style="height:150px;">
+	    	<form id="searchForm">
+	    		<table>
+	    			<tr>
+	    				<th>儿童编码:</th>
+	    				<td>
+	    					<input type="text" id="childCode" class="easyui-textbox" />
+	    				</td>
+	    				<th>出生证号:</th>
+	    				<td>
+	    					<input type="text" id="birthNo" class="easyui-textbox" />
+	    				</td>
+	    				<th>身份证号:</th>
+	    				<td>
+	    					<input type="text" id="childId" class="easyui-textbox" />
+	    				</td>
+	    				<th>母亲姓名:</th>
+	    				<td>
+	    					<input type="text" id="motherName" class="easyui-textbox" />
+	    				</td>
+						<th>父亲姓名:</th>
+						<td>
+							<input type="text" id="fatherName" class="easyui-textbox" />
+						</td>
+	    			</tr>
+	    			<tr>
+	    				<th>出生日期:</th>
+	    				<td>
+	    					<input type="text" id="birthday" class="easyui-datebox" data-options="formatter:ww3,parser:w3">
+	    				</td>
+	    				<th>儿童姓名:</th>
+	    				<td>
+	    					<input type="text" id="childName" class="easyui-textbox" />
+	    				</td>
+	    				<th>性别:</th>
+	    				<td>
+	    					<select id="sex" class="easyui-combobox" data-options="width:80">
+	    					<option value="">请选择</option>
+							    <option value="1">男</option>
+							    <option value="2">女</option>
+							</select>
+	    				</td>
+	    				<th>建档县国标:</th>
+	    				<td>
+	    					<input type="text" id="regCountyCode" class="easyui-textbox" />
+	    				</td>
+	    			</tr>
+	    			<tr>
+	    				<td></td>
+	    				<td></td>
+	    				<td></td>
+	    				<td></td>
+	    				<td></td>
+	    				<td></td>
+	    				<td></td>
+	    				<td>
+	    					<a href="javascript:void(0);" class="easyui-linkbutton" onclick="clearCondition();">清空所有条件</a>
+	    					<a href="javascript:void(0);" class="easyui-linkbutton" data-options="width:87" onclick="searchOnProvincePlatform()">查&nbsp;&nbsp;&nbsp;&nbsp;询</a>
+	    				</td>
+	    			</tr>
+	    		</table>
+	    	</form>
+	    </div>
+	    
+	    <!-- 查询结果 -->
+	    <div data-options="region:'center',title:'查询结果'" style="height:200px" >
+			<table id="resultTable" class="easyui-datagrid" id="datagrid_platform_result" style="width:1px;height:1px"
+				data-options="singleSelect:true,fit:true,onSelect:rtRowSelectCallBack">
+				<thead>
+					<tr>
+						<th data-options="field:'chil_id',hidden:true">儿童ID</th>
+						<th data-options="field:'chil_code',width:150">儿童编码</th>
+						<th data-options="field:'chil_cardno'">免疫卡号</th>
+						<th data-options="field:'chil_carddate',hidden:true">发卡日期</th>
+						<th data-options="field:'chil_name',width:60">姓名</th>
+						<th data-options="field:'chil_sex',formatter:sexFormatter">性别</th>
+						<th data-options="field:'chil_no'">身份证号</th>
+						<th data-options="field:'chil_healthno',hidden:true">健康档案标识</th>
+						<th data-options="field:'chil_birthno'">出生证号</th>
+						<th data-options="field:'chil_birthday',width:140,formatter:timeFormatter">出生日期</th>
+						<th data-options="field:'chil_birthweight',hidden:true">出生体重</th>
+						<th data-options="field:'chil_nati_id',hidden:true">民族</th>
+						<th data-options="field:'chil_mother'">母亲姓名</th>
+						<th data-options="field:'chil_father'">父亲姓名</th>
+						<th data-options="field:'chil_residence',hidden:true">居住属性</th>
+						<th data-options="field:'chil_account',hidden:true">户籍属性</th>
+						<th data-options="field:'chil_address',hidden:true">家庭地址</th>
+						<th data-options="field:'chil_habi_id'">户籍县国标</th>
+						<th data-options="field:'chil_habiaddress',hidden:true">户籍地址</th>
+						<th data-options="field:'chil_tel',hidden:true">家庭电话</th>
+						<th data-options="field:'chil_mobile',hidden:true">手机</th>
+						<th data-options="field:'chil_sensitivity',hidden:true">过敏史</th>
+						<th data-options="field:'chil_motherhb',hidden:true">母亲HB</th>
+						<th data-options="field:'chil_motherhiv',hidden:true">母亲HIV</th>
+						<th data-options="field:'chil_here',formatter:childHereFormatter">在册状态</th>
+						<th data-options="field:'chil_leavedate',width:140,formatter:timeFormatter">在册状态变化日期</th>
+						<th data-options="field:'chil_leave',hidden:true">迁出分类</th>
+						<th data-options="field:'chil_leaveremark',hidden:true">迁出其他备注</th>
+						<th data-options="field:'chil_curdepartment',hidden:true">现管理单位编码</th>
+						<th data-options="field:'chil_predepartment',hidden:true">前管理单位编码</th>
+						<th data-options="field:'chil_createcounty'">建档县国标</th>
+						<th data-options="field:'chil_createsite',hidden:true">建档单位编码</th>
+						<th data-options="field:'chil_createdate',width:140,formatter:timeFormatter">建档日期</th>
+						<th data-options="field:'chil_createman',hidden:true">建卡人</th>
+						<th data-options="field:'chil_unitimmu',hidden:true">受种者单位</th>
+						<th data-options="field:'chil_birthhospital',hidden:true">出生医院编码</th>
+						<th data-options="field:'chil_birthhospitalname'">出生医院名称</th>
+						<th data-options="field:'chil_bcg_scar',hidden:true">是否有卡介苗疤痕</th>
+						<th data-options="field:'chil_motherno'">母亲身份证号</th>
+						<th data-options="field:'chil_fatherno'">父亲身份证号</th>
+						<th data-options="field:'chil_province',hidden:true">出省状态</th>
+						<th data-options="field:'chil_edit_date',hidden:true,fixed:true">更新时间</th>
+						<th data-options="field:'oper',width:154,formatter:operFormatter">操作</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		
+		<!-- 接种信息，传染病，异常反应，禁忌，变更记录的tabs -->
+	    <div data-options="region:'south',split:true" style="height:200px;">
+	    	<div id="tt" class="easyui-tabs" style="width:1px;height:1px;" data-options="fit:true">
+			    <div title="接种信息">
+			        <table id="inoculations" class="easyui-datagrid" style="width:1px;height:1px" data-options="singleSelect:true,fit:true">
+			        	<thead>
+			        		<tr>
+			        			<th data-options="field:'inoc_chil_id',hidden:true">疫苗id</th>
+			        			<th data-options="field:'inoc_bact_code',width:150,formatter:bactFormatter">疫苗编码</th>
+			        			<th data-options="field:'inoc_property',formatter:propertyFomatter">接种属性</th>
+			        			<th data-options="field:'inoc_reinforce',formatter:reinforceFormatter">替代属性</th>
+			        			<th data-options="field:'inoc_time'">剂次</th>
+			        			<th data-options="field:'inoc_dose'">剂量</th>
+			        			<th data-options="field:'inoc_opinion',hidden:true">评价</th>
+			        			<th data-options="field:'inoc_depa_code',hidden:true">接种部门UUID</th>
+			        			<th data-options="field:'inoc_depa_id',hidden:true">接种部门国标</th>
+			        			<th data-options="field:'inoc_date',width:140,formatter:timeFormatter">接种时间</th>
+			        			<th data-options="field:'inoc_date_certainty',hidden:true">接种时间确定性</th>
+			        			<th data-options="field:'inoc_union_code'">联合疫苗编码</th>
+			        			<th data-options="field:'inoc_batchno',width:100">批号</th>
+			        			<th data-options="field:'inoc_corp_code',hidden:true">生产企业</th>
+			        			<th data-options="field:'inoc_regulatory_code',hidden:true">疫苗监管码</th>
+			        			<th data-options="field:'inoc_free',formatter:yesOrNoFormatter">是否免费疫苗</th>
+			        			<th data-options="field:'inoc_pay',formatter:yesOrNoFormatter">是否补助疫苗</th>
+			        			<th data-options="field:'inoc_county'">接种县国标</th>
+			        			<th data-options="field:'inoc_nationcode'">接种单位编码</th>
+			        			<th data-options="field:'inoc_inpl_id',formatter:posFormatter">接种部位</th>
+			        			<th data-options="field:'inoc_nurse'">接种人员</th>
+			        			<th data-options="field:'inoc_editdate',width:140,formatter:timeFormatter">录入日期</th>
+			        			<th data-options="field:'inoc_validdate'">疫苗有效期</th>
+			        		</tr>
+			        	</thead>
+			        </table>
+			    </div>
+			    <div title="传染病">
+			        <table id="infections" class="easyui-datagrid" style="width:1px;height:1px" data-options="singleSelect:true,fit:true">
+			        	<thead>
+			        		<tr>
+			        			<th data-options="field:'infe_chil_id',hidden:true">儿童id</th>
+			        			<th data-options="field:'infe_code'">传染病编码</th>
+			        			<th data-options="field:'infe_date',width:140,formatter:timeFormatter">发病日期</th>
+			        		</tr>
+			        	</thead>
+			        </table>
+			    </div>
+			    <div title="异常反应">
+			       	<table id="aefis" class="easyui-datagrid" style="width:1px;height:1px" data-options="singleSelect:true,fit:true">
+			        	<thead>
+			        		<tr>
+			        			<th data-options="field:'aefi_chil_id',hidden:true">儿童id</th>
+			        			<th data-options="field:'aefi_bact_code'">疫苗编码</th>
+			        			<th data-options="field:'aefi_date',width:140,formatter:timeFormatter">反应日期</th>
+			        			<th data-options="field:'aefi_code'">反应症状编码</th>
+			        		</tr>
+			        	</thead>
+			        </table>
+			    </div>
+			    <div title="禁忌">
+			        <table id="istabus" class="easyui-datagrid" style="width:1px;height:1px" data-options="singleSelect:true,fit:true">
+			        	<thead>
+			        		<tr>
+			        			<th data-options="field:'ista_chil_id',hidden:true">儿童id</th>
+			        			<th data-options="field:'ista_code'">禁忌症编码</th>
+			        		</tr>
+			        	</thead>
+			        </table>
+			    </div>
+			    <div title="变更记录">
+			        <table id="childheres" class="easyui-datagrid" style="width:1px;height:1px" data-options="singleSelect:true,fit:true">
+			        	<thead>
+			        		<tr>
+			        			<th data-options="field:'chhe_chil_id',hidden:true">儿童id</th>
+			        			<th data-options="field:'chhe_here'">现在册状态</th>
+			        			<th data-options="field:'chhe_prehere'">原在册状态</th>
+			        			<th data-options="field:'chhe_chil_province'">出省状态</th>
+			        			<th data-options="field:'chhe_chil_provinceremark'">变更原因</th>
+			        			<th data-options="field:'chhe_changedate',width:140,formatter:timeFormatter">变更日期</th>
+			        			<th data-options="field:'chhe_depa_id',width:100">变更单位</th>
+			        		</tr>
+			        	</thead>
+			        </table>
+			    </div>
+			</div>
+	    </div>
+	</div>
+	<!--<script src="$webPath/resource/jytc/platform_search.js"></script>-->
+	<script>
+
+        // 保存平台数据到数据库
+        function saveRowData(index) {
+            var rows = jqResultTable.datagrid("getRows");
+            console.log(rows[index]);
+
+            var layerIndex = layerFn.loading.show('正在处理...');
+            $.ajax({
+                type: "POST",
+                url:  webpath+"/provincePlatform/saveToLocal.jhtml",
+                data: {child: JSON.stringify({child: rows[index]})},
+                success: function(result) {
+
+                    console.log("result: ", typeof result, result);
+                    if (result && result != "") {
+                        resultObj = JSON.parse(result);
+                        console.log("ajax 返回的对象: ", resultObj);
+                        if (resultObj["code"] == 200) {
+                            layerFn.center(AppKey.code.code200, "已成功下载");
+                        } else {
+                            layerFn.center(AppKey.code.code201, "系统异常，下载失败");
+                        }
+                    }
+                },
+                error: function() {
+                    layerFn.center(AppKey.code.code199, "下载失败!");
+                }
+            });
+
+        }
+
+        // 查询按钮绑定的click事件回调
+        function searchOnProvincePlatform() {
+            console.log("searchOnProvincePlatform...");
+            var data = {};
+            var childCode = jqChildCode.textbox("getValue");
+            var childName = jqChildName.textbox("getValue");
+            var sex = jqSex.combobox("getValue");
+            var motherName = jqMotherName.textbox("getValue");
+            var fatherName = jqFatherName.textbox("getValue");
+            var birthday = jqBirthday.datebox("getValue");
+            var birthNo = jqBirthNo.textbox("getValue");
+            var childId = jqChildId.textbox("getValue");
+            var regCountyCode = jqRegCountyCode.textbox("getValue");
+
+            if (isNullString(childCode)
+                && isNullString(childName)
+                && isNullString(sex)
+                && isNullString(motherName)
+                && isNullString(fatherName)
+                && isNullString(birthday)
+                && isNullString(birthNo)
+                && isNullString(childId)
+                && isNullString(regCountyCode)) {
+                layer.msg("至少输入一个查询条件");
+                return;
+            }
+
+            data["childCode"] = childCode;
+            data["childName"] = childName;
+            data["sex"] = sex;
+            data["motherName"] = motherName;
+            data["fatherName"] = fatherName;
+            data["birthday"] = birthday;
+            data["birthNo"] = birthNo;
+            data["childId"] = childId;
+            data["regCountyCode"] = regCountyCode;
+
+            console.log(webpath+"/provincePlatform/dispatcher.jhtml");
+            console.log(data);
+
+            //return;
+            var layerIndex = layerFn.loading.show('正在处理...');
+            $.ajax({
+                type: "POST",
+                url: webpath+"/provincePlatform/dispatcher.jhtml",
+                data: data,
+                success: function(result) {
+                    processAjaxResponseData(result);
+                },
+                error: function() {
+                    layerFn.center(AppKey.code.code199, "没有查询到信息!");
+                }
+            });
+        }
+        /**
+         * @author 研发一部 朱修贤
+         * @date 2017年12月5日13:58:53
+         */
+
+// global object
+        var dataCache = [];
+
+        var codes = [
+            {code : "0101",fullName : "皮内注射用卡介苗",simpleName:"卡介苗",EngName:"BCG"},
+            {code : "0201",fullName : "重组乙型肝炎疫苗(CHO细胞)",simpleName:"乙肝(CHO)",EngName:"HepB-cho"},
+            {code : "0202",fullName : "重组乙型肝炎疫苗(酵母)",simpleName:"乙肝(酵母)",EngName:"HepB-yst"},
+            {code : "0301",fullName : "脊髓灰质炎减毒活疫苗(人二倍体细胞)",simpleName:"脊灰(减毒二倍体)",EngName:"OPV-hdc"},
+            {code : "0302",fullName : "脊髓灰质炎减毒活疫苗(猴肾细胞)",simpleName:"脊灰(减毒猴肾)",EngName:"OPV-mkc"},
+            {code : "0303",fullName : "脊髓灰质炎灭活疫苗",simpleName:"脊灰(灭活)",EngName:"IPV"},
+            {code : "0306",fullName : "Sabin株脊髓灰质炎灭活疫苗",simpleName:"Sabin株脊灰(灭活)",EngName:"SIPV"},
+            {code : "0311",fullName : "口服Ⅰ型Ⅲ脊髓灰质炎减毒活疫苗（人二倍体细胞）",simpleName:"二价脊灰疫苗",EngName:"bOPV"},
+            {code : "0401",fullName : "吸附百白破联合疫苗",simpleName:"百白破",EngName:"DPT"},
+            {code : "0402",fullName : "吸附无细胞百白破联合疫苗",simpleName:"百白破(无细胞)",EngName:"DaPT"},
+            {code : "0501",fullName : "吸附百日咳白喉联合疫苗",simpleName:"百白",EngName:"DP"},
+            {code : "0601",fullName : "吸附白喉破伤风联合疫苗",simpleName:"白破",EngName:"DT"},
+            {code : "0602",fullName : "吸附白喉破伤风联合疫苗(成人及青少年用)",simpleName:"白破(成人)",EngName:"DT-a"},
+            {code : "0603",fullName : "吸附无细胞百白破联合疫苗(青少年)",simpleName:"百白破(青少年)",EngName:"Tdap"},
+            {code : "0701",fullName : "吸附白喉疫苗",simpleName:"白喉",EngName:"Dv"},
+            {code : "0702",fullName : "吸附白喉疫苗(成人及青少年用)",simpleName:"白喉(成人)",EngName:"Dv-a"},
+            {code : "0801",fullName : "吸附破伤风疫苗",simpleName:"破伤风",EngName:"TT"},
+            {code : "0901",fullName : "麻疹减毒活疫苗",simpleName:"麻疹",EngName:"MV"},
+            {code : "1001",fullName : "腮腺炎减毒活疫苗",simpleName:"腮腺炎",EngName:"Mum"},
+            {code : "1101",fullName : "风疹减毒活疫苗(人二倍体细胞)",simpleName:"风疹(二倍体)",EngName:"Rub-hdc"},
+            {code : "1102",fullName : "风疹减毒活疫苗(兔肾细胞)",simpleName:"风疹(兔肾)",EngName:"Rub-rkc"},
+            {code : "1201",fullName : "麻疹腮腺炎风疹联合减毒活疫苗",simpleName:"麻腮风",EngName:"MMR"},
+            {code : "1301",fullName : "麻疹腮腺炎联合减毒活疫苗",simpleName:"麻腮",EngName:"MM"},
+            {code : "1401",fullName : "麻疹风疹联合减毒活疫苗",simpleName:"麻风",EngName:"MR"},
+            {code : "1501",fullName : "腮腺炎风疹联合减毒活疫苗",simpleName:"腮风",EngName:"MumR"},
+            {code : "1601",fullName : "A群脑膜炎球菌多糖疫苗",simpleName:"流脑A",EngName:"MenA"},
+            {code : "1702",fullName : "A+C群脑膜炎球菌多糖结合疫苗",simpleName:"流脑A+C结合",EngName:"MenAC"},
+            {code : "1701",fullName : "A+C群脑膜炎球菌多糖疫苗",simpleName:"流脑A+C",EngName:"MenAC"},
+            {code : "1703",fullName : "ACYW135群脑膜炎球菌多糖疫苗",simpleName:"流脑A+C+Y+W135",EngName:"MenAC"},
+            {code : "1801",fullName : "乙型脑炎减毒活疫苗",simpleName:"乙脑(减毒)",EngName:"JE-l"},
+            {code : "1802",fullName : "乙型脑炎灭活疫苗",simpleName:"乙脑(灭活)",EngName:"JE-i"},
+            {code : "1901",fullName : "甲型肝炎减毒活疫苗",simpleName:"甲肝(减毒)",EngName:"HepA-l"},
+            {code : "1902",fullName : "冻干甲型肝炎减毒活疫苗",simpleName:"甲肝(减毒冻干)",EngName:"HepA-l-fd"},
+            {code : "1903",fullName : "甲型肝炎灭活疫苗",simpleName:"甲肝(灭活)",EngName:"HepA-i"},
+            {code : "2001",fullName : "甲肝乙肝联合疫苗",simpleName:"甲乙肝",EngName:"HepAB"},
+            {code : "2101",fullName : "流行性感冒全病毒灭活疫苗",simpleName:"流感(全病毒)",EngName:"Flu-wv"},
+            {code : "2102",fullName : "流行性感冒裂解疫苗",simpleName:"流感(裂解)",EngName:"Flu-sp"},
+            {code : "2103",fullName : "流行性感冒亚单位疫苗",simpleName:"流感(亚单位)",EngName:"Flu-su"},
+            {code : "2104",fullName : "甲型H1N1流感疫苗(裂解无佐剂)",simpleName:"甲型流感(裂解无佐剂)",EngName:"FluA/H1N1-sp"},
+            {code : "2105",fullName : "甲型H1N1流感疫苗(裂解有佐剂",simpleName:"甲型流感(裂解有佐剂)",EngName:"FluA/H1N1-spa"},
+            {code : "2106",fullName : "甲型H1N1流感疫苗(全病毒)",simpleName:"甲型流感(全病毒)",EngName:"FluA/H1N1-wv"},
+            {code : "2201",fullName : "冻干水痘减毒活疫苗",simpleName:"水痘",EngName:"Var"},
+            {code : "2301",fullName : "b型流感嗜血杆菌多糖结合疫苗",simpleName:"Hib",EngName:"Hib"},
+            {code : "2301",fullName : "b型流感嗜血杆菌多糖结合疫苗",simpleName:"Hib-OMPC",EngName:"Hib-OMPC"},
+            {code : "2401",fullName : "口服轮状病毒活疫苗",simpleName:"轮状病毒",EngName:"Rot"},
+            {code : "2501",fullName : "23价肺炎球菌多糖疫苗",simpleName:"肺炎23",EngName:"Pneu23"},
+            {code : "2502",fullName : "七价肺炎球菌结合疫苗",simpleName:"七价肺炎",EngName:"Pneu7"},
+            {code : "2601",fullName : "气管炎疫苗	",simpleName:"气管炎",EngName:"Tra"},
+            {code : "2701",fullName : "兰菌净细菌溶解物",simpleName:"兰菌净",EngName:"Lan"},
+            {code : "2801",fullName : "人用狂犬病疫苗(Vero细胞)",simpleName:"狂犬病(Vero)",EngName:"Rab-Vero"},
+            {code : "2802",fullName : "冻干人用狂犬病疫苗(Vero细胞)",simpleName:"狂犬病(Vero冻干)",EngName:"Rab-Vero-fd"},
+            {code : "2803",fullName : "人用狂犬病疫苗(地鼠肾细胞)",simpleName:"狂犬病(地鼠肾)",EngName:"Rab-hkc"},
+            {code : "2901",fullName : "Ⅰ价肾综合征出血热灭活疫苗",simpleName:"出血热(Ⅰ价)",EngName:"HFⅠ"},
+            {code : "2902",fullName : "Ⅱ价肾综合征出血热灭活疫苗",simpleName:"出血热(Ⅱ价)",EngName:"HFⅡ"},
+            {code : "2903",fullName : "双价肾综合征出血热灭活疫苗",simpleName:"出血热(双价)",EngName:"HFⅠ+Ⅱ"},
+            {code : "3001",fullName : "伤寒疫苗",simpleName:"伤寒",EngName:"Typh"},
+            {code : "3002",fullName : "伤寒Vi多糖疫苗",simpleName:"伤寒Vi",EngName:"Typh-Vi"},
+            {code : "3101",fullName : "伤寒副伤寒甲联合疫苗",simpleName:"伤寒副伤寒甲",EngName:"T-pTA"},
+            {code : "3201",fullName : "伤寒副伤寒甲乙联合疫苗",simpleName:"伤寒副伤寒甲乙",EngName:"T-pTAB"},
+            {code : "3301",fullName : "口服福氏宋内痢疾双价活疫苗",simpleName:"痢疾",EngName:"Dys"},
+            {code : "3401",fullName : "钩端螺旋体疫苗",simpleName:"钩体",EngName:"Lep"},
+            {code : "3501",fullName : "皮肤划痕用鼠疫活疫苗",simpleName:"鼠疫",EngName:"Plag"},
+            {code : "3601",fullName : "皮肤划痕人用炭疽活疫苗",simpleName:"炭疽",EngName:"Anth"},
+            {code : "3701",fullName : "皮肤划痕人用布氏菌活疫苗",simpleName:"布病",EngName:"Bruc"},
+            {code : "3801",fullName : "霍乱疫苗",simpleName:"霍乱",EngName:"Chol"},
+            {code : "3901",fullName : "乙型肝炎人免疫球蛋白",simpleName:"乙肝球蛋白",EngName:"HepBIG"},
+            {code : "3902",fullName : "冻干乙型肝炎人免疫球蛋白",simpleName:"乙肝球蛋白(冻干)",EngName:"HepBIG-fd"},
+            {code : "4001",fullName : "白喉抗毒素	",simpleName:"白抗",EngName:"DAT"},
+            {code : "4002",fullName : "冻干白喉抗毒素",simpleName:"白抗(冻干)",EngName:"DAT-fd"},
+            {code : "4101",fullName : "破伤风抗毒素",simpleName:"破抗",EngName:"TAT"},
+            {code : "4102",fullName : "冻干破伤风抗毒素",simpleName:"破抗(冻干)",EngName:"TAT-fd"},
+            {code : "4201",fullName : "破伤风人免疫球蛋白",simpleName:"破伤风球蛋白",EngName:"TIG"},
+            {code : "4202",fullName : "冻干破伤风人免疫球蛋白",simpleName:"破伤风球蛋白(冻干)",EngName:"TIG-fd"},
+            {code : "4301",fullName : "抗狂犬病血清",simpleName:"狂犬病血清",EngName:"RAS"},
+            {code : "4401",fullName : "狂犬病人免疫球蛋白",simpleName:"狂犬病球蛋白",EngName:"RIG"},
+            {code : "4402",fullName : "冻干狂犬病人免疫球蛋白",simpleName:"狂犬病球蛋白(冻干)",EngName:"RIG-fd"},
+            {code : "4501",fullName : "结核菌素纯蛋白衍生物",simpleName:"结核菌素衍生物",EngName:"TB-PPD"},
+            {code : "4502",fullName : "卡介菌纯蛋白衍生物",simpleName:"卡介菌衍生物",EngName:"BCG-PPD"},
+            {code : "4601",fullName : "锡克试验毒素",simpleName:"锡克毒素",EngName:"STT"},
+            {code : "4701",fullName : "森林脑炎疫苗",simpleName:"森林脑炎疫苗",EngName:"TBE"},
+            {code : "4801",fullName : "登革热疫苗",simpleName:"登革热疫苗",EngName:"DFV"},
+            {code : "4901",fullName : "b型流感嗜血杆菌（结合）和吸附无细胞百白破联合疫苗",simpleName:"无细胞百白破Hib四联苗",EngName:"DTaP-Hib"},
+            {code : "5001",fullName : "吸附无细胞百白破灭活脊髓灰质炎和 b型流感嗜血杆菌（结合）联合疫苗",simpleName:"无细胞百白破IPV和Hib五联苗",EngName:"DTaP-IPV-Hib"},
+            {code : "5401",fullName : "肠道病毒71型灭活疫苗(人二倍体)",simpleName:"71型灭活疫苗",EngName:"EV71V-i"},
+            {code : "9899",fullName : "其它",simpleName:"9899",EngName:""},
+            {code : "9900",fullName : "人禽流感",simpleName:"9900",EngName:""},
+            {code : "9999",fullName : "其他疫苗",simpleName:"其他疫苗",EngName:"OTHER"}
+        ];
+
+        // jQuery object
+        var jqSearchForm =  $("#searchForm");
+        var jqChildCode = $("#childCode");
+        var jqChildName = $("#childName");
+        var jqSex = $("#sex");
+        var jqMotherName = $("#motherName");
+        var jqBirthday = $("#birthday");
+        var jqBirthNo = $("#birthNo");
+        var jqChildId = $("#childId");
+        var jqRegCountyCode = $("#regCountyCode");
+
+        var jqResultTable = $("#resultTable"); 		// 儿童信息结果datagrid
+        var jqInoculations = $("#inoculations"); 	// 接种记录datagrid
+        var jqInfections = $("#infections");		// 传染病记录datagrid
+        var jqAefis = $("#aefis");					// 异常反应datagrid
+        var jqIstabus = $("#istabus");				// 禁忌datagrid
+        var jqChildheres = $("#childheres"); 		// 变更记录
+
+        // 儿童信息tab 父窗口
+        var jqParentChildTab = null;
+        var jqParentChildDatagrid = null;
+
+
+        // 页面加载
+        $(function() {
+            // 如果本页面是从父窗口打开的iframe，获取父窗口对应的值到本页面对应的input中
+            if (window.parent) {
+                var childCode = $("#_easyui_textbox_input1", window.parent.document).val();
+                var childName = $("#_easyui_textbox_input2", window.parent.document).val();
+                jqChildCode.textbox("setValue", childCode);
+                jqChildName.textbox("setValue", childName);
+                jqParentChildTab = $("#childTab", window.parent.document);
+                jqParentChildDatagrid = $("#datagrid-child-list", window.parent.document);
+                console.log("jqParentChildTab: ", jqParentChildTab);
+                console.log("jqParentChildDatagrid: ", jqParentChildDatagrid);
+            }
+
+            // 绑定儿童编码textbox的focus和blur事件
+            jqChildCode.textbox("textbox").focus(function(e) {
+                console.log("儿童编码 focus");
+                /*jqBirthNo.textbox("disable");
+                jqChildId.textbox("disable");
+                jqMotherName.textbox("disable");
+                jqBirthday.datebox("disable");
+                jqChildName.textbox("disable");
+                jqSex.combobox("disable");
+                jqRegCountyCode.textbox("disable");*/
+            }).blur(function(e) {
+                /*$(this).prop("disabled", true);*/
+                console.log("儿童编码 blur");
+            });
+
+            jqBirthNo.textbox("textbox").focus(function(e) {
+                console.log("出生证号 focus");
+            }).blur(function(e) {
+                console.log("出生证号 blur");
+            });
+
+            jqChildId.textbox("textbox").focus(function(e) {
+                console.log("身份证 focus");
+            }).blur(function(e) {
+                console.log("身份证 blur");
+            });
+
+        });
+
+        // 清空#searchForm表单
+        function clearCondition() {
+            jqSearchForm.form("clear");
+            jqSex.combobox("select", "男");
+        }
+
+
+
+        /**
+         * 处理查询结果
+         */
+        function processAjaxResponseData(resultString) {
+
+            console.log("ajax返回结果: ", resultString);
+
+            if (!resultString || resultString == "") {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            layerFn.center(AppKey.code.code200, "查询成功!");
+
+            var data = JSON.parse(resultString);
+
+            if (!data || !data["map"]) {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            var children = data["map"]["children"];
+
+            if (!children) {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            var childArray = children["child"];
+
+            //return;
+            if (!childArray) {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            // 缓存儿童数据
+            dataCache = childArray;
+
+            // 清空儿童datagrid
+            jqResultTable.datagrid('loadData', { total: 0, rows: [] });
+
+            if (childArray.length && childArray.length > 0) {
+                childArray.forEach(function(elt, i, array) {
+                    jqResultTable.datagrid("insertRow", {index: i, row: elt});
+                });
+            } else {
+                jqResultTable.datagrid("insertRow", {index: 0, row: childArray});
+            }
+
+            jqResultTable.datagrid("selectRow", 0);
+        }
+
+        function rtRowSelectCallBack(index, row) {
+            jqInoculations.datagrid("loadData", {total: 0, rows: []});
+            jqInfections.datagrid("loadData", {total: 0, rows: []});
+            jqAefis.datagrid("loadData", {total: 0, rows: []});
+            jqIstabus.datagrid("loadData", {total: 0, rows: []});
+            jqChildheres.datagrid("loadData", {total: 0, rows: []});
+
+            var child = dataCache.length ? dataCache[index] : dataCache;
+
+            // 接种信息
+            if (child["inoculations"] && child["inoculations"] != "") {
+
+                var inoculationArray = child["inoculations"]["inoculation"];
+                if (inoculationArray) {
+                    if (inoculationArray.length && inoculationArray.length > 0) {
+                        inoculationArray.forEach(function(elt, i, array) {
+                            jqInoculations.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqInoculations.datagrid("insertRow", {index: 0,row: inoculationArray});
+                    }
+                }
+            }
+
+            // 传染病
+            if (child["infections"] && child["infections"]) {
+                var infectionArray = child["infections"]["infection"];
+                if (infectionArray) {
+                    if (infectionArray.length && infectionArray.length > 0) {
+                        infectionArray.forEach(function(elt, i, array) {
+                            jqInfections.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqInfections.datagrid("insertRow", {index: 0, row: infectionArray});
+                    }
+                }
+            }
+
+            // 异常反应
+            if (child["aefis"] && child["aefis"] != "") {
+                var aefiArray = child["aefis"]["aefi"];
+                if (aefiArray) {
+                    if (aefiArray.length && aefiArray.length > 0) {
+                        aefiArray.forEach(function(elt, i, array) {
+                            jqAefis.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqAefis.datagrid("insertRow", {index: 0, row: aefiArray});
+                    }
+                }
+            }
+
+            // 禁忌
+            if (child["istabus"] && child["istabus"] != "") {
+                var istabuArray = child["istabus"]["istabu"];
+                if (istabuArray) {
+                    if (istabuArray.length && istabuArray.length > 0) {
+                        istabuArray.forEach(function(elt, i, array) {
+                            jqIstabus.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqIstabus.datagrid("insertRow", {index: 0, row: istabuArray});
+                    }
+                }
+            }
+
+            // 变更记录
+            if (child["childheres"] && child["childheres"] != "") {
+                var childhereArray = child["childheres"]["childhere"];
+                if (childhereArray) {
+                    if (childhereArray.length && childhereArray.length > 0)
+                        childhereArray.forEach(function(elt, i, array) {
+                            jqChildheres.datagrid("insertRow", {index: i, row: elt});
+                        });
+                } else {
+                    jqChildheres.datagrid("insertRow", {index: 0, row: childhereArray});
+                }
+            }
+
+        }
+
+        // 性别格式化
+        function sexFormatter(value, row, index) {
+            if (value == 1) {
+                return "男";
+            } else if (value == 2) {
+                return "女";
+            } else {
+                return "";
+            }
+        }
+
+        // 在册状态格式化
+        function childHereFormatter(value, row, index) {
+            if (value == 1) {
+                return "在册";
+            } else if (value == 2) {
+                return "迁出";
+            } else if (value == 3) {
+                return "临时迁出";
+            } else if (value == 4) {
+                return "死亡";
+            } else if (value == 5) {
+                return "删除";
+            } else {
+                return "临时接种";
+            }
+        }
+
+        // 日期格式化
+        function timeFormatter(value, row, index) {
+            return value.substring(0, value.length - 2);
+        }
+
+        // 接种属性格式化
+        function propertyFomatter(value, row, index) {
+            if (value == 0) {
+                return "基础";
+            } else if (value == 1) {
+                return "加强";
+            } else if (value == 2) {
+                return "强化";
+            } else if (value == 3) {
+                return "应急";
+            }
+        }
+
+        // 替代属性格式化
+        function reinforceFormatter(value, row, index) {
+            if (value == 0) {
+                return "无";
+            } else if (value == 1) {
+                return "替代强化剂次";
+            } else if (value == 2) {
+                return "替代应急剂次";
+            }
+        }
+
+        // 0，1，是，否格式化
+        function yesOrNoFormatter(value, row, index) {
+            if (value == 0) {
+                return "否";
+            } else if (value == 1) {
+                return "是";
+            }
+        }
+
+        // 操作格式化
+        function operFormatter(value, row, index) {
+            return "<a href=\"javascript:void(0);\" onclick=\"saveRowData(" + index + ")\">下载儿童数据到当前接种点</a>";
+        }
+
+        //疫苗编码formatter
+        function bactFormatter(value, row, index) {
+            var str = "";
+            codes.forEach(function(elt, i, array) {
+                if (elt.code == value) {
+                    str = "(" + value + ")" + elt.simpleName;
+                }
+            });
+            return str;
+        }
+        // 接种部位格式化
+        function posFormatter(value, row, index) {
+            if (value == 1) {
+                return "左臂";
+            } else if (value == 2) {
+                return "右臂";
+            } else if(value == 4){
+                return "左腿";
+            }else if(value== 5){
+                return "右腿";
+            }else if(value==9){
+                return "口服";
+            }else{
+                return "";
+			}
+            // else if(value==10){
+            //     return "不详";
+            // }
+        }
+        // 判断空字符串
+        function isNullString(obj) {
+            if (!obj || obj == "") {
+                return true;
+            } else
+                return false;
+        }/**
+         * @author 研发一部 朱修贤
+         * @date 2017年12月5日13:58:53
+         */
+
+// global object
+        var dataCache = [];
+
+        var codes = [
+            {code : "0101",fullName : "皮内注射用卡介苗",simpleName:"卡介苗",EngName:"BCG"},
+            {code : "0201",fullName : "重组乙型肝炎疫苗(CHO细胞)",simpleName:"乙肝(CHO)",EngName:"HepB-cho"},
+            {code : "0202",fullName : "重组乙型肝炎疫苗(酵母)",simpleName:"乙肝(酵母)",EngName:"HepB-yst"},
+            {code : "0203",fullName : "重组乙型肝炎疫苗(汉逊酵母)",simpleName:"乙肝疫苗(汉逊酵母)",EngName:"HepB-hpy"},
+            {code : "0301",fullName : "脊髓灰质炎减毒活疫苗(人二倍体细胞)",simpleName:"脊灰(减毒二倍体)",EngName:"OPV-hdc"},
+            {code : "0302",fullName : "脊髓灰质炎减毒活疫苗(猴肾细胞)",simpleName:"脊灰(减毒猴肾)",EngName:"OPV-mkc"},
+            {code : "0303",fullName : "脊髓灰质炎灭活疫苗",simpleName:"脊灰(灭活)",EngName:"IPV"},
+            {code : "0306",fullName : "Sabin株脊髓灰质炎灭活疫苗",simpleName:"Sabin株脊灰(灭活)",EngName:"SIPV"},
+            {code : "0311",fullName : "口服Ⅰ型Ⅲ脊髓灰质炎减毒活疫苗（人二倍体细胞）",simpleName:"二价脊灰疫苗",EngName:"bOPV"},
+            {code : "0401",fullName : "吸附百白破联合疫苗",simpleName:"百白破",EngName:"DPT"},
+            {code : "0402",fullName : "吸附无细胞百白破联合疫苗",simpleName:"百白破(无细胞)",EngName:"DaPT"},
+            {code : "0501",fullName : "吸附百日咳白喉联合疫苗",simpleName:"百白",EngName:"DP"},
+            {code : "0601",fullName : "吸附白喉破伤风联合疫苗",simpleName:"白破",EngName:"DT"},
+            {code : "0602",fullName : "吸附白喉破伤风联合疫苗(成人及青少年用)",simpleName:"白破(成人)",EngName:"DT-a"},
+            {code : "0603",fullName : "吸附无细胞百白破联合疫苗(青少年)",simpleName:"百白破(青少年)",EngName:"Tdap"},
+            {code : "0701",fullName : "吸附白喉疫苗",simpleName:"白喉",EngName:"Dv"},
+            {code : "0702",fullName : "吸附白喉疫苗(成人及青少年用)",simpleName:"白喉(成人)",EngName:"Dv-a"},
+            {code : "0801",fullName : "吸附破伤风疫苗",simpleName:"破伤风",EngName:"TT"},
+            {code : "0901",fullName : "麻疹减毒活疫苗",simpleName:"麻疹",EngName:"MV"},
+            {code : "1001",fullName : "腮腺炎减毒活疫苗",simpleName:"腮腺炎",EngName:"Mum"},
+            {code : "1101",fullName : "风疹减毒活疫苗(人二倍体细胞)",simpleName:"风疹(二倍体)",EngName:"Rub-hdc"},
+            {code : "1102",fullName : "风疹减毒活疫苗(兔肾细胞)",simpleName:"风疹(兔肾)",EngName:"Rub-rkc"},
+            {code : "1201",fullName : "麻疹腮腺炎风疹联合减毒活疫苗",simpleName:"麻腮风",EngName:"MMR"},
+            {code : "1301",fullName : "麻疹腮腺炎联合减毒活疫苗",simpleName:"麻腮",EngName:"MM"},
+            {code : "1401",fullName : "麻疹风疹联合减毒活疫苗",simpleName:"麻风",EngName:"MR"},
+            {code : "1501",fullName : "腮腺炎风疹联合减毒活疫苗",simpleName:"腮风",EngName:"MumR"},
+            {code : "1601",fullName : "A群脑膜炎球菌多糖疫苗",simpleName:"流脑A",EngName:"MenA"},
+            {code : "1702",fullName : "A+C群脑膜炎球菌多糖结合疫苗",simpleName:"流脑A+C结合",EngName:"MenAC"},
+            {code : "1701",fullName : "A+C群脑膜炎球菌多糖疫苗",simpleName:"流脑A+C",EngName:"MenAC"},
+            {code : "1703",fullName : "ACYW135群脑膜炎球菌多糖疫苗",simpleName:"流脑A+C+Y+W135",EngName:"MenAC"},
+            {code : "1801",fullName : "乙型脑炎减毒活疫苗",simpleName:"乙脑(减毒)",EngName:"JE-l"},
+            {code : "1802",fullName : "乙型脑炎灭活疫苗",simpleName:"乙脑(灭活)",EngName:"JE-i"},
+            {code : "1901",fullName : "甲型肝炎减毒活疫苗",simpleName:"甲肝(减毒)",EngName:"HepA-l"},
+            {code : "1902",fullName : "冻干甲型肝炎减毒活疫苗",simpleName:"甲肝(减毒冻干)",EngName:"HepA-l-fd"},
+            {code : "1903",fullName : "甲型肝炎灭活疫苗",simpleName:"甲肝(灭活)",EngName:"HepA-i"},
+            {code : "2001",fullName : "甲肝乙肝联合疫苗",simpleName:"甲乙肝",EngName:"HepAB"},
+            {code : "2101",fullName : "流行性感冒全病毒灭活疫苗",simpleName:"流感(全病毒)",EngName:"Flu-wv"},
+            {code : "2102",fullName : "流行性感冒裂解疫苗",simpleName:"流感(裂解)",EngName:"Flu-sp"},
+            {code : "2103",fullName : "流行性感冒亚单位疫苗",simpleName:"流感(亚单位)",EngName:"Flu-su"},
+            {code : "2104",fullName : "甲型H1N1流感疫苗(裂解无佐剂)",simpleName:"甲型流感(裂解无佐剂)",EngName:"FluA/H1N1-sp"},
+            {code : "2105",fullName : "甲型H1N1流感疫苗(裂解有佐剂",simpleName:"甲型流感(裂解有佐剂)",EngName:"FluA/H1N1-spa"},
+            {code : "2106",fullName : "甲型H1N1流感疫苗(全病毒)",simpleName:"甲型流感(全病毒)",EngName:"FluA/H1N1-wv"},
+            {code : "2201",fullName : "冻干水痘减毒活疫苗",simpleName:"水痘",EngName:"Var"},
+            {code : "2301",fullName : "b型流感嗜血杆菌多糖结合疫苗",simpleName:"Hib",EngName:"Hib"},
+            {code : "2301",fullName : "b型流感嗜血杆菌多糖结合疫苗",simpleName:"Hib-OMPC",EngName:"Hib-OMPC"},
+            {code : "2401",fullName : "口服轮状病毒活疫苗",simpleName:"轮状病毒",EngName:"Rot"},
+            {code : "2501",fullName : "23价肺炎球菌多糖疫苗",simpleName:"肺炎23",EngName:"Pneu23"},
+            {code : "2502",fullName : "七价肺炎球菌结合疫苗",simpleName:"七价肺炎",EngName:"Pneu7"},
+            {code : "2601",fullName : "气管炎疫苗	",simpleName:"气管炎",EngName:"Tra"},
+            {code : "2701",fullName : "兰菌净细菌溶解物",simpleName:"兰菌净",EngName:"Lan"},
+            {code : "2801",fullName : "人用狂犬病疫苗(Vero细胞)",simpleName:"狂犬病(Vero)",EngName:"Rab-Vero"},
+            {code : "2802",fullName : "冻干人用狂犬病疫苗(Vero细胞)",simpleName:"狂犬病(Vero冻干)",EngName:"Rab-Vero-fd"},
+            {code : "2803",fullName : "人用狂犬病疫苗(地鼠肾细胞)",simpleName:"狂犬病(地鼠肾)",EngName:"Rab-hkc"},
+            {code : "2901",fullName : "Ⅰ价肾综合征出血热灭活疫苗",simpleName:"出血热(Ⅰ价)",EngName:"HFⅠ"},
+            {code : "2902",fullName : "Ⅱ价肾综合征出血热灭活疫苗",simpleName:"出血热(Ⅱ价)",EngName:"HFⅡ"},
+            {code : "2903",fullName : "双价肾综合征出血热灭活疫苗",simpleName:"出血热(双价)",EngName:"HFⅠ+Ⅱ"},
+            {code : "3001",fullName : "伤寒疫苗",simpleName:"伤寒",EngName:"Typh"},
+            {code : "3002",fullName : "伤寒Vi多糖疫苗",simpleName:"伤寒Vi",EngName:"Typh-Vi"},
+            {code : "3101",fullName : "伤寒副伤寒甲联合疫苗",simpleName:"伤寒副伤寒甲",EngName:"T-pTA"},
+            {code : "3201",fullName : "伤寒副伤寒甲乙联合疫苗",simpleName:"伤寒副伤寒甲乙",EngName:"T-pTAB"},
+            {code : "3301",fullName : "口服福氏宋内痢疾双价活疫苗",simpleName:"痢疾",EngName:"Dys"},
+            {code : "3401",fullName : "钩端螺旋体疫苗",simpleName:"钩体",EngName:"Lep"},
+            {code : "3501",fullName : "皮肤划痕用鼠疫活疫苗",simpleName:"鼠疫",EngName:"Plag"},
+            {code : "3601",fullName : "皮肤划痕人用炭疽活疫苗",simpleName:"炭疽",EngName:"Anth"},
+            {code : "3701",fullName : "皮肤划痕人用布氏菌活疫苗",simpleName:"布病",EngName:"Bruc"},
+            {code : "3801",fullName : "霍乱疫苗",simpleName:"霍乱",EngName:"Chol"},
+            {code : "3901",fullName : "乙型肝炎人免疫球蛋白",simpleName:"乙肝球蛋白",EngName:"HepBIG"},
+            {code : "3902",fullName : "冻干乙型肝炎人免疫球蛋白",simpleName:"乙肝球蛋白(冻干)",EngName:"HepBIG-fd"},
+            {code : "4001",fullName : "白喉抗毒素	",simpleName:"白抗",EngName:"DAT"},
+            {code : "4002",fullName : "冻干白喉抗毒素",simpleName:"白抗(冻干)",EngName:"DAT-fd"},
+            {code : "4101",fullName : "破伤风抗毒素",simpleName:"破抗",EngName:"TAT"},
+            {code : "4102",fullName : "冻干破伤风抗毒素",simpleName:"破抗(冻干)",EngName:"TAT-fd"},
+            {code : "4201",fullName : "破伤风人免疫球蛋白",simpleName:"破伤风球蛋白",EngName:"TIG"},
+            {code : "4202",fullName : "冻干破伤风人免疫球蛋白",simpleName:"破伤风球蛋白(冻干)",EngName:"TIG-fd"},
+            {code : "4301",fullName : "抗狂犬病血清",simpleName:"狂犬病血清",EngName:"RAS"},
+            {code : "4401",fullName : "狂犬病人免疫球蛋白",simpleName:"狂犬病球蛋白",EngName:"RIG"},
+            {code : "4402",fullName : "冻干狂犬病人免疫球蛋白",simpleName:"狂犬病球蛋白(冻干)",EngName:"RIG-fd"},
+            {code : "4501",fullName : "结核菌素纯蛋白衍生物",simpleName:"结核菌素衍生物",EngName:"TB-PPD"},
+            {code : "4502",fullName : "卡介菌纯蛋白衍生物",simpleName:"卡介菌衍生物",EngName:"BCG-PPD"},
+            {code : "4601",fullName : "锡克试验毒素",simpleName:"锡克毒素",EngName:"STT"},
+            {code : "4701",fullName : "森林脑炎疫苗",simpleName:"森林脑炎疫苗",EngName:"TBE"},
+            {code : "4801",fullName : "登革热疫苗",simpleName:"登革热疫苗",EngName:"DFV"},
+            {code : "4901",fullName : "b型流感嗜血杆菌（结合）和吸附无细胞百白破联合疫苗",simpleName:"无细胞百白破Hib四联苗",EngName:"DTaP-Hib"},
+            {code : "5001",fullName : "吸附无细胞百白破灭活脊髓灰质炎和 b型流感嗜血杆菌（结合）联合疫苗",simpleName:"无细胞百白破IPV和Hib五联苗",EngName:"DTaP-IPV-Hib"},
+            {code : "5101",fullName : "黄热减毒活疫苗",simpleName:"黄热减毒活疫苗",EngName:"YFV"},
+            {code : "5301",fullName : "AC流脑Hib联合疫苗",simpleName:"AC流脑Hib联合疫苗",EngName:"MCV-AC/Hib"},
+            {code : "5401",fullName : "肠道病毒71型灭活疫苗(人二倍体)",simpleName:"EV71灭活疫苗",EngName:"EV71V-i"},
+            {code : "5402",fullName : "肠道病毒71型灭活疫苗(Vero细胞)",simpleName:"EV71疫苗(Vero细胞)",EngName:"EV71V-vero"},
+            {code : "9899",fullName : "其它",simpleName:"9899",EngName:""},
+            {code : "9900",fullName : "人禽流感",simpleName:"9900",EngName:""},
+            {code : "9999",fullName : "其他疫苗",simpleName:"其他疫苗",EngName:"OTHER"}
+        ];
+
+        // jQuery object
+        var jqSearchForm =  $("#searchForm");
+        var jqChildCode = $("#childCode");
+        var jqChildName = $("#childName");
+        var jqSex = $("#sex");
+        var jqMotherName = $("#motherName");
+        var jqFatherName = $("#fatherName");
+        var jqBirthday = $("#birthday");
+        var jqBirthNo = $("#birthNo");
+        var jqChildId = $("#childId");
+        var jqRegCountyCode = $("#regCountyCode");
+
+        var jqResultTable = $("#resultTable"); 		// 儿童信息结果datagrid
+        var jqInoculations = $("#inoculations"); 	// 接种记录datagrid
+        var jqInfections = $("#infections");		// 传染病记录datagrid
+        var jqAefis = $("#aefis");					// 异常反应datagrid
+        var jqIstabus = $("#istabus");				// 禁忌datagrid
+        var jqChildheres = $("#childheres"); 		// 变更记录
+
+        // 儿童信息tab 父窗口
+        var jqParentChildTab = null;
+        var jqParentChildDatagrid = null;
+
+
+        // 页面加载
+        $(function() {
+            // 如果本页面是从父窗口打开的iframe，获取父窗口对应的值到本页面对应的input中
+            if (window.parent) {
+                var childCode = $("#_easyui_textbox_input1", window.parent.document).val();
+                var childName = $("#_easyui_textbox_input2", window.parent.document).val();
+                jqChildCode.textbox("setValue", childCode);
+                jqChildName.textbox("setValue", childName);
+                jqParentChildTab = $("#childTab", window.parent.document);
+                jqParentChildDatagrid = $("#datagrid-child-list", window.parent.document);
+                console.log("jqParentChildTab: ", jqParentChildTab);
+                console.log("jqParentChildDatagrid: ", jqParentChildDatagrid);
+            }
+
+            // 绑定儿童编码textbox的focus和blur事件
+            jqChildCode.textbox("textbox").focus(function(e) {
+                console.log("儿童编码 focus");
+                /*jqBirthNo.textbox("disable");
+                jqChildId.textbox("disable");
+                jqMotherName.textbox("disable");
+                jqBirthday.datebox("disable");
+                jqChildName.textbox("disable");
+                jqSex.combobox("disable");
+                jqRegCountyCode.textbox("disable");*/
+            }).blur(function(e) {
+                /*$(this).prop("disabled", true);*/
+                console.log("儿童编码 blur");
+            });
+
+            jqBirthNo.textbox("textbox").focus(function(e) {
+                console.log("出生证号 focus");
+            }).blur(function(e) {
+                console.log("出生证号 blur");
+            });
+
+            jqChildId.textbox("textbox").focus(function(e) {
+                console.log("身份证 focus");
+            }).blur(function(e) {
+                console.log("身份证 blur");
+            });
+
+        });
+
+        // 清空#searchForm表单
+        function clearCondition() {
+            jqSearchForm.form("clear");
+            jqSex.combobox("select", "男");
+        }
+
+
+
+        /**
+         * 处理查询结果
+         */
+        function processAjaxResponseData(resultString) {
+
+            console.log("ajax返回结果: ", resultString);
+
+            if (!resultString || resultString == "") {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            layerFn.center(AppKey.code.code200, "查询成功!");
+
+            var data = JSON.parse(resultString);
+
+            if (!data || !data["map"]) {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            var children = data["map"]["children"];
+
+            if (!children) {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            var childArray = children["child"];
+
+            //return;
+            if (!childArray) {
+                layerFn.center(AppKey.code.code199, "暂无数据!");
+                return;
+            }
+
+            // 缓存儿童数据
+            dataCache = childArray;
+
+            // 清空儿童datagrid
+            jqResultTable.datagrid('loadData', { total: 0, rows: [] });
+
+            if (childArray.length && childArray.length > 0) {
+                childArray.forEach(function(elt, i, array) {
+                    jqResultTable.datagrid("insertRow", {index: i, row: elt});
+                });
+            } else {
+                jqResultTable.datagrid("insertRow", {index: 0, row: childArray});
+            }
+
+            jqResultTable.datagrid("selectRow", 0);
+        }
+
+        function rtRowSelectCallBack(index, row) {
+            jqInoculations.datagrid("loadData", {total: 0, rows: []});
+            jqInfections.datagrid("loadData", {total: 0, rows: []});
+            jqAefis.datagrid("loadData", {total: 0, rows: []});
+            jqIstabus.datagrid("loadData", {total: 0, rows: []});
+            jqChildheres.datagrid("loadData", {total: 0, rows: []});
+
+            var child = dataCache.length ? dataCache[index] : dataCache;
+
+            // 接种信息
+            if (child["inoculations"] && child["inoculations"] != "") {
+
+                var inoculationArray = child["inoculations"]["inoculation"];
+                if (inoculationArray) {
+                    if (inoculationArray.length && inoculationArray.length > 0) {
+                        inoculationArray.forEach(function(elt, i, array) {
+                            jqInoculations.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqInoculations.datagrid("insertRow", {index: 0,row: inoculationArray});
+                    }
+                }
+            }
+
+            // 传染病
+            if (child["infections"] && child["infections"]) {
+                var infectionArray = child["infections"]["infection"];
+                if (infectionArray) {
+                    if (infectionArray.length && infectionArray.length > 0) {
+                        infectionArray.forEach(function(elt, i, array) {
+                            jqInfections.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqInfections.datagrid("insertRow", {index: 0, row: infectionArray});
+                    }
+                }
+            }
+
+            // 异常反应
+            if (child["aefis"] && child["aefis"] != "") {
+                var aefiArray = child["aefis"]["aefi"];
+                if (aefiArray) {
+                    if (aefiArray.length && aefiArray.length > 0) {
+                        aefiArray.forEach(function(elt, i, array) {
+                            jqAefis.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqAefis.datagrid("insertRow", {index: 0, row: aefiArray});
+                    }
+                }
+            }
+
+            // 禁忌
+            if (child["istabus"] && child["istabus"] != "") {
+                var istabuArray = child["istabus"]["istabu"];
+                if (istabuArray) {
+                    if (istabuArray.length && istabuArray.length > 0) {
+                        istabuArray.forEach(function(elt, i, array) {
+                            jqIstabus.datagrid("insertRow", {index: i, row: elt});
+                        });
+                    } else {
+                        jqIstabus.datagrid("insertRow", {index: 0, row: istabuArray});
+                    }
+                }
+            }
+
+            // 变更记录
+            if (child["childheres"] && child["childheres"] != "") {
+                var childhereArray = child["childheres"]["childhere"];
+                if (childhereArray) {
+                    if (childhereArray.length && childhereArray.length > 0)
+                        childhereArray.forEach(function(elt, i, array) {
+                            jqChildheres.datagrid("insertRow", {index: i, row: elt});
+                        });
+                } else {
+                    jqChildheres.datagrid("insertRow", {index: 0, row: childhereArray});
+                }
+            }
+
+        }
+
+        // 性别格式化
+        function sexFormatter(value, row, index) {
+            if (value == 1) {
+                return "男";
+            } else if (value == 2) {
+                return "女";
+            } else {
+                return "";
+            }
+        }
+
+        // 在册状态格式化
+        function childHereFormatter(value, row, index) {
+            if (value == 1) {
+                return "在册";
+            } else if (value == 2) {
+                return "迁出";
+            } else if (value == 3) {
+                return "临时迁出";
+            } else if (value == 4) {
+                return "死亡";
+            } else if (value == 5) {
+                return "删除";
+            } else {
+                return "临时接种";
+            }
+        }
+
+        // 日期格式化
+        function timeFormatter(value, row, index) {
+            return value.substring(0, value.length - 2);
+        }
+
+        // 接种属性格式化
+        function propertyFomatter(value, row, index) {
+            if (value == 0) {
+                return "基础";
+            } else if (value == 1) {
+                return "加强";
+            } else if (value == 2) {
+                return "强化";
+            } else if (value == 3) {
+                return "应急";
+            }
+        }
+
+        // 替代属性格式化
+        function reinforceFormatter(value, row, index) {
+            if (value == 0) {
+                return "无";
+            } else if (value == 1) {
+                return "替代强化剂次";
+            } else if (value == 2) {
+                return "替代应急剂次";
+            }
+        }
+
+        // 0，1，是，否格式化
+        function yesOrNoFormatter(value, row, index) {
+            if (value == 0) {
+                return "否";
+            } else if (value == 1) {
+                return "是";
+            }
+        }
+
+        // 操作格式化
+        function operFormatter(value, row, index) {
+            return "<a href=\"javascript:void(0);\" onclick=\"saveRowData(" + index + ")\">下载儿童数据到当前接种点</a>";
+        }
+
+        //疫苗编码formatter
+        function bactFormatter(value, row, index) {
+            var str = "";
+            codes.forEach(function(elt, i, array) {
+                if (elt.code == value) {
+                    str = "(" + value + ")" + elt.simpleName;
+                }
+            });
+            return str;
+        }
+        // 接种部位格式化
+        function posFormatter(value, row, index) {
+            if (value == 1) {
+                return "左臂";
+            } else if (value == 2) {
+                return "右臂";
+            } else if(value == 4){
+                return "左腿";
+            }else if(value== 5){
+                return "右腿";
+            }else if(value==9){
+                return "口服";
+            }else{
+                return "";
+			}
+            // else if(value==10){
+            //     return "不详";
+            // }
+        }
+        // 判断空字符串
+        function isNullString(obj) {
+            if (!obj || obj == "") {
+                return true;
+            } else
+                return false;
+        }
+		window.onload = function()
+		{
+			/*document.getElementById("birthtime_start").focus();*/
+			keyDownEventFun();
+		}
+		//按回车键搜索
+		function keyDownEventFun(){
+			$('#birthday').textbox('textbox').keydown(function (event) {
+				if (event.keyCode == 13) {
+					searchOnProvincePlatform();
+				}
+			});
+
+			$('#birthday').textbox('textbox').keydown(function (event) {
+				if (event.keyCode == 13) {
+					searchOnProvincePlatform();
+				}
+			});
+
+		}
+
+		document.onkeydown=function(event){
+			var e = event || window.event || arguments.callee.caller.arguments[0];
+			if(e && e.keyCode==27){ // 按 Esc
+			}
+			if(e && e.keyCode==13){ // enter 键
+				searchOnProvincePlatform();
+			}
+		};
+	</script>
+</body>
+</html>

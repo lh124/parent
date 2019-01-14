@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>未种通知</title>
+	#parse("sys/header.html")
+	<!--选择城市控件-->
+	<link href="${rc.contextPath}/statics/plugins/city/css/city-picker.css" rel="stylesheet">
+	<link href="${rc.contextPath}/statics/plugins/city/css/main.css" rel="stylesheet">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+	<script src="${rc.contextPath}/statics/plugins/city/js/city-picker.data.js"></script>
+	<script src="${rc.contextPath}/statics/plugins/city/js/city-picker.js"></script>
+	<script src="${rc.contextPath}/statics/plugins/city/js/main.js"></script>
+	<script type="application/javascript">
+        var orgId="$shiro.getBaseInfo('orgId')";
+	</script>
+</head>
+<body style="padding: 5px">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div  class="grid-btn">
+			<form id="childGatherForm" class="form-inline" role="form">
+
+				<div class="form-group">
+					&nbsp; &nbsp;统计年度:<input type="text" class="form-control" v-model.trim="q.year_start" id="year_start" name="year_start" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model.trim="q.year_end" id="year_end" name="year_end" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+				<div class="form-group" >
+					&nbsp;在册情况:
+					<select  class="selectpicker" id="infostatus" name="infostatus" title=""  multiple data-live-search="true"></select>
+				</div>
+
+				&nbsp;
+				<a class="btn btn-primary" @click="query">查询</a>
+				<a class="btn btn-primary" @click="reset">重置</a>
+				<a class="btn btn-primary" @click="excel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+				<a class="btn btn-primary" @click="print">打印</a>
+
+			</form>
+		</div>
+		<table id="childGatherGrid"></table>
+		<div id="childGatherGridPager"></div>
+		<ul class="nav nav-tabs mt20">
+			<li class="active"><a href="#imperfectChild" data-toggle="tab">信息不完整儿童</a></li>
+
+
+		</ul>
+		<div class="tab-content" style="margin-top: 5px">
+			<!--不完整儿童-->
+			<div class="tab-pane fade in active" id="imperfectChild">
+				<div id="inoculation_tabs" v-cloak>
+					<div v-show="showList" class="panel panel-default">
+						<table id="childInfoGrid"></table>
+						<div id="childInfoGridPager"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	<div v-show="!showList" class="panel panel-default h-auto" id="childModel">
+
+	</div>
+
+</div>
+<!--查看儿童弹框-->
+
+<script src="${rc.contextPath}/statics/js/statistics/childGather.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/bus/createchild.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/child/childvalidator.js?_${date.systemTime}"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/allprovince.js"></script>
+</body>
+</html>
+
+
+

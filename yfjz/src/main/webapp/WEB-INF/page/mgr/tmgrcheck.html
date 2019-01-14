@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+<title>盘点表</title>
+#parse("sys/header.html")
+</head>
+<body class="myBody">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForm">
+				<div class="form-group">
+					<label >盘点单号:</label>
+					<input type="text" class="form-control" style="width: 150px" id="searchOrder" placeholder="盘点单号">
+				</div>
+				<div class="form-group">
+					<label >盘点人员:</label>
+					<input type="text" class="form-control" style="width: 150px" id="searchUser" placeholder="盘点人员">
+				</div>
+				<div class="form-group">
+					<label >盘点时间:</label>
+					<input type="text" class="form-control" style="width: 150px"    id="startDate" placeholder="开始时间" data-date-format="yyyy-mm-dd">
+					-
+					<input type="text" class="form-control" style="width: 150px"    id="endDate" placeholder="结束时间" data-date-format="yyyy-mm-dd">
+				</div>
+				<a class="btn btn-warning" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+			</form>
+			<a class="btn btn-primary" @click="add"><i class="fa fa-check"></i>&nbsp;盘点</a>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">库存盘点</div>
+			<form class="form-inline" style="margin: 10px">
+				<div class="form-group">
+					<label >盘点单号:</label>
+					<input type="text" class="form-control" style="width: 150px" id="order" placeholder="盘点单号">
+				</div>
+				<div class="form-group">
+					<label >盘点人员:</label>
+					<input type="text" class="form-control" style="width: 150px" id="checkUser" placeholder="盘点人员">
+				</div>
+				<div class="form-group">
+					<label >盘点时间:</label>
+					<input type="text" class="form-control" style="width: 150px" id="checkTime" placeholder="入库时间"  data-date-format="yyyy-mm-dd">
+				</div>
+				<div class="form-group">
+					<label >盘点仓库:</label>
+					<select class="form-control" id="store" style="width: 150px" v-model="storeId" @change="reloadList()">
+						<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+				</div>
+			</form>
+			<table id="checkItem"></table>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="提交"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+	</div>
+</div>
+<script>
+    $(function () {
+
+        $('#checkTime,#startDate,#endDate').datetimepicker(
+            {
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayBtn: true,
+                startView: 'month',
+                minView:'month',
+                language:  'zh-CN'
+            }
+        );
+        $('#checkTime').val(formatDateTime(new Date()));
+    });
+
+</script>
+<script src="${rc.contextPath}/statics/js/mgr/tmgrcheck.js?_${date.systemTime}"></script>
+</body>
+</html>

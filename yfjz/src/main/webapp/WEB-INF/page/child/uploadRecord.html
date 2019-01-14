@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+<title>儿童基本信息表</title>
+<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+#parse("sys/header.html")
+<script>
+	var orgId="$shiro.getBaseInfo('orgId')";
+	var orgName="$shiro.getBaseInfo('orgName')";
+	var userName="$shiro.getBaseInfo('userName')";
+</script>
+
+</head>
+<body class="childrenBody">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<form class="form-inline" role="form">
+				<div class="form-group">
+					儿童编码:<input type="text" class="form-control" v-model.trim="q.chilCode" @keyup.enter="downloadChild" style="width: 180px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;儿童姓名:	<input type="text" class="form-control" v-model.trim="q.chilName" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+
+				<div class="form-group">
+					&nbsp;接种日期:<input type="text" class="form-control" v-model.trim="q.inoculateDateStart" id="inoculateDateStart" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model.trim="q.inoculateDateEnd" id="inoculateDateEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<!--<a class="btn btn-default" @click="query">查询</a>-->
+				<a class="btn btn-primary" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+
+
+			</form>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+		<!--<button style="float: right"><a href="#move" id="" data-toggle="tab">变更记录</a></button>-->
+		<!--接种记录、过敏史、异常反应等-->
+    </div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/uploadRecord.js?_${date.systemTime}"></script>
+
+</body>
+</html>

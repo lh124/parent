@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<!--<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" /> 3.x以上版本不需要使用这个配置-->
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<!--  Cxf WebService 服务端示例 服务器端implementor指向的是实现类-->
+	<!--<jaxws:endpoint id="DemoWebservice" implementor="io.yfjz.webservice.impl.DemoWebserviceImpl" address="/demo"/>-->
+
+
+	<!--  Cxf WebService 客户端示例 -->
+	<!--<jaxws:client id="demoClient" serviceClass="io.yfjz.webservice.IDemoWebService" address="http://localhost:8080/yfjz/webservice/demo?wsdl" />-->
+</beans>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>原始数据导入</title>
+    #parse("sys/header.html")
+</head>
+<body>
+
+<div id="mongorrapp" v-cloak>
+    <div v-show="showList">
+        <center>
+            <button type="button" class="easyui-linkbutton" @click="mongo();" iconCls="icon-expexcel">mongo测试</button>
+        </center>
+    </div>
+    {{r}}
+</div>
+<script src="${rc.contextPath}/statics/js/mongo/mongo.js?_${date.systemTime}"></script>
+</body>
+</html>

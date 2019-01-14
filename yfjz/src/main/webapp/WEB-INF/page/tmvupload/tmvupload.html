@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>保存app上传的文件基本信息表，每个Android盒子需要播放视频的路径</title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="panel panel-default">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">视频附件：</div>
+					<div class="col-sm-10">
+						<input type="file" name="tMvUpload.realname" id="file" onchange="uploadFile('file');" readonly style="width:200px;"/>
+						<span id="show_msg_span_id"></span>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!--播放台列表列表-->
+		<div style="width:100%;">
+			<table id="playerArea_jqGrid"></table>
+		</div>
+
+		<div class="grid-btn" style="margin-top: 20px; padding-left: 28px;">
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;视频删除</a>
+			<a class="btn btn-primary" @click="relevance"><i class="fa fa-play-circle"></i>&nbsp;视频关联播放台</a>
+		</div>
+
+		<!--视频列表-->
+		<table id="jqGrid"></table>
+
+
+
+    </div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/tmvupload/tmvupload.js?_${date.systemTime}"></script>
+</body>
+</html>

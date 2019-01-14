@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>欢迎使用数字化预防接种门诊</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="statics/plugins/layui/css/layui.css" media="all" />
+  <link rel="stylesheet" href="statics/css/public/base.css" media="all" />
+  <link rel="stylesheet" href="statics/css/login.css" media="all" />
+  <link rel="shortcut icon" href="statics/images/favicon.ico">
+</head>
+<div class="container">
+  <div class="background"></div>
+  <div class="login-box">
+    <div class="box-title"></div>
+    <div class="box-content clearfix">
+      <div class="login-img fl">
+        <img src="statics/images/pic.png" alt="">
+      </div>
+      <div class="login-form layui-form fl">
+        <h2>登录 LOGIN</h2>
+        <div class="input-group mb30">
+          <i class="input-icon input-icon-user"></i>
+          <input type="text" name="username" class="layui-input" lay-verify="required"  placeholder="用户名" />
+        </div>
+        <div class="input-group mb15">
+          <i class="input-icon input-icon-password"></i>
+          <input type="password" name="password" class="layui-input" lay-verify="required|password" placeholder="密码" />
+        </div>
+        <div class="more-action clearfix">
+          <input type="checkbox" id="remember" class="fl" name="remember" lay-skin="primary" title="记住密码" />
+          <!--<a href="#" class="fr">忘记密码</a>-->
+        </div>
+        <div class="more-action clearfix">
+          <label id="showErrMsg" style="color: red"></label>
+        </div>
+        <button class="layui-btn login-btn" lay-submit="" lay-filter="login">登录</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="statics/libs/jquery.min.js"></script>
+<script type="text/javascript" src="statics/plugins/layui/layui.js"></script>
+<script>
+    layui.use(['form','jquery'], function(){
+        var form    = layui.form,
+            $     = layui.jquery,
+            layer = layui.layer;
+
+        $(".login-form input").on('keydown', function(e){  //document为当前元素，限制范围，如果不限制的话会一直有事件
+            if(e.keyCode == 13){
+                $(".login-btn").click();
+            }
+        });
+
+        form.verify({
+            username: function(value, item){ //value：表单的值、item：表单的DOM对象
+                /*if(/(^\_)|(\__)|(\_+$)/.test(value)){
+                    return '用户名首尾不能出现下划线';
+                }*/
+                /*if(/^\d+\d+\d$/.test(value)){
+                    return '用户名不能全为数字';
+                }*/
+            }
+
+            //我们既支持上述函数式的方式，也支持下述数组的形式
+            //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+            ,password: [
+                /^(.+){4,12}$/
+                ,'密码必须6到12位'
+            ]
+        });
+        // 记住密码
+        var remember = localStorage.getItem('remember');
+        if(remember) {
+            $("#remember").attr("checked",'remember');
+            form.render();
+        }
+
+        if (getCookie("rmbUser") == "true") {
+            $("#remember").prop("checked",true);
+            $("[name=username]").val(getCookie("userName"));
+            $("[name=password]").val(getCookie("passWord"));
+        }
+
+        //监听提交
+        form.on('submit(login)', function(data){
+            data = data.field;
+            if(data.remember) {
+                localStorage.setItem('remember',true);
+            }else {
+                localStorage.removeItem('remember');
+            }
+            for(var i in  data) {
+                if(i != 'password'){
+                    data[i] = $.trim(data[i]);
+                }
+            }
+            //记住密码
+            saveUserInfo();
+            layer.load(2);
+            $.ajax({
+                url: 'sys/login',
+                type: 'post',
+                dataType: 'json',
+                data: data,
+                success: function(res) {
+                    if(res.code == 0){//登录成功
+                        parent.location.href ='index.html';
+                    }else{
+                        $("#showErrMsg").html(res.msg);
+                        layer.closeAll('loading');
+                    }
+                },
+                error: function(res) {
+                    layer.closeAll('loading');
+                }
+            });
+            return false;
+        });
+
+        //记住密码功能
+        function saveUserInfo(){
+            var remember = $("#remember").is(":checked");
+            if (remember) {
+                var userName = $("[name=username]").val();
+                var passWord = $("[name=password]").val();
+                setCookie("rmbUser", "true",7); // 存储一个带7天期限的 cookie
+                setCookie("userName", userName,7); // 存储一个带7天期限的 cookie
+                setCookie("passWord", passWord,7); // 存储一个带7天期限的 cookie
+            }else {
+                delCookie("rmbUser");        // 删除 cookie
+                delCookie("userName");
+                delCookie("passWord");
+            }
+        }
+    });
+
+
+    //写cookies
+    function setCookie(name, value,Days) {
+        if(Days == null){
+           Days = 30;
+        }
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+        document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+    }
+    //读取cookies
+    function getCookie(name) {
+        var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+        if (arr = document.cookie.match(reg)) return unescape(arr[2]);
+        else return null;
+    }
+    //删除cookies
+    function delCookie(name) {
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval = getCookie(name);
+        if (cval != null) document.cookie = name + "=" + cval + ";expires=" + exp.toGMTString();
+    }
+</script>
+</body>
+</html>

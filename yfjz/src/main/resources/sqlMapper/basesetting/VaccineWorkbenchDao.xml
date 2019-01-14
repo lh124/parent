@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.inoculation.VaccineWorkbenchDao">
+
+
+    <insert id="saveVaccineRelation" parameterType="list">
+        INSERT INTO t_mgr_vaccine_workbench(id,vaccine_id,workbench_id,org_id,create_time)
+        VALUES
+        <foreach collection ="list" item="item" index= "index" separator =",">
+         (
+            uuid(),
+            #{item.ids},
+            #{item.pos},
+            #{item.orgId},
+            #{item.createTime}
+         )
+        </foreach >
+    </insert>
+    <delete id="deleteVaccineRelation" parameterType="hashmap">
+        DELETE FROM t_mgr_vaccine_workbench where workbench_id=#{pos} AND org_id=#{orgId}
+        AND vaccine_id IN
+        <foreach collection ="ids" item="id" index= "index" separator ="," open="(" close=")">
+              #{id}
+        </foreach >
+    </delete>
+</mapper>

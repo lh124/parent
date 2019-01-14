@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>入园证明</title>
+	#parse("sys/header.html")
+	<style>
+		#parent .active{
+			background:grey;
+		}
+		#parent #div1{
+
+			display:none;
+		}
+	</style>
+</head>
+<body>
+	<!--<table style="margin-left: 5px">
+		<tr style="margin-top: 500px">
+			<td><input id="input1" style="" class="active" type="button" value="实种查验证明" /> </td>
+			<td><input id="input2" type="button" value="未种查验证明" /></td>
+		</tr>
+
+	</table>-->
+	<ul id="myTab" class="nav nav-tabs">
+		<!--仓库管理界面-->
+		<li class="active"><a href="#already" data-toggle="tab">实种查验证明</a></li>
+		<!--设备管理界面-->
+		<li><a href="#div1" data-toggle="tab">未种查验证明</a></li>
+	</ul>
+	<div id="myTabContent" class="tab-content" style="margin-top: 10px;margin-left: 10px">
+		<div class="tab-pane fade in active" name="div1" id="already" style="margin-left: 20px">
+			<ul ><button onclick="prints()" id="btn1">打印</button></ul>
+		<!--<div data-options="region:'center',title:'入园接种证明'" style="height:530px; width:600px ;">-->
+			<ul style="margin-top:20px;text-align: center;font-size: 20px" ><label name="currentdepartname" ></label>入园、入学预防接种证查验证明</ul></br>
+			<ul style="text-align: center;font-size: 14px"><label id="oprDate"  ></label></ul>
+
+			<ul style="margin-left: 45px">姓名：<label name="cname" style="margin-right: 10px"></label><label name="sex" style="margin-right:10px"></label><label name="birthTime" style="margin-right: 10px"></label>家长姓名：<label name="mother" style="margin-right: 35px"></label>
+			</br>联系电话：<label name="phone"></label> &nbsp;居住地址：<label name="address" ></label></ul>
+			<!--<div style="margin-left: 150px">居住地址：<label id="address" style="margin-right: 20px"></label></div>-->
+			<ul style="margin-left: 20px">经查验接种记录，已完成以下疫苗接种（见下表），特此证明。</ul>
+			</br>
+			<ul><label  style="margin-left: 20px">一类疫苗：</label><label style="margin-left: 320px">二类疫苗：</label></ul>
+				<table id="result"  style="  width:300px;margin-left: 20px;border-color: grey;position: absolute" border="1"  cellspacing="0" cellpadding="0" >
+
+				</table>
+			<div id="second" style="height: 400px">
+				<table id="result2"  style=" width:300px;border-color: grey;float: right;margin-right: 25px" border="1" cellspacing="0" cellpadding="0" >
+
+				</table>
+			</div>
+				<table id="bottom"  style=" border: 0px; width:300px;float: right; margin-left: 200px" border="1" cellspacing="0" cellpadding="0" >
+
+				</table>
+		</div>
+		<div class="tab-pane fade in" id="div1" name="div1" style="margin-left: 50px">
+		<ul ><button onclick="prints()" id="btn2">打印</button></ul>
+		<!--<div data-options="region:'center',title:'入园接种证明'" style="height:530px; width:600px ;">-->
+		<ul style="margin-top:20px;text-align: center;font-size: 20px" ><label name="currentdepartname" ></label>入园、入学预防接种证查验证明</ul></br>
+		<ul style="text-align: center;font-size: 14px"><label name="oprDate1"  ></label></ul>
+
+		<ul style="margin-left: 45px">姓名：<label name="cname" id="cname" style="margin-right: 10px"></label><label id="sex" name="sex" style="margin-right:10px"></label><label name="birthTime" style="margin-right: 10px"></label>家长姓名：<label name="mother" style="margin-right: 35px"></label>
+			</br>联系电话：<label name="phone"></label> &nbsp;居住地址：<label name="address" ></label></ul>
+		<!--<div style="margin-left: 150px">居住地址：<label id="address" style="margin-right: 20px"></label></div>-->
+		<ul style="margin-left: 20px" id="myul">经查验接种记录，还有以下疫苗未完成接种（见下表），其他疫苗已按程序完成接种，特此证明。</ul>
+		</br>
+		<!--<ul><label  style="margin-left: 20px">一类疫苗：</label></ul>-->
+		<div style="height: 300px">
+			<table id="result3"   style=" width:550px;margin-left: 50px;border-color: grey;position: absolute" border="1" cellspacing="0" cellpadding="0" >
+
+			</table>
+		</div>
+		<div id="bottom2" style="margin-left: 200px"></div>
+	</div>
+	</div>
+	<script type="text/javascript">
+		$(function () {
+            var childId = "$!request.getParameter('childId')";
+            var childName = "$!request.getParameter('childName')";
+            var fatherName = "$!request.getParameter('fatherName')";
+            var matherName = "$!request.getParameter('matherName')";
+            var birthtime = "$!request.getParameter('birthtime')";
+            var sex = "$!request.getParameter('sex')";
+            var chilTel = "$!request.getParameter('chilTel')";
+            var chilMobile = "$!request.getParameter('chilMobile')";
+            var address = "$!request.getParameter('address')";
+            var orgName="$shiro.getBaseInfo('orgName')";
+            $("label[name='cname']").text(childName);
+            $("label[name='sex']").text(sex);
+            if(matherName!=null && matherName.trim() != ''){
+                $("label[name='mother']").text(matherName);
+			}else{
+                $("label[name='mother']").text(fatherName);
+			}
+			if(chilTel != null && chilTel.trim() != ''){
+                $("label[name='phone']").text(chilTel);
+			}else{
+                $("label[name='phone']").text(chilMobile);
+			}
+            $("label[name='birthTime']").text(birthtime.substring(0,10));
+            $("label[name='address']").text(address);
+            $("label[name='currentdepartname']").text(orgName);
+            //$('#cname').html(childName);
+            /*$('#oprDate').html(getNowDate());
+            $('#oprDate1').html(getNowDate());*/
+            var html3 = "";
+            var html4 = "";
+            var html5 = "";
+            layer.msg('努力加载中，请耐心等待...', {icon: 16,shade: [0.5, '#f5f5f5'],scrollbar: false, time:100000}) ;
+            $.ajax({
+                type : 'post',
+                url :  '../tchildinoculate/choolAdmission?chilCode='
+                    + childId,
+                success : function(data) {
+                    layer.msg("加载完成",{scrollbar: false, time:500});
+                    var list = data.page.list;
+                    var plans = data.plan.plans;
+                        var html = "";
+                        var html2 = "";
+                        html +="<tr>";
+                        html +="<td style='font-size: 12px; width:140px'>"+"疫苗名称"+"</td>";
+                        html +="<td style='width:30px;font-size: 12px'>"+"剂次"+"</td>";
+                        html +="<td style='text-align: center;width: 80px;font-size: 12px'>"+"接种日期"+"</td>";
+                        html +="<td style='text-align: center;width: 50px;font-size: 12px'>"+"备注"+"</td>";
+                        html +="</tr>";
+
+                        html2 +="<tr>";
+                        html2 +="<td style='font-size: 12px; width:140px'>"+"疫苗名称"+"</td>";
+                        html2 +="<td style='width:30px;font-size: 12px'>"+"剂次"+"</td>";
+                        html2 +="<td style='text-align: center;width: 80px;font-size: 12px'>"+"接种日期"+"</td>";
+                        html2 +="<td style='text-align: center;width: 50px;font-size: 12px'>"+"备注"+"</td>";
+                        html2 +="</tr>";
+
+                        html3 +="<tr>";
+                        html3 +="<td style='font-size: 12px; width:100px'>"+"需补种的疫苗"+"</td>";
+                        html3 +="<td style='width:30px;font-size: 12px'>"+"剂次"+"</td>";
+                        html3 +="<td style='width:30px;font-size: 12px'>"+"预约时间"+"</td>";
+                        html3 +="<td style='width:30px;font-size: 12px'>"+"补种时间"+"</td>";
+                        html3 +="<td style='width:30px;font-size: 12px'>"+"疫苗批号"+"</td>";
+                        html3 +="<td style='width:30px;font-size: 12px'>"+"接种者签名"+"</td>";
+                        html3 +="</tr>";
+                        var names1=[];
+                        var names2=[];
+                        var names3=[];
+                        $.each(list,function(i,item){
+                            if(item.inoc_free == '1'){
+                                names1.push(item.r1);
+                                html +="<tr class= '' >";
+                                html +="<td class='name' style='font-size: 12px'>"+item.bio_cn_sortname +"</td>";
+                                /*html +="<td class='name' style='font-size: 12px'>"+item.bio_name +"</td>";*/
+                                html +="<td style='width:30px;text-align:center;font-size: 12px'>"+item.inoc_time+"</td>";
+                                html +="<td style='text-align: center;width: 80px;font-size: 12px'>"+item.inoc_date+"</td>";
+                                html +="<td style='text-align: center;width: 50px;font-size: 12px'>"+item.remark+"</td>";
+                                html +="</tr>";
+
+                            }
+                            if(item.inoc_free == '0'){
+                                html2 +="<tr>";
+                                html2 +="<td style='font-size: 12px'>"+item.bio_cn_sortname+"</td>";
+                                html2 +="<td style='width:30px;text-align:center;font-size: 12px'>"+item.inoc_time+"</td>";
+                                html2 +="<td style='text-align: center;width: 80px;font-size: 12px'>"+item.inoc_date+"</td>";
+                                html2 +="<td style='text-align: center;width: 50px;font-size: 12px'>"+item.remark+"</td>";
+                                html2 +="</tr>";
+                                names2.push(item.r1);
+                            }
+
+                        });
+                        var flag = 0;
+                        $.each(data.plan.plans,function(i,item){
+                            if(item.state == 0 && item.pass!='1'){
+                                flag = 1;
+                                html3 +="<tr class= '' >";
+                                html3 +="<td class='name' style='font-size: 12px'>"+item.classId +"</td>";
+                                /*html +="<td class='name' style='font-size: 12px'>"+item.bio_name +"</td>";*/
+                                html3 +="<td style='width:30px;text-align:center; font-size: 12px'>"+item.injectionTimes+"</td>";
+                                html3 +="<td style='width:70px;font-size: 12px'>"+item.inoculateTime.substring(0,10)+"</td>";
+                                /*html3 +="<td style='width:70px;font-size: 12px'>"+" "+"</td>";*/
+                                html3 +="<td style='width:70px;font-size: 12px'>"+"   "+"</td>";
+                                html3 +="<td style='width:70px;font-size: 12px'>"+"    "+"</td>";
+                                html3 +="<td style='width:70px;font-size: 12px'>"+"     "+"</td>";
+
+                                html3 +="</tr>";
+                            }
+
+
+                        });
+
+                        html4+="<tr style='border: 0px;height: 150px' >";
+						html4+="<td style='border: none' align='center' colspan='6'>验证人(签名):</br></br>验证单位(盖章):</br></br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;验证日期:&nbsp;&nbsp;  "+getNowDate()+"</td>";
+						html4+="</tr>";
+
+                        html5+="<tr style='border: 0px;height: 100px' >";
+						html5+="<td style='border: none; align='left' colspan='4'>验证人(签名):</br></br>验证单位(盖章):</br></br>验证日期:&nbsp;&nbsp;  "+getNowDate()+"</td>";
+						html5+="</tr>";
+
+                        /*html4+="<ul style='float: left;margin-top:40px;list-style-type: none'>";
+                        html4+="<li >验证人(签名):</li></br> <li>验证单位(盖章):</li></br> <li>验证日期:  "+new Date().Format('yyyy-MM-dd')+"</li>";
+                        html4+="</ul>";*/
+
+                        $('#result').html(html);
+                        $('#result2').html(html2);
+                        $('#bottom').html(html5);
+                        //$('#result2').html(html2).append(html4);
+                        if(flag===0){
+                            //$('#result3').html("<tr><td>经查验接种记录，还有以下疫苗未完成接种（见下表），其他疫苗已按程序完成接种，特此证明</td></tr>");
+                            $('#result3').html("<tr style='border: 0px;height: 150px' >" +
+                                "<td style='border: none' align='center' colspan='6'>验证人(签名):</br></br>验证单位(盖章):</br></br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;验证日期:&nbsp;&nbsp;  "+getNowDate()+"</td>" +
+                                "</tr>");
+                            $('#myul').html("经查验接种记录，该儿童已按免规程序完成接种，特此证明。");
+                        }else{
+                            $('#result3').html(html3);
+                            $('#bottom2').html(html4);
+                        }
+
+                }
+            });
+
+			//获取某月份的最后一天
+			function getMonthLastDay(year, month) {
+				return new Date(new Date(year, month + 1, 1).getTime() - 3600000 * 24).getDate();
+			}
+
+
+			$("#btn1").on('click',function(){
+				$("#btn1").hide();
+				$("#myTab").hide();
+				//$("#input2").hide();
+
+				print();
+			});
+			$("#btn2").on('click',function(){
+				$("#btn2").hide();
+				$("#myTab").hide();
+				//$("#input2").hide();
+
+				print();
+			});
+
+		});
+        function getNowDate() {
+            var date = new Date();
+            var sign1 = "-";
+            var sign2 = ":";
+            var year = date.getFullYear() // 年
+            var month = date.getMonth() + 1; // 月
+            var day = date.getDate(); // 日
+            var hour = date.getHours(); // 时
+            var minutes = date.getMinutes(); // 分
+            var seconds = date.getSeconds() //秒
+           /* var weekArr = [ '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天' ];
+            var week = weekArr[date.getDay() - 1];*/
+            // 给一位数数据前面加 “0”
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (day >= 0 && day <= 9) {
+                day = "0" + day;
+            }
+            if (hour >= 0 && hour <= 9) {
+                hour = "0" + hour;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+                minutes = "0" + minutes;
+            }
+            if (seconds >= 0 && seconds <= 9) {
+                seconds = "0" + seconds;
+            }
+            /* var currentdate = year + sign1 + month + sign1 + day + " "
+                    + hour + sign2 + minutes + sign2 + seconds + " "
+                    + week; */
+            var currentdate = year + sign1 + month + sign1 + day ;
+            return currentdate;
+        }
+
+	</script>
+
+
+
+
+<script>
+
+
+</script>
+</body>
+
+</html>
+
+
+

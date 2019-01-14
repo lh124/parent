@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="io.yfjz.dao.bus.TBusRegisterDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.bus.TBusRegisterEntity">
+		select * from t_bus_register where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.bus.TBusRegisterEntity">
+		select * from t_bus_register
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<!--今日登记总人数-->
+	<select id="sumregister" resultType="int">
+		SELECT
+-- 		count(DISTINCT reg.fk_child_code)
+		count(DISTINCT queue.no_text)
+		FROM
+		t_bus_register reg
+		JOIN t_child_info child ON reg.fk_child_code = child.chil_code
+		JOIN t_vac_info info on reg.fk_vaccine_code=info.bio_code
+		JOIN t_queue_no queue on reg.fk_child_code=queue.child_code
+		where  	<![CDATA[ TO_DAYS(reg.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(reg.create_time)<=TO_DAYS(NOW())]]>
+		AND  	<![CDATA[ TO_DAYS(queue.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(queue.create_time)<=TO_DAYS(NOW())]]>
+	</select>
+	<!--今日还未登记人数-->
+	<select id="noregister" resultType="int">
+		select count(*) from t_queue_no WHERE step = 'register' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+	</select>
+	<select id="registerlist" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+     SELECT
+	no_text,
+	child_code,
+	child_name,
+	info.chil_sex AS remark ,
+	info.chil_address as id ,
+	info.chil_birthday as position
+FROM
+	t_queue_no queue
+	LEFT JOIN t_child_info info ON queue.child_code = info.chil_code
+WHERE
+	to_days( queue.create_time ) = to_days( now( ) )
+	AND step = 'inoculate'
+	AND queue.`status` !=-1
+	</select>
+	<select id="registerlists" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		SELECT
+		count(DISTINCT reg.fk_child_code) as child_code ,'登记' as no_text
+		FROM
+		t_bus_register reg
+		JOIN t_child_info child ON reg.fk_child_code = child.chil_code
+		JOIN t_vac_info info on reg.fk_vaccine_code=info.bio_code
+		JOIN t_queue_no queue on reg.fk_child_code=queue.child_code
+		where  	<![CDATA[ TO_DAYS(reg.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(reg.create_time)<=TO_DAYS(NOW())]]>
+		AND  	<![CDATA[ TO_DAYS(queue.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(queue.create_time)<=TO_DAYS(NOW())]]>
+	</select>
+	<select id="noregisterlist" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select * from t_queue_no WHERE step = 'register' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+	</select>
+	<select id="noregisterlists" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select  count(*) as child_code ,'登记' as no_text from t_queue_no WHERE step = 'register' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+	</select>
+
+	<!--未接种人数-->
+	<select id="noinoculate" resultType="int">
+		select count(*) from t_queue_no WHERE step = 'inoculate' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+	</select>
+	<select id="noinoculatelist" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select *  from t_queue_no WHERE step = 'inoculate' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+	</select>
+	<!--待儿保人数-->
+	<select id="sumhealthcare" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+	select * from t_queue_no WHERE step = 'healthcare' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+   </select>
+	<select id="sumhealthcares" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+	select count(*) as child_code ,'儿保' as no_text from t_queue_no WHERE step = 'healthcare' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+   </select>
+
+	<!--待预检人数-->
+	<select id="waitsumprecheck" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select *  from t_queue_no WHERE step = 'precheck' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+   </select>
+	<select id="sumprechecks" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select count(*) as child_code ,'预检' as no_text from t_queue_no WHERE step = 'precheck' and  to_days(create_time) = to_days(now()) and  `status`!=-1
+   </select>
+	<!--取号数-->
+	<select id="getNumber" resultType="int">
+	select  (select count(*) from t_queue_no WHERE to_days(create_time) = to_days(now()))  as no1   from t_base_getnums
+</select>
+<select id="navCount" resultType="map">
+	SELECT
+	*,suminoculate-observelist as sumobserve
+FROM
+	(
+	( SELECT count( * ) AS sumprecheck FROM t_child_precheck WHERE to_days( create_time ) = to_days( now( ) ) ) a1,
+	( SELECT count( * ) AS sumhealthcare FROM t_child_healthcare WHERE to_days( create_time ) = to_days( now( ) ) ) a2,
+(select count(*) as sumnoprecheck  from t_queue_no WHERE step = 'precheck' and  to_days(create_time) = to_days(now()) and  `status`!=-1) a3,
+(select count(*) as sumnohealthcare  from t_queue_no WHERE step = 'healthcare' and  to_days(create_time) = to_days(now()) and  `status`!=-1) a4 ,
+(select count(*) as noinoculate from t_queue_no WHERE step = 'inoculate' and  to_days(create_time) = to_days(now()) and  `status`!=-1) a5,
+(select (select count(*)  from t_queue_no WHERE to_days(create_time) = to_days(now())) as number from t_base_getnums) a6,
+(select count(*) as sumregister from t_queue_no WHERE to_days(create_time) = to_days(now()) and (step = 'inoculate' or step='observe' ) and  `status`!=-1) as a7,
+(select count(*) as todaysumregister from t_queue_no WHERE step = 'register' and  to_days(create_time) = to_days(now()) and  `status`!=-1) as a8,
+(select count(*) as observelist from ( SELECT count(*) FROM t_child_inoculate inoc
+		LEFT JOIN t_child_info info ON info.chil_code = inoc.chil_code
+		LEFT JOIN t_vac_info vac ON inoc.inoc_bact_code = vac.bio_code
+		WHERE to_days( inoc_date ) = to_days( now())  and date_add(now(),interval -30 minute) >= inoc_date
+		 and inoc.type !=3 GROUP BY inoc.chil_code )t) a9,
+(select count(*) as suminoculate  from (SELECT count(*) FROM t_child_inoculate inoc
+    LEFT JOIN t_child_info info ON info.chil_code = inoc.chil_code
+	LEFT JOIN t_vac_info vac ON inoc.inoc_bact_code = vac.bio_code
+WHERE to_days( inoc_date ) = to_days( now( ) ) AND inoc.type != 3 and inoc.inoc_depa_code = #{orgId}
+GROUP BY inoc.chil_code )tt ) a10
+	)
+
+</select>
+
+
+	<!--已完成接种统计-->
+	<select id="finishInoculate" resultType="io.yfjz.entity.child.TChildInfoEntity">
+		select c.tower_name as chil_code,count(c.tower_name) as chil_name from (select info.chil_code,info.chil_name  , oper.tower, tower.tower_name, qno.no_text from t_child_info info
+				left join t_queue_no qno on qno.child_code=info.chil_code
+				left join t_queue_no_operate oper on oper.fk_queue_no_id=qno.id  and qno.step !='inoculate'
+				left join t_base_tower tower on tower.id=oper.tower
+				where TO_DAYS(oper.operate_time) =TO_DAYS(now()) and  TO_DAYS(qno.create_time) =TO_DAYS(now()) and qno.`status`!=-1 and tower.tower_nature_id=2
+				GROUP BY chil_code,tower_name
+				) as c
+				GROUP BY c.tower_name
+	</select>
+
+
+	<!--获取某儿童当日已登记的疫苗-->
+	<select id="alreadyRegisterList" resultType="HashMap">
+		select reg.* , vac.bio_spec_id
+		from t_bus_register reg
+		LEFT JOIN t_vac_info vac on reg.fk_vaccine_code = vac.bio_code
+		WHERE
+		reg.fk_child_code = #{childCode}
+		<![CDATA[ and to_days(reg.create_time) = to_days(now()) ]]>
+	</select>
+
+	<!--判断儿童是否已经登记过同类型的疫苗 ，当天-->
+	<select id="exist" parameterType="HashMap" resultType="Integer">
+		select count(0) from t_bus_register where fk_child_code = #{childCode}
+		and left(fk_vaccine_code,2) = left(#{vaccineCode},2) and  to_days(create_time) = to_days(now())
+	</select>
+
+	<!--根据儿童编码获取登记的列表-->
+	<select id="registeList" resultType="Map">
+		select
+			reg.id,reg.fk_child_code as childCode,
+			vaclass.class_cn_name as className,
+			reg.fk_vaccine_code as bioCode,
+			vac.bio_cn_sortname as bioName,
+			reg.dose_no as doseNo,
+			reg.batchnum,
+			DATE_FORMAT( reg.expiry_date, '%Y-%m-%d' ) as expiryDate,
+			fac.factory_cn_name as factoryName,
+			tower.tower_name as towerName,
+			reg.create_doctor_name as doctorName,
+			reg.create_time as createTime,
+			reg.`ismf`,
+			reg.inoculate_site as inoculateSite,
+			reg.inoculate_site_code as inoculateSiteCode
+			from t_bus_register  reg
+			LEFT JOIN t_vac_info vac on reg.fk_vaccine_code = vac.bio_code
+			LEFT JOIN t_vac_class vaclass on left(reg.fk_vaccine_code,2)=vaclass.class_code
+			LEFT JOIN t_vac_factory fac on reg.factory_code=fac.factory_code
+			LEFT JOIN t_base_tower tower on reg.fk_pos_id = tower.id
+		where reg.`fk_child_code` = #{childCode}
+	</select>
+
+	<!-- 获取某儿童当日登记的疫苗列表 -->
+	<select id="getTodayRegisterList" resultType="Map">
+		select
+			reg.id,reg.fk_child_code as childCode,
+			vaclass.class_cn_name as className,
+			reg.fk_vaccine_code as bioCode,
+			vac.bio_cn_sortname as bioName,
+			reg.dose_no as doseNo,
+-- 			reg.batchnum,
+-- 			DATE_FORMAT( reg.expiry_date, '%Y-%m-%d' ) as expiryDate,
+-- 			fac.factory_code as factoryCode,
+-- 			fac.factory_cn_name as factoryName,
+			tower.tower_name as towerName,
+			reg.create_doctor_id as doctorId,
+			reg.create_doctor_name as doctorName,
+			reg.create_time as createTime,
+			reg.`ismf`,
+			reg.remark,
+			reg.fk_pos_id as fkPosId,
+			reg.inoculate_site as inoculateSite,
+			reg.inoculate_site_code as inoculateSiteCode,
+			base.channel
+			from t_bus_register  reg
+			LEFT JOIN t_vac_info vac on reg.fk_vaccine_code = vac.bio_code
+			LEFT JOIN t_vac_class vaclass on left(reg.fk_vaccine_code,2)=vaclass.class_code
+			LEFT JOIN t_vac_factory fac on reg.factory_code=fac.factory_code
+			LEFT JOIN t_base_tower tower on reg.fk_pos_id = tower.id
+			LEFT JOIN t_mgr_stock_base base on reg.fk_vaccine_code=base.fk_vaccine_code AND reg.batchnum=base.batchnum
+		where reg.`fk_child_code` = #{childCode}
+		and reg.`status` = 0
+		<![CDATA[ and to_days(reg.create_time) = to_days(now()) ]]>
+	</select>
+
+	<!--统计今日是否还有未接种的疫苗，已登记成功的-->
+	<select id="countTodayRegister" resultType="Map">
+		select
+			 count(0) as totalCount
+			from t_bus_register
+		where `fk_child_code` = #{childCode}
+		and `status` = 0
+		<![CDATA[ and to_days(create_time) = to_days(now()) ]]>
+	</select>
+
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from t_bus_register 
+	</select>
+	<select id="queryToDayRegisterList" resultType="map">
+		SELECT
+		DISTINCT
+		chil_code as childCode,
+		chil_name as childName,
+		IF(chil_sex=1,'男','女') as sex ,
+		DATE_FORMAT(chil_birthday,'%Y-%m-%d %T') as birthday,
+		chil_mother as mother,
+		chil_father as father,
+		chil_mobile as chilMobile,
+		chil_tel as chilTel,
+		(select name from t_base_committee where code=chil_committee ) as committee,
+		chil_habiaddress as habiaddress,
+		chil_address as address,
+		queue.no_text as number,
+		child.remark as remark,
+        GROUP_CONCAT(info.bio_cn_sortname  SEPARATOR ';') AS bioName,
+        GROUP_CONCAT(batchnum  SEPARATOR ';') AS batchnum,
+        GROUP_CONCAT(reg.inoculate_site  SEPARATOR ';') AS inoculate_site,
+        GROUP_CONCAT(reg.dose_no  SEPARATOR ';') AS dose_no
+		FROM
+		t_bus_register reg
+		JOIN t_child_info child ON reg.fk_child_code = child.chil_code
+		JOIN t_vac_info info on reg.fk_vaccine_code=info.bio_code
+		JOIN t_queue_no queue on reg.fk_child_code=queue.child_code
+		where
+		<![CDATA[TO_DAYS(reg.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(reg.create_time)<=TO_DAYS(NOW())]]>
+		<![CDATA[AND TO_DAYS(queue.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(queue.create_time)<=TO_DAYS(NOW())]]>
+-- 		GROUP BY reg.fk_child_code
+		GROUP BY queue.no_text
+		ORDER BY  reg.create_time DESC,reg.fk_child_code
+		<if test="offset!=null and limit!=null">
+			Limit #{offset},#{limit}
+		</if>
+	</select>
+	<select id="queryRegisterNames" resultType="string">
+			select GROUP_CONCAT(bio_cn_sortname separator ';') AS bioName from t_bus_register reg
+			JOIN t_vac_info info ON info.bio_code= reg.fk_vaccine_code
+			where fk_child_code=#{childCode} AND TO_DAYS(reg.create_time)=TO_DAYS(NOW())
+	</select>
+	<select id="queryToDayWaitList" resultType="map">
+		SELECT
+		no_text noText,
+		info.chil_code childCode,
+		info.chil_name childName,
+		case info.chil_sex when 1 then '男' when 2 then '女' else
+		''  END  AS  sex,
+		DATE_FORMAT(info.chil_birthday,'%Y-%m-%d %T') as birthday
+
+		FROM
+		t_queue_no queue
+		left JOIN t_child_info info ON queue.child_code=info.chil_code
+		WHERE
+		step = 'register'
+		<![CDATA[AND TO_DAYS( queue.create_time ) >= TO_DAYS( NOW( ) )]]>
+		<![CDATA[AND TO_DAYS( queue.create_time ) <= TO_DAYS( NOW( ) )]]>
+		AND queue.`status` in (0,1)
+		ORDER BY
+		queue.create_time
+		<if test="offset!=null and limit!=null">
+			Limit #{offset},#{limit}
+		</if>
+	</select>
+	<select id="queryToDayWaitTotal" resultType="int">
+		SELECT
+		count(queue.id)
+		FROM
+		t_queue_no queue
+		left JOIN t_child_info info ON queue.child_code=info.chil_code
+		WHERE
+		step = 'register'
+		 <![CDATA[AND TO_DAYS( queue.create_time ) >= TO_DAYS( NOW( ) )]]>
+		 <![CDATA[AND TO_DAYS( queue.create_time ) <= TO_DAYS( NOW( ) )]]>
+		AND queue.`status` in (0,1)
+	</select>
+	<select id="queryToDayRegisterTotal" resultType="int">
+		SELECT
+-- 		count(DISTINCT reg.fk_child_code)
+		count(DISTINCT  queue.no_text)
+
+		FROM
+		t_bus_register reg
+		JOIN t_child_info child ON reg.fk_child_code = child.chil_code
+		JOIN t_vac_info info on reg.fk_vaccine_code=info.bio_code
+		JOIN t_queue_no queue on reg.fk_child_code=queue.child_code
+		where
+		 <![CDATA[TO_DAYS(reg.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(reg.create_time)<=TO_DAYS(NOW())]]>
+		 <![CDATA[AND TO_DAYS(queue.create_time)>=TO_DAYS(NOW()) AND  TO_DAYS(queue.create_time)<=TO_DAYS(NOW())]]>
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.bus.TBusRegisterEntity">
+		insert into t_bus_register
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="fkChildCode != null and fkChildCode  != ''">`fk_child_code` ,</if>
+			<if test="fkOrgId != null and fkOrgId  != ''">`fk_org_id` ,</if>
+			<if test="fkVaccineCode != null and fkVaccineCode  != ''">`fk_vaccine_code` ,</if>
+			<if test="doseNo != null">`dose_no` ,</if>
+			<if test="batchnum != null and batchnum  != ''">`batchnum` ,</if>
+			<if test="expiryDate != null">`expiry_date` ,</if>
+			<if test="factoryCode != null and factoryCode  != ''">`factory_code` ,</if>
+			<if test="createDoctorName != null and createDoctorName  != ''">`create_doctor_name` ,</if>
+			<if test="createDoctorId != null and createDoctorId  != ''">`create_doctor_id` ,</if>
+			<if test="remark != null and remark  != ''">`remark` ,</if>
+			<if test="createTime != null">`create_time` ,</if>
+			<if test="fkPosId != null and fkPosId  != ''">`fk_pos_id` ,</if>
+			<if test="ismf != null">`ismf`,</if>
+			<if test="status != null">`status`,</if>
+			<if test="inoculateSite != null">`inoculate_site`,</if>
+			<if test="inoculateSiteCode != null">`inoculate_site_code`,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="fkChildCode != null and fkChildCode  != ''">#{fkChildCode} ,</if>
+			<if test="fkOrgId != null and fkOrgId  != ''">#{fkOrgId} ,</if>
+			<if test="fkVaccineCode != null and fkVaccineCode  != ''">#{fkVaccineCode} ,</if>
+			<if test="doseNo != null">#{doseNo} ,</if>
+			<if test="batchnum != null and batchnum  != ''">#{batchnum} ,</if>
+			<if test="expiryDate != null">#{expiryDate} ,</if>
+			<if test="factoryCode != null and factoryCode  != ''">#{factoryCode} ,</if>
+			<if test="createDoctorName != null and createDoctorName  != ''">#{createDoctorName} ,</if>
+			<if test="createDoctorId != null and createDoctorId  != ''">#{createDoctorId} ,</if>
+			<if test="remark != null and remark  != ''">#{remark} ,</if>
+			<if test="createTime != null">#{createTime} ,</if>
+			<if test="fkPosId != null and fkPosId  != ''">#{fkPosId} ,</if>
+			<if test="ismf != null">#{ismf},</if>
+			<if test="status != null">#{status},</if>
+			<if test="inoculateSite != null">#{inoculateSite},</if>
+			<if test="inoculateSiteCode != null">#{inoculateSiteCode},</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.bus.TBusRegisterEntity">
+		update t_bus_register
+		<set>
+			<if test="fkChildCode != null and fkChildCode  != ''">`fk_child_code` = #{fkChildCode}, </if>
+			<if test="fkOrgId != null and fkOrgId  != ''">`fk_org_id` = #{fkOrgId}, </if>
+			<if test="fkVaccineCode != null and fkVaccineCode  != ''">`fk_vaccine_code` = #{fkVaccineCode}, </if>
+			<if test="doseNo != null">`dose_no` = #{doseNo} , </if>
+			<if test="batchnum != null and batchnum  != ''">`batchnum` = #{batchnum}, </if>
+			<if test="expiryDate != null">`expiry_date` = #{expiryDate} , </if>
+			<if test="factoryCode != null and factoryCode  != ''">`factory_code` = #{factoryCode}, </if>
+			<if test="createDoctorName != null and createDoctorName  != ''">`create_doctor_name` = #{createDoctorName}, </if>
+			<if test="createDoctorId != null and createDoctorId  != ''">`create_doctor_id` = #{createDoctorId}, </if>
+			<if test="remark != null and remark  != ''">`remark` = #{remark}, </if>
+			<if test="createTime != null">`create_time` = #{createTime} , </if>
+			<if test="fkPosId != null and fkPosId  != ''">`fk_pos_id` = #{fkPosId}, </if>
+			<if test="ismf != null">`ismf` = #{ismf}, </if>
+			<if test="status != null">`status` = #{status},</if>
+			<if test="inoculateSite != null">`inoculate_site` = #{inoculateSite},</if>
+			<if test="inoculateSiteCode != null">`inoculate_site_code` = #{inoculateSiteCode},</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!--更新状态为已完成-->
+	<update id="updateStatus">
+		update t_bus_register
+		set `status` = #{status}
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from t_bus_register where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from t_bus_register where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+
+	<!--优先删除今日已登记的疫苗，然后再保存登记界面的推荐列表-->
+	<delete id="deleteAll">
+		delete from t_bus_register where `fk_child_code` = #{childCode}
+		 <![CDATA[ and to_days(create_time) = to_days(now()) ]]>
+	</delete>
+
+</mapper>

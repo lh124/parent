@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.SixToOneStatisticsDao">
+
+
+    <select id="queryList" resultType="io.yfjz.entity.statistics.SixToOneResult">
+        SELECT
+        com.NAME AS committee,
+        dict.en_name AS vaccine,
+        plan.injection_times AS  times,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence = "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND (
+            ( TO_DAYS( plan.first_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.first_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) )
+            OR (
+            TO_DAYS( plan.first_time ) >= TO_DAYS( SUBDATE( #{endDate}, INTERVAL 12 MONTH ) )
+            AND TO_DAYS( plan.first_time ) <![CDATA[ < ]]> TO_DAYS( #{startDate} ) AND plan.inoculate_time IS NULL
+            )
+            OR (
+            TO_DAYS( chd.chil_birthday )  <![CDATA[ >= ]]>  TO_DAYS( SUBDATE( #{startDate}, INTERVAL 168 MONTH ) ) AND TO_DAYS( plan.inoculate_time ) >= TO_DAYS( #{startDate} )
+            AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} )
+            )
+        ) THEN
+        1 ELSE NULL
+        END
+        ) AS localShould,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence <![CDATA[ <> ]]> "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND(
+            ( TO_DAYS( plan.first_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.first_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) )
+            OR (
+            TO_DAYS( plan.first_time ) >= TO_DAYS( SUBDATE( #{endDate}, INTERVAL 12 MONTH ) )
+            AND TO_DAYS( plan.first_time ) <![CDATA[ < ]]> TO_DAYS( #{startDate} ) AND plan.inoculate_time IS NULL
+            )
+            OR (
+            TO_DAYS( chd.chil_birthday )  <![CDATA[ >= ]]>  TO_DAYS( SUBDATE( #{startDate}, INTERVAL 168 MONTH ) ) AND TO_DAYS( plan.inoculate_time ) >= TO_DAYS( #{startDate} )
+            AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} )
+            )
+        ) THEN
+        1 ELSE NULL
+        END
+        ) AS moveShould,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence = "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND ( TO_DAYS( plan.inoculate_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) ) THEN
+        1 ELSE NULL
+        END
+        ) AS localReal,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence <![CDATA[ <> ]]> "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND ( TO_DAYS( plan.inoculate_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) ) THEN
+        1 ELSE NULL
+        END
+        ) AS moveReal
+        FROM
+        t_rule_plan plan
+        INNER JOIN t_rule_dic dict ON plan.class_id = dict.id
+        INNER JOIN t_child_info chd ON plan.child_id = chd.chil_code
+        LEFT JOIN t_base_committee com ON chd.chil_committee = com.`code`
+        GROUP BY
+        plan.class_id,
+        plan.injection_times,
+        chd.chil_committee
+        HAVING `committee` is not null
+        ORDER BY
+        dict.sort_order,
+        plan.injection_times;
+    </select>
+    <!--6-1汇总查询-->
+    <select id="queryTotalList" resultType="io.yfjz.entity.statistics.SixToOneResult">
+        SELECT
+        dict.`name` AS vaccine,
+        plan.injection_times AS  times,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence = "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND (
+            ( TO_DAYS( plan.first_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.first_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) )
+            OR (
+            TO_DAYS( plan.first_time ) >= TO_DAYS( SUBDATE( #{endDate}, INTERVAL 12 MONTH ) )
+            AND TO_DAYS( plan.first_time ) <![CDATA[ < ]]> TO_DAYS( #{startDate} ) AND plan.inoculate_time IS NULL
+            )
+            OR (
+            TO_DAYS( chd.chil_birthday )  <![CDATA[ >= ]]>  TO_DAYS( SUBDATE( #{startDate}, INTERVAL 168 MONTH ) ) AND TO_DAYS( plan.inoculate_time ) >= TO_DAYS( #{startDate} )
+            AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} )
+            )
+        ) THEN
+        1 ELSE NULL
+        END
+        ) AS localShould,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence <![CDATA[ <> ]]> "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND(
+            ( TO_DAYS( plan.first_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.first_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) )
+            OR (
+            TO_DAYS( plan.first_time ) >= TO_DAYS( SUBDATE( #{endDate}, INTERVAL 12 MONTH ) )
+            AND TO_DAYS( plan.first_time ) <![CDATA[ < ]]> TO_DAYS( #{startDate} ) AND plan.inoculate_time IS NULL
+            )
+            OR (
+            TO_DAYS( chd.chil_birthday )  <![CDATA[ >= ]]>  TO_DAYS( SUBDATE( #{startDate}, INTERVAL 168 MONTH ) ) AND TO_DAYS( plan.inoculate_time ) >= TO_DAYS( #{startDate} )
+            AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} )
+            )
+        ) THEN
+        1 ELSE NULL
+        END
+        ) AS moveShould,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence = "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND ( TO_DAYS( plan.inoculate_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) ) THEN
+        1 ELSE NULL
+        END
+        ) AS localReal,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence <![CDATA[ <> ]]> "1" AND chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND ( TO_DAYS( plan.inoculate_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) ) THEN
+        1 ELSE NULL
+        END
+        ) AS moveReal
+        FROM
+        t_rule_plan plan
+        INNER JOIN t_rule_dic dict ON plan.class_id = dict.id
+        INNER JOIN t_child_info chd ON plan.child_id = chd.chil_code
+        LEFT JOIN t_base_committee com ON chd.chil_committee = com.`code`
+        GROUP BY
+        plan.class_id,
+        plan.injection_times
+        ORDER BY
+        dict.sort_order,
+        plan.injection_times;
+    </select>
+    <select id="articleFirstTimely" resultType="io.yfjz.entity.statistics.SixToOneResult">
+
+        SELECT
+        com.NAME AS committee,
+        dict.en_name AS vaccine,
+        plan.injection_times AS  times,
+        COUNT(
+        CASE
+
+        WHEN ( chd.chil_residence = "1" AND chd.delete_status = 0 )
+        AND ( TO_DAYS( plan.inoculate_time ) >= TO_DAYS( #{startDate} ) AND TO_DAYS( plan.inoculate_time ) &gt;= TO_DAYS( #{endDate} ) ) AND plan.state=2 THEN
+        1 ELSE NULL
+        END
+        ) AS localReal,
+        COUNT(
+        CASE
+        WHEN ( chd.chil_residence &gt;> "1" AND chd.delete_status = 0 )
+        AND ( TO_DAYS( plan.inoculate_time ) >= TO_DAYS( #{startDate} ) AND TO_DAYS( plan.inoculate_time ) &gt;= TO_DAYS( #{endDate} ) ) THEN
+        1 ELSE NULL
+        END
+        ) AS moveReal
+        FROM
+        t_rule_plan plan
+        INNER JOIN t_rule_dic dict ON plan.class_id = dict.id
+        INNER JOIN t_child_info chd ON plan.child_id = chd.chil_code
+        LEFT JOIN t_base_committee com ON chd.chil_committee=com.`code`
+        where dict.en_name='HepB' AND plan.injection_times=1
+        GROUP BY
+        plan.class_id,
+        plan.injection_times ,
+        chd.chil_committee
+        HAVING `committee` is not null
+        ORDER BY
+        dict.sort_order,
+        plan.injection_times;
+    </select>
+    <!--本地应种或流动应种查询-->
+    <select id="queryShouldIno" parameterType="java.util.HashMap" resultType="int">
+        SELECT
+        COUNT(DISTINCT child_id)
+        FROM
+        t_rule_plan
+        WHERE
+        class_id = #{planClassId}
+        AND injection_times = #{agentTimes}
+        <if test="selectType == 'local'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = child_id ) =1
+        </if>
+        <if test="selectType == 'move'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = child_id ) <![CDATA[  <>  ]]> 1
+        </if>
+        AND (SELECT delete_status FROM t_child_info cd WHERE cd.chil_code = child_id ) =0
+        AND(
+        /*最早接种日期落在统计月*/
+        (
+        TO_DAYS(first_time) <![CDATA[  >=  ]]> TO_DAYS( #{startDate} )
+        AND TO_DAYS(first_time) <![CDATA[  <=  ]]> TO_DAYS( #{endDate} )
+        )
+        /*12月内还没有接种的*/
+        OR (
+        TO_DAYS(first_time) <![CDATA[  <  ]]> TO_DAYS( #{startDate} )
+        AND first_time <![CDATA[  >=  ]]> SUBDATE(
+         #{startDate} ,
+        INTERVAL 12 MONTH
+        )
+        AND state = 0
+        )
+        /*大于7岁，小于14岁，并且在本月内进行了补种的*/
+        OR (
+        (
+        SELECT
+        chil_birthday
+        FROM
+        t_child_info chd
+        WHERE
+        chd.chil_code = child_id
+        ) <![CDATA[  <  ]]> SUBDATE(
+         #{startDate} ,
+        INTERVAL 84 MONTH
+        )
+        AND (
+        SELECT
+        chil_birthday
+        FROM
+        t_child_info chd
+        WHERE
+        chd.chil_code = child_id
+        ) <![CDATA[  >  ]]> SUBDATE(
+        #{startDate},
+        INTERVAL 168 MONTH
+        )
+        AND state <![CDATA[  <>  ]]> 0
+        AND inoculate_time <![CDATA[  >=  ]]> #{startDate}
+        AND inoculate_time <![CDATA[  <=  ]]> #{endDate}
+        )
+        );
+    </select>
+    <!--本地实种或流动实种查询-->
+    <select id="queryRealIno" parameterType="java.util.HashMap" resultType="int">
+        SELECT
+        COUNT(DISTINCT child_id)
+        FROM
+        t_rule_plan plan
+        left join t_child_inoculate inoc on inoc.id = plan.inoculate_id
+        WHERE
+        class_id = #{planClassId} and inoc.inoc_depa_code = #{org_id}
+        AND injection_times = #{agentTimes}
+        <if test="selectType == 'local'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = child_id ) =1
+        </if>
+        <if test="selectType == 'move'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = child_id ) <![CDATA[  <>  ]]> 1
+        </if>
+        AND (SELECT delete_status FROM t_child_info cd WHERE cd.chil_code = child_id ) =0
+        AND state <![CDATA[  <>  ]]> 0
+        AND TO_DAYS(inoculate_time) <![CDATA[  >=  ]]> TO_DAYS( #{startDate} )
+        AND TO_DAYS(inoculate_time) <![CDATA[  <=  ]]> TO_DAYS( #{endDate} )
+       ;
+    </select>
+    <!--本地实种及时或流动实种及时查询-->
+    <select id="queryRealInoTimely" parameterType="java.util.HashMap" resultType="int">
+        SELECT
+        COUNT(DISTINCT child_id)
+        FROM
+        t_rule_plan
+        WHERE
+        class_id = #{planClassId}
+        AND injection_times = #{agentTimes}
+        <if test="selectType == 'local'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = child_id ) =1
+        </if>
+        <if test="selectType == 'move'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = child_id ) <![CDATA[  <>  ]]> 1
+        </if>
+        AND (SELECT delete_status FROM t_child_info cd WHERE cd.chil_code = child_id ) =0
+        AND TO_DAYS(inoculate_time) <![CDATA[  >=  ]]> TO_DAYS( #{startDate} )
+        AND TO_DAYS(inoculate_time) <![CDATA[  <=  ]]> TO_DAYS( #{endDate} )
+        AND state = 2;
+    </select>
+    <!--本地实种或流动实种查询-->
+    <select id="queryRealInoFromIno" parameterType="java.util.HashMap" resultType="int">
+        SELECT
+        COUNT(DISTINCT chil_code)
+        FROM
+        t_child_inoculate ino
+        WHERE
+        inoc_vcn_kind = #{planClassId}
+        AND inoc_time = #{agentTimes}
+        <if test="selectType == 'local'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = ino.chil_code ) =1
+        </if>
+        <if test="selectType == 'move'">
+            AND (SELECT chil_residence FROM t_child_info cd WHERE cd.chil_code = ino.chil_code ) <![CDATA[  <>  ]]> 1
+        </if>
+        AND (SELECT delete_status FROM t_child_info cd WHERE cd.chil_code = ino.chil_code ) =0
+        AND TO_DAYS(inoc_date) <![CDATA[  >=  ]]> TO_DAYS( #{startDate} )
+        AND TO_DAYS(inoc_date) <![CDATA[  <=  ]]> TO_DAYS( #{endDate} );
+    </select>
+    
+    <select id="queryUploadList" resultType="map">
+        /*SELECT
+        dict.`name` AS vaccine,
+        plan.injection_times AS  times,
+        chd.chil_residence as residence,
+        dict.bio_sort_id as bioCode,
+        COUNT(
+        CASE
+        WHEN ( chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND (
+            ( TO_DAYS( plan.first_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.first_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) )
+            OR (
+            TO_DAYS( plan.first_time ) >= TO_DAYS( SUBDATE( #{endDate}, INTERVAL 12 MONTH ) )
+            AND TO_DAYS( plan.first_time ) <![CDATA[ < ]]> TO_DAYS( #{startDate} ) AND plan.inoculate_time IS NULL
+            )
+            OR (
+            TO_DAYS( chd.chil_birthday )  <![CDATA[ >= ]]>  TO_DAYS( SUBDATE( #{startDate}, INTERVAL 168 MONTH ) ) AND TO_DAYS( plan.inoculate_time ) >= TO_DAYS( #{startDate} )
+            AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} )
+            )
+        ) THEN
+        1 ELSE NULL
+        END
+        ) AS shouldInoc,
+
+        COUNT(
+        CASE
+        WHEN ( chd.delete_status = 0 AND chd.chil_here IN ('1','6','7','10'))
+        AND ( TO_DAYS( plan.inoculate_time ) <![CDATA[ >= ]]> TO_DAYS( #{startDate} ) AND TO_DAYS( plan.inoculate_time ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} ) ) THEN
+        1 ELSE NULL
+        END
+        ) AS realInoc
+        FROM
+        t_rule_plan plan
+        INNER JOIN t_rule_dic dict ON plan.class_id = dict.id
+        INNER JOIN t_child_info chd ON plan.child_id = chd.chil_code
+        LEFT JOIN t_base_committee com ON chd.chil_committee = com.`code`
+        GROUP BY
+        plan.class_id,
+        plan.injection_times
+        ORDER BY
+        dict.sort_order,
+        plan.injection_times;*/
+    </select>
+</mapper>

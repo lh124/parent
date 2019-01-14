@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrStockOutItemDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrStockOutItemEntity">
+		select * from t_mgr_stock_out_item where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.mgr.TMgrStockOutItemEntity">
+		select * from t_mgr_stock_out_item
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_mgr_stock_out_item
+	</select>
+	<select id="queryReceiveItemList" resultType="map">
+		SELECT
+			base.product_name AS productName,
+			base.price,
+			base.factory_name AS factoryName,
+			(select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) as dosenorm,
+		    (select text from sys_dict where ttype='code_drug' AND value=base.drug) as drug,
+		    (select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) as doseminUnitCode,
+			base.batchnum,
+			item.amount,
+			item.person_amount AS personAmount,
+			equip.NAME AS equipmentName
+		FROM
+			t_mgr_stock_out_item item
+			LEFT JOIN t_mgr_equipment equip ON item.fk_equipment_id = equip.id
+			JOIN t_mgr_stock_info info ON item.stock_info_id = info.id
+			JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+		WHERE
+			item.total_id=#{totalId}
+		ORDER BY
+			base.`type`
+
+	</select>
+	<select id="queryReceiveItemListTotal" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			t_mgr_stock_out_item
+		WHERE
+			total_id=#{totalId}
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.mgr.TMgrStockOutItemEntity">
+		insert into t_mgr_stock_out_item
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+
+				            <if test="stockInfoId != null and stockInfoId  != ''">`stock_info_id` , </if>
+
+				            <if test="amount != null">`amount` , </if>
+
+				            <if test="createUserId != null">`create_user_id` , </if>
+
+				            <if test="totalId != null and totalId  != ''">`total_id` , </if>
+
+				            <if test="status != null">`status` , </if>
+
+				            <if test="deleteStatus != null">`delete_status` , </if>
+
+				            <if test="createTime != null">`create_time` , </if>
+
+				            <if test="updateTime != null">`update_time`, </if>
+							<if test="fkEquipmentId != null">`fk_equipment_id`, </if>
+							<if test="personAmount != null">`person_amount` </if>
+
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						            <if test="stockInfoId != null and stockInfoId  != ''">#{stockInfoId} , </if>
+
+					            <if test="amount != null">#{amount} , </if>
+
+					            <if test="createUserId != null">#{createUserId} , </if>
+
+					            <if test="totalId != null and totalId  != ''">#{totalId} , </if>
+
+					            <if test="status != null">#{status} , </if>
+
+					            <if test="deleteStatus != null">#{deleteStatus} , </if>
+
+					            <if test="createTime != null">#{createTime} , </if>
+
+					            <if test="updateTime != null">#{updateTime}, </if>
+								<if test="fkEquipmentId != null">#{fkEquipmentId}, </if>
+								<if test="personAmount != null">#{personAmount} </if>
+
+			</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrStockOutItemEntity">
+		update t_mgr_stock_out_item 
+		<set>
+	        <if test="stockInfoId != null and stockInfoId  != ''">`stock_info_id` = #{stockInfoId}, </if>
+		        <if test="amount != null">`amount` = #{amount} , </if>
+		        <if test="createUserId != null">`create_user_id` = #{createUserId} , </if>
+		        <if test="totalId != null and totalId  != ''">`total_id` = #{totalId}, </if>
+		        <if test="status != null">`status` = #{status} , </if>
+		        <if test="deleteStatus != null">`delete_status` = #{deleteStatus} , </if>
+		        <if test="createTime != null">`create_time` = #{createTime} , </if>
+		        <if test="updateTime != null">`update_time` = #{updateTime} </if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mgr_stock_out_item where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_stock_out_item where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

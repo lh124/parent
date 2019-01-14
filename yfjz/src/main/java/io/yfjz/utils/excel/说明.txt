@@ -1,0 +1,25 @@
+本路径下的excel操作说明
+包名：com.system.web.utils.excel
+
+第一步：执行com.system.web.utils.excel.MainTest 的main方法
+创建标题头对应的字段名称例如：
+final HashMap<String,String> mapper = new HashMap<>();
+mapper.put("序号","xh");
+
+第二步：调用工具类的构造函数，将第一行，标题头 两个参数传入
+final ExcelUtils excel = new ExcelUtils(1,mapper);
+
+第三步：执行核心方法，处理数据
+excel.readExcel("E:\\aa.xlsx");
+
+第四步：最终获取excel的数据list集合
+final ArrayList<HashMap<String, String>> list = excel.getExcelData();
+
+
+第五步：测试结果集的内容是否正常
+for (HashMap<String,String> map : list ) {
+    for (String key : map.keySet()){
+        System.out.print(key +":"+ map.get(key) +"\t\t");
+    }
+    System.out.println("\n\n\n");
+}

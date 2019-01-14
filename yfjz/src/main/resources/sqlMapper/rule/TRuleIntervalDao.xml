@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.rule.TRuleIntervalDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.rule.TRuleIntervalEntity">
+		select * from t_rule_interval where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.rule.TRuleIntervalEntity">
+		select * from t_rule_interval 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_rule_interval 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.rule.TRuleIntervalEntity">
+		insert into t_rule_interval
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+		
+				            <if test="sourceClassId != null and sourceClassId  != ''">`source_class_id` , </if>
+			
+				            <if test="sourceTimes != null">`source_times` , </if>
+			
+				            <if test="targetClassId != null and targetClassId  != ''">`target_class_id` , </if>
+			
+				            <if test="targetTimes != null">`target_times` , </if>
+			
+				            <if test="intervalMonth != null">`interval_month` , </if>
+			
+				            <if test="intervalDay != null">`interval_day` </if>
+			
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						            <if test="sourceClassId != null and sourceClassId  != ''">#{sourceClassId} , </if>
+		
+					            <if test="sourceTimes != null">#{sourceTimes} , </if>
+		
+					            <if test="targetClassId != null and targetClassId  != ''">#{targetClassId} , </if>
+		
+					            <if test="targetTimes != null">#{targetTimes} , </if>
+		
+					            <if test="intervalMonth != null">#{intervalMonth} , </if>
+		
+					            <if test="intervalDay != null">#{intervalDay} </if>
+		
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.rule.TRuleIntervalEntity">
+		update t_rule_interval 
+		<set>
+	        <if test="sourceClassId != null and sourceClassId  != ''">`source_class_id` = #{sourceClassId}, </if>
+		        <if test="sourceTimes != null">`source_times` = #{sourceTimes} , </if>
+		        <if test="targetClassId != null and targetClassId  != ''">`target_class_id` = #{targetClassId}, </if>
+		        <if test="targetTimes != null">`target_times` = #{targetTimes} , </if>
+		        <if test="intervalMonth != null">`interval_month` = #{intervalMonth} , </if>
+		        <if test="intervalDay != null">`interval_day` = #{intervalDay} </if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_rule_interval where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_rule_interval where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

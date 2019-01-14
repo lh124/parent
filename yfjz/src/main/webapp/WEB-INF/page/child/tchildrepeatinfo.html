@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+<title>儿童基本信息表</title>
+<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+#parse("sys/header.html")
+<script>
+	var orgId="$shiro.getBaseInfo('orgId')";
+	var orgName="$shiro.getBaseInfo('orgName')";
+	var userName="$shiro.getBaseInfo('userName')";
+</script>
+<style type="text/css">
+	/*隐藏掉我们模型的checkbox*/
+	.my_protocol .input_agreement_protocol {
+		appearance: none;
+		-webkit-appearance: none;
+		outline: none;
+		display: none;
+	}
+	/*未选中时*/
+	.my_protocol .input_agreement_protocol+span {
+		width: 16px;
+		height: 16px;
+		background-color: red;
+		display: inline-block;
+		background-position-x: 0px;
+		background-position-y: -25px;
+		position: relative;
+		top: 3px;
+	}
+	/*选中checkbox时,修改背景图片的位置*/
+	.my_protocol .input_agreement_protocol:checked+span {
+		background-position: 0 0px
+	}
+</style>
+
+</head>
+<body class="childrenBody">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<form class="form-inline" role="form">
+				<div class="form-group">
+					儿童编码:<input type="text" class="form-control" v-model="q.chilCode" @keyup.enter="downloadChild" style="width: 180px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;儿童姓名:	<input type="text" class="form-control" v-model="q.chilName" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<!--<div class="form-group">
+					儿童性别:	<input type="text" class="form-control" v-model="q.chilSex" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>-->
+				<div class="form-group">
+					&nbsp;居委会/行政村:
+					<select v-model="q.chilCommittee" class="form-control" @keyup.enter="query" id="chilCommittees" name="chilCommittees" >
+						<option value=""></option>
+					</select>
+<!--
+					<input type="text" class="form-control" v-model="q.chilCommittee" @keyup.enter="query" style="width: 170px" placeholder="">
+-->
+				</div>
+				<!--<div class="form-group">
+					户籍属性:	<input type="text" class="form-control" v-model="q.chilAccount" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>-->
+				<!--<div class="form-group">
+					&nbsp;个案状态:<input type="text" class="form-control" v-model="q.chilHere" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>-->
+				<div class="form-group">
+					&nbsp;在册情况:
+						<select v-model="q.chilHere" class="form-control" @keyup.enter="query"  id="infostatus" name="infostatus" >
+							<!--<option v-for="item in items" v-bind:value="item.value">111</option>-->
+							<option value="" ></option>
+						</select>
+				</div>
+				<div class="form-group">
+					&nbsp;出生日期:<input type="text" class="form-control" v-model="q.chilBirthdayStart" id="chilBirthdayStart" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model="q.chilBirthdayEnd" id="chilBirthdayEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;接种日期:<input type="text" class="form-control" v-model="q.inoculateDateStart" id="inoculateDateStart" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model="q.inoculateDateEnd" id="inoculateDateEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					<input type="checkbox"  v-model="q.isUpload" id="isUpload" name="isUpload" @keyup.enter="query" style="height:20px;margin-right:1px;width:20px;display:inline-block;position: relative;top: 4px" placeholder=""/>未上传
+				</div>
+				<a class="btn btn-primary" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+				<!--<a class="btn btn-default" @click="downloadChild">平台下载</a>-->
+				#if($shiro.hasPermission("tchildinfo:save"))
+				<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				#end
+				#if($shiro.hasPermission("tchildinfo:update"))
+				<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-primary" @click="batchPrintCode"><i class="fa fa-pencil-square-o"></i>&nbsp;打印条码</a>
+				#end
+				<a class="btn btn-primary"  @click="printCard"></i>接种卡打印</a>
+				<a class="btn btn-primary"  @click="print"></i>&nbsp;&nbsp;接种证打印</a>
+<!--
+				<a style="float: right" class="btn btn-primary" @click="downloadChild"><i class="fa fa-download"></i>&nbsp;已在异地接种儿童下载</a>
+-->
+				<a style="float: right" class="btn btn-primary" @click="upload"><i class="fa fa-upload"></i>&nbsp;上传</a>
+				<!--#if($shiro.hasPermission("tchildinfo:delete"))
+				<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+				#end-->
+			</form>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+		<!--<a class="btn btn-primary" style="float: right;margin-top: 20px;margin-right: 190px" @click="printCard"></i>接种卡打印</a>
+		<a class="btn btn-primary" style="float: right;margin: 20px;" @click="print"></i>&nbsp;&nbsp;接种证打印</a>-->
+		<!--<button style="float: right"><a href="#move" id="" data-toggle="tab">变更记录</a></button>-->
+		<!--接种记录、过敏史、异常反应等-->
+		<ul class="nav nav-tabs mt20">
+			<li class="active"><a href="#inoculation" data-toggle="tab">接种记录</a></li>
+			<li><a href="#abnormal" data-toggle="tab">异常反应</a></li>
+			<li><a href="#taboo" data-toggle="tab">接种禁忌</a></li>
+			<li><a href="#allergy" data-toggle="tab">过敏史</a></li>
+			<li><a href="#infection" data-toggle="tab">传染病史</a></li>
+			<li><a href="#move" id="moveTitle" data-toggle="tab">变更记录</a></li>
+			<li><a href="#newBorn" data-toggle="tab">新生儿</a></li>
+			<li><a href="#migrationChild" data-toggle="tab">异地接种儿童</a></li>
+			<!--<li><a href="#serviceRecord" data-toggle="tab">服务记录</a></li>-->
+
+		</ul>
+		<!--以上类容展示-->
+		<div class="tab-content" style="margin-top: 5px">
+
+			<!--接种记录-->
+			<div class="tab-pane fade in active" id="inoculation">
+				<div id="inoculation_tabs" v-cloak>
+					<iframe name="inoculation" style="width:100%; height:250px" frameborder="0"  id="inoculation_iframe" src="../child/tchildinoculate.html"></iframe>
+
+				</div>
+
+			</div>
+			<!--变更记录-->
+			<div class="tab-pane fade in " id="move">
+				<div id="move_tabs" v-cloak>
+					<iframe name="" style="width:100%; height:250px" frameborder="0" id="move_iframe"   src="../child/tchildmove.html"></iframe>
+				</div>
+
+			</div>
+			<div class="tab-pane fade in " id="abnormal">
+				<div id="abnormal_tabs" v-cloak>
+					<iframe name="" style="width:100%; height:250px" frameborder="0" id="abnormal_iframe"   src="../child/tchildabnormal.html"></iframe>
+
+
+				</div>
+
+			</div>
+			<div class="tab-pane fade in " id="taboo">
+				<div id="taboo_tabs" v-cloak>
+					<iframe name="" style="width:100%; height:250px" frameborder="0" id="taboo_iframe"   src="../child/tchildtaboo.html"></iframe>
+
+
+				</div>
+
+			</div>
+			<div class="tab-pane fade in " id="allergy">
+				<div id="allergy_tabs" v-cloak>
+					<iframe name="" style="width:100%; height:250px" frameborder="0" id="allergy_iframe"  src="../child/tchildallergy.html"></iframe>
+
+
+				</div>
+
+			</div>
+			<div class="tab-pane fade in " id="infection">
+				<div id="infection_tabs" v-cloak>
+					<iframe name="" style="width:100%; height:250px" frameborder="0" id="infection_iframe"   src="../child/tchildinfection.html"></iframe>
+					<!--<div v-show="showList" class="panel panel-default">
+						<table id="infectionGrid"></table>
+						<div id="infectionGridPager"></div>
+					</div>-->
+
+				</div>
+
+			</div>
+			<div class="tab-pane fade in " id="newBorn">
+				<div id="newBorn_tabs" v-cloak>
+					<iframe name="" style="width:100%; height:250px" frameborder="0" id="newBorn_iframe"   src="../provinceplatform/tchilddownload.html"></iframe>
+
+				</div>
+
+			</div>
+			<div class="tab-pane fade in " id="migrationChild">
+				<div id="migrationChild_tabs" v-cloak>
+					<iframe name="" style="width:100%; height:250px" frameborder="0" id="migrationChild_iframe"   src="../provinceplatform/tchildelsewhere.html"></iframe>
+
+				</div>
+
+			</div>
+
+		</div>
+    </div>
+	<!--打印弹框选择开始-->
+	<div id="printDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+		<br/>
+		<h5 style="margin-left: 30px">请选择接种证打印模板：</h5>
+		<div  style="width:100%; text-align:center">
+			<div style="display: inline-block">
+				接种证打印模板:
+				<select  class="form-control"  id="modelName" name="modelName" >
+
+				</select>
+			</div>
+		</div>
+		<br/>
+		<div style="text-align: center">
+			<button onclick="printInoculation(1,$('#modelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打印接种记录</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="printChildInfo(1,$('#modelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打印儿童信息</button>
+		</div>
+		<!--<div style="text-align: center">
+			<button onclick="printInoculation(0,1,$('#modelName').val())" class="layui-btn" style="width: 100px;height: 50px;font-size: 20px" >打印接种记录</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="printChildInfo(1,1,$('#modelName').val())" class="layui-btn" style="width: 100px;height: 50px;font-size: 20px" >打印儿童信息</button>
+		</div>-->
+		<br/>
+		<br/>
+		<div style="text-align: left;margin-left:30px;color: red">
+			请注意：<br/>
+			<font color="red">  1.“打印接种记录”按钮为打印所选择的接种记录</font><br/>
+			<font color="red">  2.“打印儿童信息”按钮为打印儿童基本信息</font><br/>
+		</div>
+
+	</div>
+	<div id="printCardDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+		<br/>
+		<!--<h5 style="margin-left: 30px">请选择接种证打印模板：</h5>
+		<div  style="width:100%; text-align:center">
+			<div style="display: inline-block">
+				接种证打印模板:
+				<select  class="form-control"  id="cardModelName" name="modelName" >
+
+				</select>
+			</div>
+		</div>-->
+		<br/>
+		<div style="text-align: center">
+
+			<button onclick="printInoculation(2,'')" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打印接种记录</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="printChildInfoCard(1)" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >新卡打印</button>
+
+			<!--<button onclick="printCurrentDayInoculation(0,1,$('#cardModelName').val())" class="layui-btn" style="width: 100px;height: 50px;font-size: 20px" >打印接种记录</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="printCurrentDayInoculation(1,1,$('#cardModelName').val())" class="layui-btn" style="width: 100px;height: 50px;font-size: 20px" >打印儿童信息</button>-->
+		</div>
+		<br/>
+		<br/>
+		<br/>
+		<div style="text-align: left;margin-left:30px;color: red">
+			请注意：<br/>
+			<font color="red">  1.“打印接种记录”按钮为打印所选择的接种记录</font><br/>
+			<font color="red">  2.“新卡打印”按钮为打印儿童基本信息和所有历次接种记录</font><br/>
+		</div>
+
+	</div>
+    <div v-show="!showList" class="panel panel-default" id="childModel">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-inline" role="form" id="chilForm">
+		<br/>
+			<div class="form-group">
+				&nbsp;建档单位:	<input type="text" class="form-control" v-model="tChildInfo.chilCreatesite" name="chilCreatesite" readonly style="width: 200px" placeholder="">
+
+			</div>
+			<!--<div class="form-group">
+				&nbsp;建档日期:	<input type="text" class="form-control" v-model="q.chilName" @keyup.enter="query" style="width: 100px" placeholder="">
+
+			</div>-->
+
+			<div class="form-group">
+				&nbsp;建档人:	<input type="text" class="form-control" v-model="tChildInfo.createUserName" readonly name="createUserName" style="width: 100px" placeholder="">
+
+			</div>
+			<div class="form-group">
+				建档日期:
+				<!--<div class="col-sm-10">-->
+				<!--<input type="text" class="form-control" v-model="tChildInfo.chilCreatedate" placeholder="建档日期"/>-->
+				<!--</div>-->
+				<!--<a class="input-group date" id="datetimepicker4" >-->
+					<input type="text" class="form-control" v-model="tChildInfo.chilCreatedate" readonly  id='chilCreatedate' name="chilCreatedate" style="width: 170px; height: 35px;" />
+					<!--<span class="input-group-addon" style="float: left; width: 40px; height: 35px;">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+				</a>-->
+			</div>
+			<br/>
+			<br/>
+			<div class="form-group">
+				&nbsp;儿童姓名:	<input type="text" class="form-control" v-model="tChildInfo.chilName" name="chilName"  style="width: 100px" placeholder="">
+
+			</div>
+			<div class="form-group">
+				&nbsp;性别:
+				<select v-model="tChildInfo.chilSex" class="form-control" name="chilSex" >
+					<option value="1">男</option>
+					<option value="2">女</option>
+				</select>
+					<!--<input type="text" class="form-control" v-model="tChildInfo.chilSex" @keyup.enter="query" style="width: 100px" placeholder="">-->
+
+			</div>
+
+			<!--<div class="form-group">
+				&nbsp;出生日期:	<input type="text" class="form-control" v-model="q.chilName" @keyup.enter="query" style="width: 100px" placeholder="">
+
+			</div>-->
+			<div class="form-group">
+				&nbsp;出生日期:
+				<!--<a class="input-group date" id="datetimepicker1"  >
+					<input type="text" class="form-control" v-model="tChildInfo.chilBirthday"  name="chilBirthday"  id='chilBirthday' style="width: 170px; height: 35px;" />
+					<span class="input-group-addon" style=" width: 40px; height: 35px;">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+				</a>-->
+				<input type="text" class="form-control" v-model="tChildInfo.chilBirthday"  name="chilBirthday"  id='chilBirthday'  style="width: 170px; height: 35px;"/>
+			</div>
+			<br/>
+			<br/>
+			<div class="form-group">
+				&nbsp;接种证号:	<input type="text" class="form-control" v-model="tChildInfo.chilCardno" name="chilCardno" style="width: 150px" placeholder="">
+
+			</div>
+			<div class="form-group">
+				&nbsp;身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilNo" name="chilNo"  style="width: 200px" placeholder="">
+
+			</div>
+			<div class="form-group">
+				&nbsp;出生证号:	<input type="text" class="form-control" v-model="tChildInfo.chilBirthno" name="chilBirthno" style="width: 150px" placeholder="">
+
+			</div>
+			<br/>
+			<br/>
+			<div class="form-group">
+				&nbsp;出生体重(kg):	<input type="text" class="form-control" v-model="tChildInfo.chilBirthweight" name="chilBirthweight" style="width: 100px" placeholder="">
+
+			</div>
+			<div class="form-group">
+				&nbsp;出生医院:
+				<!--<input list="chilBirthhospitalname" type="text" v-model="tChildInfo.chilBirthhospitalname" class="form-control" name="chilBirthhospitalname"  placeholder=""   >
+				<datalist id="chilBirthhospitalname"  >
+
+				</datalist>-->
+				<!--<select v-model="tChildInfo.chilBirthhospitalname" onmousedown="Select.del(this,event)" onkeypress="Select.write(this,event)" class="form-control"  id="chilBirthhospitalname" name="chilBirthhospitalname" >
+
+				</select>-->
+
+<!--
+				<input tag="factoryName" type="hidden" class="form-control"  v-model="tMgrStockBase.factoryName" name="factoryName" placeholder="生产厂家"/>
+-->
+
+				<select  class="col-lg-12 form-control selectpicker"  name="chilBirthhospitalname"  id="chilBirthhospitalname" v-model="tChildInfo.chilBirthhospital"  data-live-search="true" >
+					<option value=""></option>
+				</select>
+<!--
+				<input type="text" class="form-control" v-model="tChildInfo.chilBirthhospitalname"  name="chilBirthhospitalname" style="width: 200px" placeholder="">
+-->
+
+			</div>
+			<!--<div class="form-group">
+				&nbsp;民族:	<input type="text" class="form-control" v-model="q.chilName" @keyup.enter="query" style="width: 100px" placeholder="">
+
+			</div>-->
+			<div class="form-group">
+				民族:
+					<select v-model="tChildInfo.chilNatiId" class="form-control"  id="chilNatiId" name="chilNatiId" >
+
+					</select>
+			</div>
+
+			<br/>
+			<br/>
+			<div class="form-group">
+				&nbsp;母亲姓名:	<input type="text" class="form-control" v-model="tChildInfo.chilMother" name="chilMother" style="width: 100px" placeholder="">
+
+			</div>
+
+			<div class="form-group">
+				&nbsp;母亲身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilMotherno" name="chilMotherno" style="width: 200px" placeholder="">
+
+			</div>
+
+			<br/>
+			<br/>
+			<div class="form-group">
+				&nbsp;父亲姓名:	<input type="text" class="form-control" v-model="tChildInfo.chilFather" name="chilFather" style="width: 100px" placeholder="">
+
+			</div>
+			<div class="form-group">
+				&nbsp;父亲身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilFatherno" name="chilFatherno" style="width: 200px" placeholder="">
+
+			</div>
+
+			<br/>
+			<br/>
+			<div class="form-group">
+
+				&nbsp;居住属性:
+					<select v-model="tChildInfo.chilResidence" class="form-control"  id="chilResidence" name="chilResidence" >
+
+					</select>
+
+				<!--&nbsp;居住属性:	<input type="text" class="form-control" v-model="tChildInfo.chilResidence" name="chilResidence" style="width: 100px" placeholder="">-->
+
+			</div>
+			<div class="form-group">
+				&nbsp;户籍属性:
+				<select v-model="tChildInfo.chilAccount" class="form-control"  id="chilAccount" name="chilAccount" >
+
+				</select>
+<!--
+				&nbsp;户籍属性:	<input type="text" class="form-control" v-model="tChildInfo.chilAccount" name="chilAccount" style="width: 100px" placeholder="">
+-->
+
+			</div>
+			<div class="form-group">
+				&nbsp;在册情况:
+				<select v-model="tChildInfo.chilHere" class="form-control"  id="chilHere" name="chilHere" >
+
+				</select>
+<!--
+				<input type="text" class="form-control" v-model="tChildInfo.chilHere" name="chilHere" style="width: 100px" placeholder="">
+-->
+
+			</div>
+			<br/>
+			<br/>
+			<div class="form-group">
+				&nbsp;行政村/居委会:
+				<select v-model="tChildInfo.chilCommittee" class="form-control"  id="chilCommittee" name="chilCommittee" >
+
+				</select>
+<!--
+				<input type="text" class="form-control" v-model="tChildInfo.chilCommittee" name="chilCommittee" style="width: 100px" placeholder="">
+-->
+
+			</div>
+			<div class="form-group">
+				&nbsp;学校:
+				<select v-model="tChildInfo.chilSchool" class="form-control"  id="chilSchool" name="chilSchool" >
+
+				</select>
+<!--
+				<input type="text" class="form-control" v-model="tChildInfo.chilSchool" name="chilSchool" style="width: 100px" placeholder="">
+-->
+
+			</div>
+			<div class="form-group">
+				&nbsp;手机:	<input type="text" class="form-control" v-model="tChildInfo.chilMobile" name="chilMobile" style="width: 150px" placeholder="">
+
+			</div>
+			<div class="form-group">
+				&nbsp;家庭电话:	<input type="text" class="form-control" v-model="tChildInfo.chilTel" name="chilTel" style="width: 150px" placeholder="">
+
+			</div>
+			<br/>
+			<br/>
+
+				<div class="form-group " style="width: 1700px;">
+					户籍地址:
+
+							<select class="form-control" @change="CityBind" name="Province" id="Province" style="width: 120px">
+							</select>
+
+						(省)
+							<select class="form-control" @change="VillageBind" name="City" id="City" style="width: 200px" >
+							</select>
+
+						(市)
+							<select class="form-control" @change="Twon" name="Village" id="Village" style="width: 200px" >
+							</select>
+
+						(县/区)
+							<select class="form-control" name="Twon" id="Twon"  style="width: 200px">
+							</select>
+						(乡镇/街道)
+					<input type="text" class="form-control"   placeholder="详细地址" id="detailed"  style="width: 300px"/>
+						<input type="hidden" class="form-control" v-model="tChildInfo.chilHabiaddress"  placeholder="" id="chilHabiaddress"  />
+
+				</div>
+
+			<br/>
+			<br/>
+
+				<div class="form-group " style="width: 1700px;">
+					现居地址:
+
+							<select class="form-control" @change="City_homeBind" name="Province_home" id="Province_home" style="width: 120px" >
+							</select>
+
+						(省)
+							<select class="form-control" @change="Village_homeBind" name="City_home" id="City_home" style="width: 200px" >
+							</select>
+						(市)
+							<select class="form-control" @change="Twon_home" name="Village_home" id="Village_home" style="width: 200px" >
+							</select>
+						(县/区)
+							<select class="form-control" name="Twon_home" id="Twon_home"  style="width: 200px">
+							</select>
+						(乡镇/街道)
+					<input type="text" class="form-control"   placeholder="详细地址" id="detailed_home"  style="width: 300px"/>
+					<input type="hidden" class="form-control" v-model="tChildInfo.chilAddress"  placeholder="" id="chilAddress"  />
+
+				</div>
+
+			<br/>
+			<br/>
+
+			<div class="form-group">
+				&nbsp;备注:	<input type="text" class="form-control" v-model="tChildInfo.remark" name="remark" style="width: 800px" placeholder="">
+
+			</div>
+
+											<!--
+
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">过敏史</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.chilSensitivity" placeholder="过敏史"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">母亲HB</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.chilMotherhb" placeholder="母亲HB"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">母亲HIV</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.chilMotherhiv" placeholder="母亲HIV"/>
+			    </div>
+			</div>
+
+			</div>&lt;!&ndash;
+
+
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">受种者单位</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.chilUnitimmu" placeholder="受种者单位"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">出生医院编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.chilBirthhospital" placeholder="出生医院编码"/>
+			    </div>
+			</div>&ndash;&gt;
+
+									&lt;!&ndash;<div class="form-group">
+			   	<div class="col-sm-2 control-label">是否有卡介苗疤痕</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.chilBcgScar" placeholder="是否有卡介苗疤痕"/>
+			    </div>
+			</div>&ndash;&gt;
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">母亲身份证号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.chilMotherno" placeholder="母亲身份证号"/>
+			    </div>
+			</div>
+									&lt;!&ndash;<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.createUserId" placeholder="创建人id"/>
+			    </div>
+			</div>&ndash;&gt;
+									&lt;!&ndash;<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.createUserName" placeholder="创建人名字"/>
+			    </div>
+			</div>&ndash;&gt;
+									&lt;!&ndash;<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInfo.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>&ndash;&gt;
+
+			</div>-->
+			<br/>
+			<br/>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+								&nbsp;&nbsp;				&nbsp;&nbsp;<input type="button" class="btn btn-primary" @click="saveOrUpdate" id="saveOrUpdate" value="确定"/>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/tchildinfo.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/child/childvalidator.js?_${date.systemTime}"></script>
+<script>
+    /*var Select = {
+        del : function(obj,e){
+
+            console.log(obj+e);
+            if((e.keyCode||e.which||e.charCode) == 1){
+                var opt = obj.options[0];
+                opt.text = opt.value = opt.value.substring(0, opt.value.length>0?opt.value.length-1:0);
+            }
+        },
+        write : function(obj,e){
+            if((e.keyCode||e.which||e.charCode) == 1)return ;
+            var opt = obj.options[0];
+            opt.selected = "selected";
+            opt.text = opt.value += String.fromCharCode(e.charCode||e.which||e.keyCode);
+        }
+    }
+
+    function test(){
+        alert(document.getElementById("select").value);
+    }*/
+</script>
+
+<script>
+</script>
+</body>
+</html>

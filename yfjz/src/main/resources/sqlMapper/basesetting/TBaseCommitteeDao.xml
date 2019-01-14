@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.basesetting.TBaseCommitteeDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.basesetting.TBaseCommitteeEntity">
+		select * from t_base_committee where code = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.basesetting.TBaseCommitteeEntity">
+		select * from t_base_committee
+
+		<where>
+			<if test="org_id!=null">
+				and org_id = #{org_id}
+			</if>
+			and delete_status = 0
+		</where>
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+
+	<select id="queryListPage" resultType="io.yfjz.entity.basesetting.TBaseCommitteeEntity" >
+		select * from t_base_committee
+		<where>
+			<if test="name != null and name.trim() != ''">
+				name like concat('%', #{name}, '%')
+			</if>
+			<if test="orgId != null and orgId.trim() != ''">
+				and `org_id` = #{orgId}
+			</if>
+			and delete_status = 0
+		</where>
+	</select>
+
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_base_committee
+		<where>
+			<if test="org_id!=null">
+				and org_id = #{org_id}
+			</if>
+			and delete_status = 0
+		</where>
+	</select>
+
+
+	<insert id="save" parameterType="io.yfjz.entity.basesetting.TBaseCommitteeEntity">
+		insert into t_base_committee
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="code != null and code  != ''">`code` ,</if>
+			<if test="name != null and name  != ''">`name` , </if>
+			<if test="orgId != null and orgId  != ''">`org_id` , </if>
+			<if test="createTime != null">`create_time` , </if>
+			<if test="updateTime != null">`update_time` , </if>
+			<if test="deleteStatus != null">`delete_status` , </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="code != null and code  != ''">#{code} ,</if>
+			<if test="name != null and name  != ''">#{name} , </if>
+			<if test="orgId != null and orgId  != ''">#{orgId} , </if>
+			<if test="createTime != null">#{createTime} , </if>
+			<if test="updateTime != null">#{updateTime} , </if>
+			<if test="deleteStatus != null">#{deleteStatus} , </if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.basesetting.TBaseCommitteeEntity">
+		update t_base_committee
+		<set>
+			<if test="name != null and name  != ''">`name` = #{name}, </if>
+			<if test="orgId != null and orgId  != ''">`org_id` = #{orgId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime} , </if>
+			<if test="updateTime != null">`update_time` = #{updateTime} , </if>
+			<if test="deleteStatus != null">`delete_status` = #{deleteStatus} , </if>
+		</set>
+		where code = #{code}
+	</update>
+	
+	<delete id="delete">
+		update_committee set `delete_status` = 1 where code = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		update_committee set `delete_status` = 1 where code in
+		<foreach item="code" collection="array" open="(" separator="," close=")">
+			#{code}
+		</foreach>
+	</delete>
+
+</mapper>

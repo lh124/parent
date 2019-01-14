@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite" xmlns:v-tolerious="http://java.sun.com/jsf/core">
+<head>
+	<title>儿童接种记录表</title>
+	#parse("sys/header.html")
+	<link rel="stylesheet" href="../statics/css/bootstrap-multiselect.css" type="text/css">
+	<script type="text/javascript" src="../statics/libs/bootstrap-multiselect.js"></script>
+</head>
+<body>
+<input type="hidden" id="chilCode" value="${request.getParameter('chilCode')}">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<!--<div class="form-group col-sm-2">-->
+				<!--<input type="text" class="form-control" v-model="q.chilCode"  @keyup.enter="query" placeholder="按姓名搜索">-->
+			<!--</div>-->
+			<!--<a class="btn btn-info" @click="query"><i class="fa fa-search"></i>&nbsp; 查询</a>-->
+			<!--#if($shiro.hasPermission("tchildinoculate:save"))-->
+			<!--<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>-->
+			<!--#end-->
+			<!--#if($shiro.hasPermission("tchildinoculate:update"))-->
+			<!--<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>-->
+			<!--#end-->
+			<!--#if($shiro.hasPermission("tchildinoculate:delete"))-->
+			<!--<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+			<!--#end-->
+			<!--<a class="btn btn-primary" href="javascript:history.go(-1)">返回上一级</a>-->
+		</div>
+		<table id="jqGrid"></table>
+		<div id="jqGridPager"></div>
+	</div>
+
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="tchildinoculateForm">
+			<div class="form-group">
+				<div class="col-sm-2 control-label">疫苗</div>
+				<div class="col-sm-10">
+					<input type="hidden" id="fkVaccineCode" v-model="tChildInoculate.inocBactCode">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocBactCode" id="fkVaccineName" name="productName"  data-toggle="modal" data-target="#myModal" placeholder="疫苗编码"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种属性</div>
+				<div class="col-sm-10">
+					<!--<input type="text" class="form-control" v-model="tChildInoculate.inocProperty" placeholder="接种属性"/>-->
+					<select v-model="tChildInoculate.inocProperty" class="form-control"  id="inocProperty" name="inocProperty" >
+						<option v-for="item in inocPropertyCode" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">剂次</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocTime" placeholder="剂次"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">强化属性</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocReinforce" placeholder="强化属性"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">批号</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocBatchno" placeholder="批号"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">剂量</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocDose" placeholder="剂量"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种评价</div>
+				<div class="col-sm-10">
+
+					<select v-model="tChildInoculate.inocOpinion" class="form-control"  id="inocOpinion" name="inocOpinion" >
+						<option v-for="item in inocOpinionCode" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+					<!--<input type="text" class="form-control" v-model="tChildInoculate.inocOpinion" placeholder="评价(及时,合格,超期,首针提前,间短)"/>-->
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">联合疫苗编码</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocUnionCode" placeholder="联合疫苗编码"/>
+				</div>
+			</div>
+			<!--<div class="form-group">-->
+				<!--<div class="col-sm-2 control-label">疫苗失效期</div>-->
+				<!--<div class="col-sm-10">-->
+					<!--<input type="text" class="form-control" v-model="tChildInoculate.inocValiddate" placeholder="疫苗失效期"/>-->
+				<!--</div>-->
+			<!--</div>-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label">生产企业(编码)</div>
+				<div class="col-sm-10" id="factoryCtrl">
+					<input tag="inocCorpCode" type="hidden" class="form-control inocCorpCode"  v-model="tChildInoculate.inocCorpCode" name="inocCorpCode" placeholder="生产企业" />
+					<span tag="inocCorpCode" >
+						<select  class="col-lg-12 form-control selectpicker" name="inocCorpCode"  id="factory" v-model="tChildInoculate.inocCorpCode"  data-live-search="true" >
+						</select>
+					</span>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">疫苗监管码</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocRegulatoryCode" placeholder="疫苗监管码"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">是否补助疫苗</div>
+				<div class="col-sm-10">
+					<!--<input type="text" class="form-control" v-model="tChildInoculate.inocPay" placeholder="是否补助疫苗1是,0不是"/>-->
+					<select v-model="tChildInoculate.inocPay" class="form-control"   >
+						<option value="1" >是</option>
+						<option value="0" >不是</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">是否免费疫苗</div>
+				<div class="col-sm-10">
+
+					<select v-model="tChildInoculate.inocFree" class="form-control"   >
+						<option value="1" >免费</option>
+						<option value="0" >收费</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">部门id(平台数据)</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocDepaId" placeholder="部门id(平台数据)"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种部位</div>
+				<div class="col-sm-10">
+					<select v-model="tChildInoculate.inocInplId" class="form-control"  id="inocInplId" name="inocInplId" >
+						<option v-for="item in inocInplIdCode" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种途径</div>
+				<div class="col-sm-10">
+
+					<select v-model="tChildInoculate.inoculateRoad" class="form-control"  id="inoculateRoad" name="inoculateRoad" >
+						<option v-for="item in inoculateRoadCode" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+
+				</div>
+			</div>
+			<!--<div class="form-group">-->
+				<!--<div class="col-sm-2 control-label">离开时间</div>-->
+				<!--<div class="col-sm-10">-->
+					<!--<input type="text" class="form-control" v-model="tChildInoculate.leaveTime" placeholder="离开时间"/>-->
+				<!--</div>-->
+			<!--</div>-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label">备注</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.remark" placeholder="备注"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: 650px;">
+			<div class="modal-header">
+				疫苗信息
+			</div>
+			<div class="modal-body">
+				<input type="text" class="form-control" id="searchName"  placeholder="请输入关键字查询" style="width: 200px" oninput="searchName()"/>
+				<table id="vaccine"></table>
+				<div id="vaccinePager"></div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+<script src="${rc.contextPath}/statics/js/medical/tchildinoculate.js?_${date.systemTime}"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/mouseoverinocdata.js"></script>
+
+</body>
+</html>

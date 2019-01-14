@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+<title>疫苗库存统计</title>
+#parse("sys/header.html")
+    <style>
+        .myBody{
+            padding: 15px 20px;
+        }
+    </style>
+</head>
+<body class="myBody">
+<div class="tab-pane fade in active" id="ret">
+    <div class="grid-btn" id="content">
+        <form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForm">
+            <div class="form-group">
+                <label >年份:</label>
+                 <input id="startDate"  class="form-control" style="width: 150px"  data-date-format="yyyy-mm-dd" >
+            </div>
+            <div class="form-group">
+                <label >月份:</label>
+                <input type="text" class="form-control" style="width: 150px"    id="endDate" placeholder="结束时间" data-date-format="yyyy-mm-dd">
+            </div>
+            <a class="btn btn-warning"  onclick="queryVaccine()"><i class="fa fa-search" ></i>&nbsp;查询</a>
+            <a class="btn btn-primary"  onclick="vaccineExcel()"><i class="fa fa-arrow-down" ></i>&nbsp;导出</a>
+            <a class="btn btn-primary" onclick="printVaccine()"><i class="fa fa-print" ></i>&nbsp;打印</a>
+        </form>
+    </div>
+    <div>
+        <table id="vaccineChangeGrid" >
+
+        </table>
+    </div>
+</div>
+<script src="${rc.contextPath}/statics/js/report/vaccineChange.js?_${date.systemTime}"></script>
+</body>
+</html>

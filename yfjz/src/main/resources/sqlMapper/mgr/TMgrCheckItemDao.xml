@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrCheckItemDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrCheckItemEntity">
+		select * from t_mgr_check_item where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.mgr.TMgrCheckItemEntity">
+		select * from t_mgr_check_item
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<select id="queryListMap" resultType="map">
+		select
+		base.product_name as productName,
+		base.price,
+		base.batchnum,
+		base.factory_name as factoryName,
+		(select text from sys_dict where ttype='dose_code' AND value=dosenorm) as dosenorm,
+		(select text from sys_dict where ttype='code_drug' AND value=drug) as drug,
+		(select text from sys_dict where ttype='vaccine_unit' AND value=dosemin_unit_code) as doseminUnitCode,
+		DATE_FORMAT( base.expiry_date ,'%Y-%m-%d') AS expiryDate,
+		item.sys_number as sysNumber,
+		item.real_number as realNumber,
+		item.diff_number as diffNumber,
+		item.cause,
+		item.handle,
+		item.check_status as checkStatus
+		from t_mgr_check_item item
+		join t_mgr_stock_info info on item.fk_stock_info_id=info.id
+		join t_mgr_stock_base base on info.fk_base_info=base.id
+		<where>
+			<if test="totalId!=null">
+				and item.fk_check_total_id=#{totalId}
+			</if>
+		</where>
+		ORDER  BY base.`type`
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_mgr_check_item
+		<where>
+			<if test="totalId!=null">
+				and fk_check_total_id=#{totalId}
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.mgr.TMgrCheckItemEntity">
+		insert into t_mgr_check_item
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+
+			<if test="fkStockInfoId != null and fkStockInfoId  != ''">`fk_stock_info_id` , </if>
+
+			<if test="sysNumber != null">`sys_number` , </if>
+
+			<if test="realNumber != null">`real_number` , </if>
+
+			<if test="diffNumber != null">`diff_number` , </if>
+
+			<if test="cause != null and cause  != ''">`cause` , </if>
+
+			<if test="handle != null and handle  != ''">`handle` , </if>
+
+			<if test="checkStatus != null">`check_status` ,</if>
+			<if test="fkCheckTotalId != null">`fk_check_total_id`, </if>
+			<if test="createTime != null">`create_time` </if>
+
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+			<if test="fkStockInfoId != null and fkStockInfoId  != ''">#{fkStockInfoId} , </if>
+
+			<if test="sysNumber != null">#{sysNumber} , </if>
+
+			<if test="realNumber != null">#{realNumber} , </if>
+
+			<if test="diffNumber != null">#{diffNumber} , </if>
+
+			<if test="cause != null and cause  != ''">#{cause} , </if>
+
+			<if test="handle != null and handle  != ''">#{handle} , </if>
+
+			<if test="checkStatus != null">#{checkStatus}, </if>
+			<if test="fkCheckTotalId != null">#{fkCheckTotalId} ,</if>
+			<if test="createTime != null">#{createTime} </if>
+			</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrCheckItemEntity">
+		update t_mgr_check_item 
+		<set>
+		        <if test="fkStockInfoId != null and fkStockInfoId  != ''">`fk_stock_info_id` = #{fkStockInfoId}, </if>
+		        <if test="sysNumber != null">`sys_number` = #{sysNumber} , </if>
+		        <if test="realNumber != null">`real_number` = #{realNumber} , </if>
+		        <if test="diffNumber != null">`diff_number` = #{diffNumber} , </if>
+		        <if test="cause != null and cause  != ''">`cause` = #{cause}, </if>
+		        <if test="handle != null and handle  != ''">`handle` = #{handle}, </if>
+		        <if test="checkStatus != null">`check_status` = #{checkStatus} </if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mgr_check_item where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_check_item where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

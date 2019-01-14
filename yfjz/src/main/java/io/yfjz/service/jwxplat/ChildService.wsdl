@@ -1,0 +1,4417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://222.85.149.105:7001/vaccine/services/ChildService" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://222.85.149.105:7001/vaccine/services/ChildService" xmlns:intf="http://222.85.149.105:7001/vaccine/services/ChildService" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns1="http://dto.vaccine.nipm.jwx.com" xmlns:tns2="http://dto.jfa.jwx.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.3
+Built on Oct 05, 2005 (05:23:37 EDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://222.85.149.105:7001/vaccine/services/ChildService" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://dto.jfa.jwx.com"/>
+   <import namespace="http://dto.vaccine.nipm.jwx.com"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_xsd_anyType">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:anyType[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+   <complexType name="ArrayOf_xsd_string">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://xml.apache.org/xml-soap" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://222.85.149.105:7001/vaccine/services/ChildService"/>
+   <import namespace="http://dto.jfa.jwx.com"/>
+   <import namespace="http://dto.vaccine.nipm.jwx.com"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="Vector">
+    <sequence>
+     <element maxOccurs="unbounded" minOccurs="0" name="item" type="xsd:anyType"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://dto.jfa.jwx.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://222.85.149.105:7001/vaccine/services/ChildService"/>
+   <import namespace="http://dto.vaccine.nipm.jwx.com"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="JfaDTO">
+    <sequence/>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://dto.vaccine.nipm.jwx.com" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://222.85.149.105:7001/vaccine/services/ChildService"/>
+   <import namespace="http://dto.jfa.jwx.com"/>
+   <import namespace="http://xml.apache.org/xml-soap"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="BaseDto">
+    <complexContent>
+     <extension base="tns2:JfaDTO">
+      <sequence>
+       <element name="count" nillable="true" type="xsd:int"/>
+       <element name="depa_ids" nillable="true" type="impl:ArrayOf_xsd_string"/>
+       <element name="depa_level" nillable="true" type="xsd:string"/>
+       <element name="depa_type" nillable="true" type="xsd:string"/>
+       <element name="end" nillable="true" type="xsd:int"/>
+       <element name="endPage" nillable="true" type="xsd:int"/>
+       <element name="page" nillable="true" type="xsd:int"/>
+       <element name="pageCount" nillable="true" type="xsd:int"/>
+       <element name="pages" nillable="true" type="xsd:int"/>
+       <element name="queryYear" nillable="true" type="xsd:string"/>
+       <element name="start" nillable="true" type="xsd:int"/>
+       <element name="startPage" nillable="true" type="xsd:int"/>
+       <element name="topCount" nillable="true" type="xsd:int"/>
+      </sequence>
+     </extension>
+    </complexContent>
+   </complexType>
+   <complexType name="CommonDTO">
+    <complexContent>
+     <extension base="tns1:BaseDto">
+      <sequence>
+       <element name="controlDepartmentSelect" nillable="true" type="xsd:string"/>
+       <element name="deleteSql" nillable="true" type="xsd:string"/>
+       <element name="insertSql" nillable="true" type="xsd:string"/>
+       <element name="queryOneSql" nillable="true" type="xsd:string"/>
+       <element name="querySql" nillable="true" type="xsd:string"/>
+       <element name="updateSql" nillable="true" type="xsd:string"/>
+      </sequence>
+     </extension>
+    </complexContent>
+   </complexType>
+   <complexType name="Department">
+    <complexContent>
+     <extension base="tns1:CommonDTO">
+      <sequence>
+       <element name="citys_ID" nillable="true" type="impl:ArrayOf_xsd_string"/>
+       <element name="countyid" nillable="true" type="xsd:string"/>
+       <element name="db_flag" nillable="true" type="xsd:string"/>
+       <element name="dein_workday" nillable="true" type="xsd:string"/>
+       <element name="depa_area" nillable="true" type="xsd:string"/>
+       <element name="depa_begindate" nillable="true" type="xsd:string"/>
+       <element name="depa_ca_indate" nillable="true" type="xsd:string"/>
+       <element name="depa_ca_use" nillable="true" type="xsd:int"/>
+       <element name="depa_cardprivilege" nillable="true" type="xsd:string"/>
+       <element name="depa_cardverify" nillable="true" type="xsd:string"/>
+       <element name="depa_code" nillable="true" type="xsd:string"/>
+       <element name="depa_codes" nillable="true" type="impl:ArrayOf_xsd_string"/>
+       <element name="depa_controlstate" nillable="true" type="xsd:string"/>
+       <element name="depa_count" nillable="true" type="xsd:int"/>
+       <element name="depa_date" nillable="true" type="xsd:string"/>
+       <element name="depa_district" nillable="true" type="xsd:string"/>
+       <element name="depa_download" nillable="true" type="xsd:string"/>
+       <element name="depa_downloadall" nillable="true" type="xsd:string"/>
+       <element name="depa_editdate" nillable="true" type="xsd:string"/>
+       <element name="depa_enddate" nillable="true" type="xsd:string"/>
+       <element name="depa_firsttime" nillable="true" type="xsd:string"/>
+       <element name="depa_fullname" nillable="true" type="xsd:string"/>
+       <element name="depa_hospital" nillable="true" type="xsd:string"/>
+       <element name="depa_id" nillable="true" type="xsd:string"/>
+       <element name="depa_ismaternity" nillable="true" type="xsd:string"/>
+       <element name="depa_isrpt" nillable="true" type="xsd:string"/>
+       <element name="depa_ldtdprivilege" nillable="true" type="xsd:string"/>
+       <element name="depa_ldtdverify" nillable="true" type="xsd:string"/>
+       <element name="depa_licence" nillable="true" type="xsd:string"/>
+       <element name="depa_md5" nillable="true" type="xsd:string"/>
+       <element name="depa_name" nillable="true" type="xsd:string"/>
+       <element name="depa_nationid" nillable="true" type="xsd:string"/>
+       <element name="depa_obstetrics_use" nillable="true" type="xsd:string"/>
+       <element name="depa_password" nillable="true" type="xsd:string"/>
+       <element name="depa_paystate" nillable="true" type="xsd:string"/>
+       <element name="depa_privilege" nillable="true" type="xsd:string"/>
+       <element name="depa_queue" nillable="true" type="xsd:int"/>
+       <element name="depa_rank" nillable="true" type="xsd:string"/>
+       <element name="depa_relation_depaid" nillable="true" type="xsd:string"/>
+       <element name="depa_secondtime" nillable="true" type="xsd:string"/>
+       <element name="depa_use" nillable="true" type="xsd:string"/>
+       <element name="depa_validperiod" nillable="true" type="xsd:string"/>
+       <element name="depa_zone" nillable="true" type="xsd:string"/>
+       <element name="department" nillable="true" type="xsd:string"/>
+       <element name="districtcode" nillable="true" type="xsd:string"/>
+       <element name="dplevel" nillable="true" type="xsd:string"/>
+       <element name="dprs_appointmentAllPart" nillable="true" type="xsd:string"/>
+       <element name="dprs_checkupgradeprivilege" nillable="true" type="xsd:string"/>
+       <element name="dprs_childName" nillable="true" type="xsd:string"/>
+       <element name="dprs_delayed" nillable="true" type="xsd:string"/>
+       <element name="dprs_digipriv" nillable="true" type="xsd:string"/>
+       <element name="dprs_digiprivs" nillable="true" type="impl:ArrayOf_xsd_string"/>
+       <element name="dprs_encryption" nillable="true" type="xsd:string"/>
+       <element name="dprs_hook" nillable="true" type="xsd:string"/>
+       <element name="dprs_hooks" nillable="true" type="impl:ArrayOf_xsd_string"/>
+       <element name="dprs_pay" nillable="true" type="xsd:string"/>
+       <element name="dprs_permitbinding" nillable="true" type="xsd:string"/>
+       <element name="dprs_upgradeprivilege" nillable="true" type="xsd:string"/>
+       <element name="dprs_useapp" nillable="true" type="xsd:string"/>
+       <element name="dprs_vaccineshortage" nillable="true" type="xsd:string"/>
+       <element name="enddate" nillable="true" type="xsd:string"/>
+       <element name="id" nillable="true" type="xsd:string"/>
+       <element name="immunitytimes" nillable="true" type="xsd:string"/>
+       <element name="include_43" nillable="true" type="xsd:string"/>
+       <element name="mode" nillable="true" type="xsd:string"/>
+       <element name="prefix_code" nillable="true" type="xsd:string"/>
+       <element name="school_type1" nillable="true" type="xsd:string"/>
+       <element name="school_type2" nillable="true" type="xsd:string"/>
+       <element name="selected_depa_level" nillable="true" type="xsd:string"/>
+       <element name="startdate" nillable="true" type="xsd:string"/>
+      </sequence>
+     </extension>
+    </complexContent>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="queryChildrenHResponse">
+
+      <wsdl:part name="queryChildrenHReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="genRandomNumResponse">
+
+      <wsdl:part name="genRandomNumReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenEResponse">
+
+      <wsdl:part name="queryChildrenEReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenBRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+      <wsdl:part name="arg3" type="xsd:string"/>
+
+      <wsdl:part name="arg4" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadRoutineImmuReportFromCityResponse">
+
+      <wsdl:part name="uploadRoutineImmuReportFromCityReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenH1N1_oldResponse">
+
+      <wsdl:part name="uploadChildrenH1N1_oldReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenH1N1Request">
+
+      <wsdl:part name="depacode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="ipvSetupRequest">
+
+      <wsdl:part name="date" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenGResponse">
+
+      <wsdl:part name="queryChildrenGReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadRoutineImmuTimesReportResponse">
+
+      <wsdl:part name="uploadRoutineImmuTimesReportReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadNewbornBackCommunalGzRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="nebo_id" type="xsd:string"/>
+
+      <wsdl:part name="nebo_downmac" type="xsd:string"/>
+
+      <wsdl:part name="nebo_downtype" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateBatchResponse">
+
+      <wsdl:part name="downloadNewBornInoculateBatchReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadReportAEFIRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDepartmentHabiaddressResponse">
+
+      <wsdl:part name="downloadDepartmentHabiaddressReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadCaseReportDataResponse">
+
+      <wsdl:part name="uploadCaseReportDataReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadPoIntensifyListReportResponse">
+
+      <wsdl:part name="uploadPoIntensifyListReportReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByChildNoResponse">
+
+      <wsdl:part name="downloadVaccByChildNoReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childInoculationControlRequest">
+
+      <wsdl:part name="updateDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByCardNoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childCardno" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateChildAttributiveResponse">
+
+      <wsdl:part name="updateChildAttributiveReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVaccinateRatioReportDataRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="depaPassword" type="xsd:string"/>
+
+      <wsdl:part name="organCode" type="xsd:string"/>
+
+      <wsdl:part name="userPassword" type="xsd:string"/>
+
+      <wsdl:part name="user" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childrenDownloadResponse">
+
+      <wsdl:part name="childrenDownloadReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadMigrationFromCityResponse">
+
+      <wsdl:part name="uploadMigrationFromCityReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="bopvSetupRequest">
+
+      <wsdl:part name="date" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenBResponse">
+
+      <wsdl:part name="queryChildrenBReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getServerDatetimeNewRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildRepeatCodeRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="delDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildRepeatDeleteResponse">
+
+      <wsdl:part name="downloadChildRepeatDeleteReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPiatsRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="impl:ArrayOf_xsd_anyType"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadCaseReportDataRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="depaPassword" type="xsd:string"/>
+
+      <wsdl:part name="organCode" type="xsd:string"/>
+
+      <wsdl:part name="userPassword" type="xsd:string"/>
+
+      <wsdl:part name="user" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDepartmentHabiaddressRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildCRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTransferRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+      <wsdl:part name="downloadDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childrenDownloadRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="chil_id" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+      <wsdl:part name="downloadDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getServerDatetimeNewResponse">
+
+      <wsdl:part name="getServerDatetimeNewReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateBatchGzRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateBatchGzResponse">
+
+      <wsdl:part name="downloadNewBornInoculateBatchGzReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateByIdNewRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="nebo_id" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childInoculationControlResponse">
+
+      <wsdl:part name="childInoculationControlReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVaccCompletionReportRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDoseInfoChangeResponse">
+
+      <wsdl:part name="uploadDoseInfoChangeReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByCardNoResponse">
+
+      <wsdl:part name="downloadVaccByCardNoReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadEpiManagerVersionResponse">
+
+      <wsdl:part name="uploadEpiManagerVersionReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByNameResponse">
+
+      <wsdl:part name="downloadVaccByNameReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadPoIntensifyDetailListResponse">
+
+      <wsdl:part name="uploadPoIntensifyDetailListReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadSecondImmuReportFromCityRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildBResponse">
+
+      <wsdl:part name="queryChildBReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadMigrationChildNoResponse">
+
+      <wsdl:part name="downloadMigrationChildNoReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenH1N1_oldRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadTimeModifyRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByChildNoInside_15Response">
+
+      <wsdl:part name="downloadVaccByChildNoInside_15Return" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pushClientMessageToAppS1Request">
+
+      <wsdl:part name="date" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateNewResponse">
+
+      <wsdl:part name="downloadNewBornInoculateNewReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenDRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="noticeDownloadRequest">
+
+      <wsdl:part name="depaCode" type="xsd:string"/>
+
+      <wsdl:part name="date" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDigitalClinicInfosResponse">
+
+      <wsdl:part name="uploadDigitalClinicInfosReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenInfoDGResponse">
+
+      <wsdl:part name="uploadChildrenInfoDGReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateByIdNewResponse">
+
+      <wsdl:part name="downloadNewBornInoculateByIdNewReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByFarNameResponse">
+
+      <wsdl:part name="downloadVaccByFarNameReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadNewbornBackCommunalResponse">
+
+      <wsdl:part name="uploadNewbornBackCommunalReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenBatchRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateCommunalRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="motherName" type="xsd:string"/>
+
+      <wsdl:part name="newBornSex" type="xsd:string"/>
+
+      <wsdl:part name="newBornBirthDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenInfoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pushMessageInfoToAppsRequest">
+
+      <wsdl:part name="date" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadImmunizationResponse">
+
+      <wsdl:part name="downloadImmunizationReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVaccineReportDataRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="depaPassword" type="xsd:string"/>
+
+      <wsdl:part name="organCode" type="xsd:string"/>
+
+      <wsdl:part name="userPassword" type="xsd:string"/>
+
+      <wsdl:part name="user" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="notificationDownloadStateResponse">
+
+      <wsdl:part name="notificationDownloadStateReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadTimeModifyResponse">
+
+      <wsdl:part name="uploadTimeModifyReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildARequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getHighestLevelDepartmentResponse">
+
+      <wsdl:part name="getHighestLevelDepartmentReturn" type="tns1:Department"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenDResponse">
+
+      <wsdl:part name="queryChildrenDReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildrenCountResponse">
+
+      <wsdl:part name="downloadChildrenCountReturn" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildrenCountRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+      <wsdl:part name="downloadDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadEpiManagerVersionRequest">
+
+      <wsdl:part name="depaCode" type="xsd:string"/>
+
+      <wsdl:part name="version" type="xsd:string"/>
+
+      <wsdl:part name="upgradedate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateChildAttributiveRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childcode" type="xsd:string"/>
+
+      <wsdl:part name="chatCurdepartment" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornFJConditionRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="type" type="xsd:string"/>
+
+      <wsdl:part name="value" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateResponse">
+
+      <wsdl:part name="downloadNewBornInoculateReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadNewbornBackCommunalRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadClientBackupRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadSecondImmuReportFromCityResponse">
+
+      <wsdl:part name="uploadSecondImmuReportFromCityReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTransferResponse">
+
+      <wsdl:part name="downloadTransferReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVersionResponse">
+
+      <wsdl:part name="uploadVersionReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadNewbornBackCommunalGzResponse">
+
+      <wsdl:part name="uploadNewbornBackCommunalGzReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getServerDatetimeRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="pushClientMessageToAppSRequest">
+
+      <wsdl:part name="type" type="xsd:string"/>
+
+      <wsdl:part name="jsonData" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByFarNameRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childName" type="xsd:string"/>
+
+      <wsdl:part name="birthDay" type="xsd:string"/>
+
+      <wsdl:part name="sex" type="xsd:string"/>
+
+      <wsdl:part name="fatherName" type="xsd:string"/>
+
+      <wsdl:part name="regCountyCode" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryEmigratedChildrenRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadNewbornBackRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadBaseInfoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="dataType" type="xsd:string"/>
+
+      <wsdl:part name="lastUpdateTime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenInfoDGRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenInfoResponse">
+
+      <wsdl:part name="uploadChildrenInfoReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="checkPasswordRequest">
+
+      <wsdl:part name="str" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="notificationDownloadStateRequest">
+
+      <wsdl:part name="id" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDigitalClinicInfosRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByBirthNoResponse">
+
+      <wsdl:part name="downloadVaccByBirthNoReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByChildNoInside_15Request">
+
+      <wsdl:part name="acode" type="xsd:string"/>
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childNo" type="xsd:string"/>
+
+      <wsdl:part name="flag" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadInoculationRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="chil_id" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+      <wsdl:part name="downloadDatetime" type="xsd:string"/>
+
+      <wsdl:part name="stat" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildRepeatDeleteRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="delDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateByCardNoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="cardno" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadRoutineImmuTimesReportResponse">
+
+      <wsdl:part name="downloadRoutineImmuTimesReportReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccinationRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="maxDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateBatchRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTimeModifyRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="checkChildHereRequest">
+
+      <wsdl:part name="chil_code" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildrenResponse">
+
+      <wsdl:part name="downloadChildrenReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadRoutineImmuReportFromCityRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadMigrationChildNoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="immuDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadNewbornBackResponse">
+
+      <wsdl:part name="uploadNewbornBackReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenFRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+      <wsdl:part name="arg3" type="xsd:string"/>
+
+      <wsdl:part name="arg4" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadRoutineImmuReportRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenAResponse">
+
+      <wsdl:part name="queryChildrenAReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadRoutineImmuReportResponse">
+
+      <wsdl:part name="uploadRoutineImmuReportReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getHighestLevelDepartmentRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildRepeatLeaveRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="delDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenGRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByNameRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childName" type="xsd:string"/>
+
+      <wsdl:part name="birthDay" type="xsd:string"/>
+
+      <wsdl:part name="sex" type="xsd:string"/>
+
+      <wsdl:part name="motherName" type="xsd:string"/>
+
+      <wsdl:part name="regCountyCode" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenERequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenARequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+      <wsdl:part name="arg3" type="xsd:string"/>
+
+      <wsdl:part name="arg4" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="checkChildHereResponse">
+
+      <wsdl:part name="checkChildHereReturn" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadPoIntensifyInocReportRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="immigrateChildRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+      <wsdl:part name="arg3" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateByCardNoResponse">
+
+      <wsdl:part name="downloadNewBornInoculateByCardNoReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadTimeModifyResponse">
+
+      <wsdl:part name="downloadTimeModifyReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadClientSetRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pushClientMessageToAppS1Response">
+
+      <wsdl:part name="pushClientMessageToAppS1Return" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadReportAEFIResponse">
+
+      <wsdl:part name="uploadReportAEFIReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadSecondImmuReportResponse">
+
+      <wsdl:part name="uploadSecondImmuReportReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getChildrenCountRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="chil_birthday" type="xsd:string"/>
+
+      <wsdl:part name="chil_name" type="xsd:string"/>
+
+      <wsdl:part name="chil_sex" type="xsd:string"/>
+
+      <wsdl:part name="chil_mother" type="xsd:string"/>
+
+      <wsdl:part name="chil_father" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadPoIntensifyListReportRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadPoIntensifyInocReportResponse">
+
+      <wsdl:part name="uploadPoIntensifyInocReportReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadInoculationResponse">
+
+      <wsdl:part name="downloadInoculationReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildrenH1N1Response">
+
+      <wsdl:part name="uploadChildrenH1N1Return" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccinationResponse">
+
+      <wsdl:part name="downloadVaccinationReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadClientBackupResponse">
+
+      <wsdl:part name="uploadClientBackupReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDepartmentHabiaddressResponse">
+
+      <wsdl:part name="uploadDepartmentHabiaddressReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadMigrationFromCityRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+      <wsdl:part name="flag" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenResponse">
+
+      <wsdl:part name="queryChildrenReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornFJCommunalResponse">
+
+      <wsdl:part name="downloadNewBornFJCommunalReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenFResponse">
+
+      <wsdl:part name="queryChildrenFReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadSecondImmuReportRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVaccineReportDataResponse">
+
+      <wsdl:part name="uploadVaccineReportDataReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadDepartmentHabiaddressRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="uploadDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryEmigratedChildrenResponse">
+
+      <wsdl:part name="queryEmigratedChildrenReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenBatchResponse">
+
+      <wsdl:part name="queryChildrenBatchReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="ipvSetupResponse">
+
+      <wsdl:part name="ipvSetupReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pushChildResponse">
+
+      <wsdl:part name="pushChildReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVersionRequest">
+
+      <wsdl:part name="depaCode" type="xsd:string"/>
+
+      <wsdl:part name="version" type="xsd:string"/>
+
+      <wsdl:part name="upgradedate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="noticeDownloadResponse">
+
+      <wsdl:part name="noticeDownloadReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccCertiInspectionRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="maxDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByTicketnoResponse">
+
+      <wsdl:part name="downloadVaccByTicketnoReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="immigrateChildResponse">
+
+      <wsdl:part name="immigrateChildReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateCommunalResponse">
+
+      <wsdl:part name="downloadNewBornInoculateCommunalReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pushMessageInfoToAppsResponse">
+
+      <wsdl:part name="pushMessageInfoToAppsReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByChildIDResponse">
+
+      <wsdl:part name="downloadVaccByChildIDReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="checkPasswordResponse">
+
+      <wsdl:part name="checkPasswordReturn" type="xsd:boolean"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childlowbirthweightRequest">
+
+      <wsdl:part name="uploadDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildRepeatCodeResponse">
+
+      <wsdl:part name="downloadChildRepeatCodeReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccCertiInspectionResponse">
+
+      <wsdl:part name="downloadVaccCertiInspectionReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByChildIDRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childID" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="mainRequest">
+
+      <wsdl:part name="args" type="impl:ArrayOf_xsd_string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVaccinateRatioReportDataResponse">
+
+      <wsdl:part name="uploadVaccinateRatioReportDataReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenCResponse">
+
+      <wsdl:part name="queryChildrenCReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getChildrenCountResponse">
+
+      <wsdl:part name="getChildrenCountReturn" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByTicketnoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childTicketno" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childlowbirthweightResponse">
+
+      <wsdl:part name="childlowbirthweightReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildTransInfoResponse">
+
+      <wsdl:part name="uploadChildTransInfoReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childrenCountGetRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+      <wsdl:part name="downloadDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByBirthNoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="birthNo" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pushChildRequest">
+
+      <wsdl:part name="nebo_code_fy" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="genRandomNumRequest">
+
+      <wsdl:part name="pwd_len" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadChildTransInfoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildCResponse">
+
+      <wsdl:part name="queryChildCReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getServerDatetimeResponse">
+
+      <wsdl:part name="getServerDatetimeReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildRepeatLeaveResponse">
+
+      <wsdl:part name="downloadChildRepeatLeaveReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadRoutineImmuTimesReportRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadImmunizationRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="maxDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornFJConditionResponse">
+
+      <wsdl:part name="downloadNewBornFJConditionReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="bopvSetupResponse">
+
+      <wsdl:part name="bopvSetupReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="childrenCountGetResponse">
+
+      <wsdl:part name="childrenCountGetReturn" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryPiatsResponse">
+
+      <wsdl:part name="queryPiatsReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateNewRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="motherName" type="xsd:string"/>
+
+      <wsdl:part name="newBornSex" type="xsd:string"/>
+
+      <wsdl:part name="newBornBirthDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="pushClientMessageToAppSResponse">
+
+      <wsdl:part name="pushClientMessageToAppSReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadPoIntensifyDetailListRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="deleFlag" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="mainResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildBRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadChildrenRequest">
+
+      <wsdl:part name="username" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="chil_id" type="xsd:string"/>
+
+      <wsdl:part name="depCode" type="xsd:string"/>
+
+      <wsdl:part name="downloadDatetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildAResponse">
+
+      <wsdl:part name="queryChildAReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornFJCommunalRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="motherName" type="xsd:string"/>
+
+      <wsdl:part name="newBornSex" type="xsd:string"/>
+
+      <wsdl:part name="newBornBirthDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadDoseInfoChangeRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="info" type="xsd:base64Binary"/>
+
+      <wsdl:part name="uploadType" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadNewBornInoculateRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="motherName" type="xsd:string"/>
+
+      <wsdl:part name="newBornSex" type="xsd:string"/>
+
+      <wsdl:part name="newBornBirthDate" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenHRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadRoutineImmuTimesReportRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="datetime" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadVaccByChildNoRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="childNo" type="xsd:string"/>
+
+      <wsdl:part name="state" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="queryChildrenCRequest">
+
+      <wsdl:part name="departmentCode" type="xsd:string"/>
+
+      <wsdl:part name="password" type="xsd:string"/>
+
+      <wsdl:part name="arg1" type="xsd:string"/>
+
+      <wsdl:part name="arg2" type="xsd:string"/>
+
+      <wsdl:part name="arg3" type="xsd:string"/>
+
+      <wsdl:part name="arg4" type="xsd:string"/>
+
+      <wsdl:part name="arg5" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="downloadClientSetResponse">
+
+      <wsdl:part name="downloadClientSetReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadBaseInfoResponse">
+
+      <wsdl:part name="uploadBaseInfoReturn" type="xsd:base64Binary"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="uploadVaccCompletionReportResponse">
+
+      <wsdl:part name="uploadVaccCompletionReportReturn" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="ServiceChild">
+
+      <wsdl:operation name="downloadChildrenCount" parameterOrder="username password depCode downloadDatetime">
+
+         <wsdl:input message="impl:downloadChildrenCountRequest" name="downloadChildrenCountRequest"/>
+
+         <wsdl:output message="impl:downloadChildrenCountResponse" name="downloadChildrenCountResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildren" parameterOrder="username password chil_id depCode downloadDatetime">
+
+         <wsdl:input message="impl:downloadChildrenRequest" name="downloadChildrenRequest"/>
+
+         <wsdl:output message="impl:downloadChildrenResponse" name="downloadChildrenResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadTransfer" parameterOrder="username password depCode downloadDatetime">
+
+         <wsdl:input message="impl:downloadTransferRequest" name="downloadTransferRequest"/>
+
+         <wsdl:output message="impl:downloadTransferResponse" name="downloadTransferResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadInoculation" parameterOrder="username password chil_id depCode downloadDatetime stat">
+
+         <wsdl:input message="impl:downloadInoculationRequest" name="downloadInoculationRequest"/>
+
+         <wsdl:output message="impl:downloadInoculationResponse" name="downloadInoculationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadTimeModify" parameterOrder="username password depCode">
+
+         <wsdl:input message="impl:downloadTimeModifyRequest" name="downloadTimeModifyRequest"/>
+
+         <wsdl:output message="impl:downloadTimeModifyResponse" name="downloadTimeModifyResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadTimeModify" parameterOrder="username password depCode">
+
+         <wsdl:input message="impl:uploadTimeModifyRequest" name="uploadTimeModifyRequest"/>
+
+         <wsdl:output message="impl:uploadTimeModifyResponse" name="uploadTimeModifyResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenH1N1_old" parameterOrder="username password info">
+
+         <wsdl:input message="impl:uploadChildrenH1N1_oldRequest" name="uploadChildrenH1N1_oldRequest"/>
+
+         <wsdl:output message="impl:uploadChildrenH1N1_oldResponse" name="uploadChildrenH1N1_oldResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenH1N1" parameterOrder="depacode password info">
+
+         <wsdl:input message="impl:uploadChildrenH1N1Request" name="uploadChildrenH1N1Request"/>
+
+         <wsdl:output message="impl:uploadChildrenH1N1Response" name="uploadChildrenH1N1Response"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenInfo" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadChildrenInfoRequest" name="uploadChildrenInfoRequest"/>
+
+         <wsdl:output message="impl:uploadChildrenInfoResponse" name="uploadChildrenInfoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenInfoDG" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadChildrenInfoDGRequest" name="uploadChildrenInfoDGRequest"/>
+
+         <wsdl:output message="impl:uploadChildrenInfoDGResponse" name="uploadChildrenInfoDGResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getChildrenCount" parameterOrder="username password chil_birthday chil_name chil_sex chil_mother chil_father">
+
+         <wsdl:input message="impl:getChildrenCountRequest" name="getChildrenCountRequest"/>
+
+         <wsdl:output message="impl:getChildrenCountResponse" name="getChildrenCountResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childrenCountGet" parameterOrder="username password depCode downloadDatetime">
+
+         <wsdl:input message="impl:childrenCountGetRequest" name="childrenCountGetRequest"/>
+
+         <wsdl:output message="impl:childrenCountGetResponse" name="childrenCountGetResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childrenDownload" parameterOrder="username password chil_id depCode downloadDatetime">
+
+         <wsdl:input message="impl:childrenDownloadRequest" name="childrenDownloadRequest"/>
+
+         <wsdl:output message="impl:childrenDownloadResponse" name="childrenDownloadResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDepartmentHabiaddress" parameterOrder="departmentCode password uploadDate">
+
+         <wsdl:input message="impl:downloadDepartmentHabiaddressRequest" name="downloadDepartmentHabiaddressRequest"/>
+
+         <wsdl:output message="impl:downloadDepartmentHabiaddressResponse" name="downloadDepartmentHabiaddressResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadPoIntensifyListReport" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadPoIntensifyListReportRequest" name="uploadPoIntensifyListReportRequest"/>
+
+         <wsdl:output message="impl:uploadPoIntensifyListReportResponse" name="uploadPoIntensifyListReportResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadPoIntensifyInocReport" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadPoIntensifyInocReportRequest" name="uploadPoIntensifyInocReportRequest"/>
+
+         <wsdl:output message="impl:uploadPoIntensifyInocReportResponse" name="uploadPoIntensifyInocReportResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadPoIntensifyDetailList" parameterOrder="departmentCode password deleFlag info">
+
+         <wsdl:input message="impl:uploadPoIntensifyDetailListRequest" name="uploadPoIntensifyDetailListRequest"/>
+
+         <wsdl:output message="impl:uploadPoIntensifyDetailListResponse" name="uploadPoIntensifyDetailListResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadImmunization" parameterOrder="departmentCode password maxDatetime">
+
+         <wsdl:input message="impl:downloadImmunizationRequest" name="downloadImmunizationRequest"/>
+
+         <wsdl:output message="impl:downloadImmunizationResponse" name="downloadImmunizationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateCommunal" parameterOrder="departmentCode password motherName newBornSex newBornBirthDate">
+
+         <wsdl:input message="impl:downloadNewBornInoculateCommunalRequest" name="downloadNewBornInoculateCommunalRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornInoculateCommunalResponse" name="downloadNewBornInoculateCommunalResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadNewbornBackCommunal" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadNewbornBackCommunalRequest" name="uploadNewbornBackCommunalRequest"/>
+
+         <wsdl:output message="impl:uploadNewbornBackCommunalResponse" name="uploadNewbornBackCommunalResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornFJCommunal" parameterOrder="departmentCode password motherName newBornSex newBornBirthDate">
+
+         <wsdl:input message="impl:downloadNewBornFJCommunalRequest" name="downloadNewBornFJCommunalRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornFJCommunalResponse" name="downloadNewBornFJCommunalResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateChildAttributive" parameterOrder="departmentCode password childcode chatCurdepartment">
+
+         <wsdl:input message="impl:updateChildAttributiveRequest" name="updateChildAttributiveRequest"/>
+
+         <wsdl:output message="impl:updateChildAttributiveResponse" name="updateChildAttributiveResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildRepeatLeave" parameterOrder="departmentCode password delDate">
+
+         <wsdl:input message="impl:downloadChildRepeatLeaveRequest" name="downloadChildRepeatLeaveRequest"/>
+
+         <wsdl:output message="impl:downloadChildRepeatLeaveResponse" name="downloadChildRepeatLeaveResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDepartmentHabiaddress" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadDepartmentHabiaddressRequest" name="uploadDepartmentHabiaddressRequest"/>
+
+         <wsdl:output message="impl:uploadDepartmentHabiaddressResponse" name="uploadDepartmentHabiaddressResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByChildNoInside_15" parameterOrder="acode departmentCode password childNo flag">
+
+         <wsdl:input message="impl:downloadVaccByChildNoInside_15Request" name="downloadVaccByChildNoInside_15Request"/>
+
+         <wsdl:output message="impl:downloadVaccByChildNoInside_15Response" name="downloadVaccByChildNoInside_15Response"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByTicketno" parameterOrder="departmentCode password childTicketno">
+
+         <wsdl:input message="impl:downloadVaccByTicketnoRequest" name="downloadVaccByTicketnoRequest"/>
+
+         <wsdl:output message="impl:downloadVaccByTicketnoResponse" name="downloadVaccByTicketnoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornFJCondition" parameterOrder="departmentCode password type value">
+
+         <wsdl:input message="impl:downloadNewBornFJConditionRequest" name="downloadNewBornFJConditionRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornFJConditionResponse" name="downloadNewBornFJConditionResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushClientMessageToAppS1" parameterOrder="date">
+
+         <wsdl:input message="impl:pushClientMessageToAppS1Request" name="pushClientMessageToAppS1Request"/>
+
+         <wsdl:output message="impl:pushClientMessageToAppS1Response" name="pushClientMessageToAppS1Response"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVersion" parameterOrder="depaCode version upgradedate">
+
+         <wsdl:input message="impl:uploadVersionRequest" name="uploadVersionRequest"/>
+
+         <wsdl:output message="impl:uploadVersionResponse" name="uploadVersionResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccCertiInspection" parameterOrder="departmentCode password maxDatetime">
+
+         <wsdl:input message="impl:downloadVaccCertiInspectionRequest" name="downloadVaccCertiInspectionRequest"/>
+
+         <wsdl:output message="impl:downloadVaccCertiInspectionResponse" name="downloadVaccCertiInspectionResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="checkChildHere" parameterOrder="chil_code">
+
+         <wsdl:input message="impl:checkChildHereRequest" name="checkChildHereRequest"/>
+
+         <wsdl:output message="impl:checkChildHereResponse" name="checkChildHereResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadCaseReportData" parameterOrder="departmentCode depaPassword organCode userPassword user arg1 arg2">
+
+         <wsdl:input message="impl:uploadCaseReportDataRequest" name="uploadCaseReportDataRequest"/>
+
+         <wsdl:output message="impl:uploadCaseReportDataResponse" name="uploadCaseReportDataResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVaccineReportData" parameterOrder="departmentCode depaPassword organCode userPassword user arg1 arg2">
+
+         <wsdl:input message="impl:uploadVaccineReportDataRequest" name="uploadVaccineReportDataRequest"/>
+
+         <wsdl:output message="impl:uploadVaccineReportDataResponse" name="uploadVaccineReportDataResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVaccinateRatioReportData" parameterOrder="departmentCode depaPassword organCode userPassword user arg1 arg2">
+
+         <wsdl:input message="impl:uploadVaccinateRatioReportDataRequest" name="uploadVaccinateRatioReportDataRequest"/>
+
+         <wsdl:output message="impl:uploadVaccinateRatioReportDataResponse" name="uploadVaccinateRatioReportDataResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="immigrateChild" parameterOrder="departmentCode password arg1 arg2 arg3">
+
+         <wsdl:input message="impl:immigrateChildRequest" name="immigrateChildRequest"/>
+
+         <wsdl:output message="impl:immigrateChildResponse" name="immigrateChildResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildA" parameterOrder="departmentCode password arg1">
+
+         <wsdl:input message="impl:queryChildARequest" name="queryChildARequest"/>
+
+         <wsdl:output message="impl:queryChildAResponse" name="queryChildAResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildB" parameterOrder="departmentCode password arg1 arg2">
+
+         <wsdl:input message="impl:queryChildBRequest" name="queryChildBRequest"/>
+
+         <wsdl:output message="impl:queryChildBResponse" name="queryChildBResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildC" parameterOrder="departmentCode password arg1">
+
+         <wsdl:input message="impl:queryChildCRequest" name="queryChildCRequest"/>
+
+         <wsdl:output message="impl:queryChildCResponse" name="queryChildCResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildren" parameterOrder="departmentCode password arg1">
+
+         <wsdl:input message="impl:queryChildrenRequest" name="queryChildrenRequest"/>
+
+         <wsdl:output message="impl:queryChildrenResponse" name="queryChildrenResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenA" parameterOrder="departmentCode password arg1 arg2 arg3 arg4">
+
+         <wsdl:input message="impl:queryChildrenARequest" name="queryChildrenARequest"/>
+
+         <wsdl:output message="impl:queryChildrenAResponse" name="queryChildrenAResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenB" parameterOrder="departmentCode password arg1 arg2 arg3 arg4">
+
+         <wsdl:input message="impl:queryChildrenBRequest" name="queryChildrenBRequest"/>
+
+         <wsdl:output message="impl:queryChildrenBResponse" name="queryChildrenBResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenBatch" parameterOrder="departmentCode password arg1">
+
+         <wsdl:input message="impl:queryChildrenBatchRequest" name="queryChildrenBatchRequest"/>
+
+         <wsdl:output message="impl:queryChildrenBatchResponse" name="queryChildrenBatchResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenC" parameterOrder="departmentCode password arg1 arg2 arg3 arg4 arg5">
+
+         <wsdl:input message="impl:queryChildrenCRequest" name="queryChildrenCRequest"/>
+
+         <wsdl:output message="impl:queryChildrenCResponse" name="queryChildrenCResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenD" parameterOrder="departmentCode password arg1 arg2">
+
+         <wsdl:input message="impl:queryChildrenDRequest" name="queryChildrenDRequest"/>
+
+         <wsdl:output message="impl:queryChildrenDResponse" name="queryChildrenDResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenE" parameterOrder="departmentCode password arg1 arg2">
+
+         <wsdl:input message="impl:queryChildrenERequest" name="queryChildrenERequest"/>
+
+         <wsdl:output message="impl:queryChildrenEResponse" name="queryChildrenEResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenF" parameterOrder="departmentCode password arg1 arg2 arg3 arg4">
+
+         <wsdl:input message="impl:queryChildrenFRequest" name="queryChildrenFRequest"/>
+
+         <wsdl:output message="impl:queryChildrenFResponse" name="queryChildrenFResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenG" parameterOrder="departmentCode password arg1 arg2">
+
+         <wsdl:input message="impl:queryChildrenGRequest" name="queryChildrenGRequest"/>
+
+         <wsdl:output message="impl:queryChildrenGResponse" name="queryChildrenGResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenH" parameterOrder="departmentCode password arg1">
+
+         <wsdl:input message="impl:queryChildrenHRequest" name="queryChildrenHRequest"/>
+
+         <wsdl:output message="impl:queryChildrenHResponse" name="queryChildrenHResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPiats" parameterOrder="departmentCode password arg1">
+
+         <wsdl:input message="impl:queryPiatsRequest" name="queryPiatsRequest"/>
+
+         <wsdl:output message="impl:queryPiatsResponse" name="queryPiatsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushMessageInfoToApps" parameterOrder="date">
+
+         <wsdl:input message="impl:pushMessageInfoToAppsRequest" name="pushMessageInfoToAppsRequest"/>
+
+         <wsdl:output message="impl:pushMessageInfoToAppsResponse" name="pushMessageInfoToAppsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushClientMessageToAppS" parameterOrder="type jsonData">
+
+         <wsdl:input message="impl:pushClientMessageToAppSRequest" name="pushClientMessageToAppSRequest"/>
+
+         <wsdl:output message="impl:pushClientMessageToAppSResponse" name="pushClientMessageToAppSResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="ipvSetup" parameterOrder="date">
+
+         <wsdl:input message="impl:ipvSetupRequest" name="ipvSetupRequest"/>
+
+         <wsdl:output message="impl:ipvSetupResponse" name="ipvSetupResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="bopvSetup" parameterOrder="date">
+
+         <wsdl:input message="impl:bopvSetupRequest" name="bopvSetupRequest"/>
+
+         <wsdl:output message="impl:bopvSetupResponse" name="bopvSetupResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="noticeDownload" parameterOrder="depaCode date">
+
+         <wsdl:input message="impl:noticeDownloadRequest" name="noticeDownloadRequest"/>
+
+         <wsdl:output message="impl:noticeDownloadResponse" name="noticeDownloadResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="notificationDownloadState" parameterOrder="id">
+
+         <wsdl:input message="impl:notificationDownloadStateRequest" name="notificationDownloadStateRequest"/>
+
+         <wsdl:output message="impl:notificationDownloadStateResponse" name="notificationDownloadStateResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadBaseInfo" parameterOrder="departmentCode password dataType lastUpdateTime">
+
+         <wsdl:input message="impl:uploadBaseInfoRequest" name="uploadBaseInfoRequest"/>
+
+         <wsdl:output message="impl:uploadBaseInfoResponse" name="uploadBaseInfoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushChild" parameterOrder="nebo_code_fy">
+
+         <wsdl:input message="impl:pushChildRequest" name="pushChildRequest"/>
+
+         <wsdl:output message="impl:pushChildResponse" name="pushChildResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDigitalClinicInfos" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadDigitalClinicInfosRequest" name="uploadDigitalClinicInfosRequest"/>
+
+         <wsdl:output message="impl:uploadDigitalClinicInfosResponse" name="uploadDigitalClinicInfosResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDoseInfoChange" parameterOrder="departmentCode password info uploadType">
+
+         <wsdl:input message="impl:uploadDoseInfoChangeRequest" name="uploadDoseInfoChangeRequest"/>
+
+         <wsdl:output message="impl:uploadDoseInfoChangeResponse" name="uploadDoseInfoChangeResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childInoculationControl" parameterOrder="updateDate">
+
+         <wsdl:input message="impl:childInoculationControlRequest" name="childInoculationControlRequest"/>
+
+         <wsdl:output message="impl:childInoculationControlResponse" name="childInoculationControlResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadEpiManagerVersion" parameterOrder="depaCode version upgradedate">
+
+         <wsdl:input message="impl:uploadEpiManagerVersionRequest" name="uploadEpiManagerVersionRequest"/>
+
+         <wsdl:output message="impl:uploadEpiManagerVersionResponse" name="uploadEpiManagerVersionResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateBatchGz" parameterOrder="departmentCode password">
+
+         <wsdl:input message="impl:downloadNewBornInoculateBatchGzRequest" name="downloadNewBornInoculateBatchGzRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornInoculateBatchGzResponse" name="downloadNewBornInoculateBatchGzResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadNewbornBackCommunalGz" parameterOrder="departmentCode password nebo_id nebo_downmac nebo_downtype">
+
+         <wsdl:input message="impl:uploadNewbornBackCommunalGzRequest" name="uploadNewbornBackCommunalGzRequest"/>
+
+         <wsdl:output message="impl:uploadNewbornBackCommunalGzResponse" name="uploadNewbornBackCommunalGzResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childlowbirthweight" parameterOrder="uploadDate">
+
+         <wsdl:input message="impl:childlowbirthweightRequest" name="childlowbirthweightRequest"/>
+
+         <wsdl:output message="impl:childlowbirthweightResponse" name="childlowbirthweightResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccination" parameterOrder="departmentCode password maxDatetime">
+
+         <wsdl:input message="impl:downloadVaccinationRequest" name="downloadVaccinationRequest"/>
+
+         <wsdl:output message="impl:downloadVaccinationResponse" name="downloadVaccinationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByCardNo" parameterOrder="departmentCode password childCardno">
+
+         <wsdl:input message="impl:downloadVaccByCardNoRequest" name="downloadVaccByCardNoRequest"/>
+
+         <wsdl:output message="impl:downloadVaccByCardNoResponse" name="downloadVaccByCardNoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadClientSet" parameterOrder="departmentCode password">
+
+         <wsdl:input message="impl:downloadClientSetRequest" name="downloadClientSetRequest"/>
+
+         <wsdl:output message="impl:downloadClientSetResponse" name="downloadClientSetResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildRepeatCode" parameterOrder="departmentCode password delDate">
+
+         <wsdl:input message="impl:downloadChildRepeatCodeRequest" name="downloadChildRepeatCodeRequest"/>
+
+         <wsdl:output message="impl:downloadChildRepeatCodeResponse" name="downloadChildRepeatCodeResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculate" parameterOrder="departmentCode password motherName newBornSex newBornBirthDate">
+
+         <wsdl:input message="impl:downloadNewBornInoculateRequest" name="downloadNewBornInoculateRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornInoculateResponse" name="downloadNewBornInoculateResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateNew" parameterOrder="departmentCode password motherName newBornSex newBornBirthDate">
+
+         <wsdl:input message="impl:downloadNewBornInoculateNewRequest" name="downloadNewBornInoculateNewRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornInoculateNewResponse" name="downloadNewBornInoculateNewResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateByIdNew" parameterOrder="departmentCode password nebo_id">
+
+         <wsdl:input message="impl:downloadNewBornInoculateByIdNewRequest" name="downloadNewBornInoculateByIdNewRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornInoculateByIdNewResponse" name="downloadNewBornInoculateByIdNewResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateByCardNo" parameterOrder="departmentCode password cardno">
+
+         <wsdl:input message="impl:downloadNewBornInoculateByCardNoRequest" name="downloadNewBornInoculateByCardNoRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornInoculateByCardNoResponse" name="downloadNewBornInoculateByCardNoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateBatch" parameterOrder="departmentCode password">
+
+         <wsdl:input message="impl:downloadNewBornInoculateBatchRequest" name="downloadNewBornInoculateBatchRequest"/>
+
+         <wsdl:output message="impl:downloadNewBornInoculateBatchResponse" name="downloadNewBornInoculateBatchResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadNewbornBack" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadNewbornBackRequest" name="uploadNewbornBackRequest"/>
+
+         <wsdl:output message="impl:uploadNewbornBackResponse" name="uploadNewbornBackResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadReportAEFI" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadReportAEFIRequest" name="uploadReportAEFIRequest"/>
+
+         <wsdl:output message="impl:uploadReportAEFIResponse" name="uploadReportAEFIResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVaccCompletionReport" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadVaccCompletionReportRequest" name="uploadVaccCompletionReportRequest"/>
+
+         <wsdl:output message="impl:uploadVaccCompletionReportResponse" name="uploadVaccCompletionReportResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadRoutineImmuTimesReport" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadRoutineImmuTimesReportRequest" name="uploadRoutineImmuTimesReportRequest"/>
+
+         <wsdl:output message="impl:uploadRoutineImmuTimesReportResponse" name="uploadRoutineImmuTimesReportResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadRoutineImmuTimesReport" parameterOrder="departmentCode password datetime">
+
+         <wsdl:input message="impl:downloadRoutineImmuTimesReportRequest" name="downloadRoutineImmuTimesReportRequest"/>
+
+         <wsdl:output message="impl:downloadRoutineImmuTimesReportResponse" name="downloadRoutineImmuTimesReportResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getServerDatetime">
+
+         <wsdl:input message="impl:getServerDatetimeRequest" name="getServerDatetimeRequest"/>
+
+         <wsdl:output message="impl:getServerDatetimeResponse" name="getServerDatetimeResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadMigrationFromCity" parameterOrder="departmentCode password info flag">
+
+         <wsdl:input message="impl:uploadMigrationFromCityRequest" name="uploadMigrationFromCityRequest"/>
+
+         <wsdl:output message="impl:uploadMigrationFromCityResponse" name="uploadMigrationFromCityResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadRoutineImmuReportFromCity" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadRoutineImmuReportFromCityRequest" name="uploadRoutineImmuReportFromCityRequest"/>
+
+         <wsdl:output message="impl:uploadRoutineImmuReportFromCityResponse" name="uploadRoutineImmuReportFromCityResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadSecondImmuReportFromCity" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadSecondImmuReportFromCityRequest" name="uploadSecondImmuReportFromCityRequest"/>
+
+         <wsdl:output message="impl:uploadSecondImmuReportFromCityResponse" name="uploadSecondImmuReportFromCityResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildTransInfo" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadChildTransInfoRequest" name="uploadChildTransInfoRequest"/>
+
+         <wsdl:output message="impl:uploadChildTransInfoResponse" name="uploadChildTransInfoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadMigrationChildNo" parameterOrder="departmentCode password immuDate">
+
+         <wsdl:input message="impl:downloadMigrationChildNoRequest" name="downloadMigrationChildNoRequest"/>
+
+         <wsdl:output message="impl:downloadMigrationChildNoResponse" name="downloadMigrationChildNoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByChildNo" parameterOrder="departmentCode password childNo state">
+
+         <wsdl:input message="impl:downloadVaccByChildNoRequest" name="downloadVaccByChildNoRequest"/>
+
+         <wsdl:output message="impl:downloadVaccByChildNoResponse" name="downloadVaccByChildNoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadRoutineImmuReport" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadRoutineImmuReportRequest" name="uploadRoutineImmuReportRequest"/>
+
+         <wsdl:output message="impl:uploadRoutineImmuReportResponse" name="uploadRoutineImmuReportResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadClientBackup" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadClientBackupRequest" name="uploadClientBackupRequest"/>
+
+         <wsdl:output message="impl:uploadClientBackupResponse" name="uploadClientBackupResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadSecondImmuReport" parameterOrder="departmentCode password info">
+
+         <wsdl:input message="impl:uploadSecondImmuReportRequest" name="uploadSecondImmuReportRequest"/>
+
+         <wsdl:output message="impl:uploadSecondImmuReportResponse" name="uploadSecondImmuReportResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryEmigratedChildren" parameterOrder="departmentCode password arg1 arg2">
+
+         <wsdl:input message="impl:queryEmigratedChildrenRequest" name="queryEmigratedChildrenRequest"/>
+
+         <wsdl:output message="impl:queryEmigratedChildrenResponse" name="queryEmigratedChildrenResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildRepeatDelete" parameterOrder="departmentCode password delDate">
+
+         <wsdl:input message="impl:downloadChildRepeatDeleteRequest" name="downloadChildRepeatDeleteRequest"/>
+
+         <wsdl:output message="impl:downloadChildRepeatDeleteResponse" name="downloadChildRepeatDeleteResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getServerDatetimeNew" parameterOrder="departmentCode password">
+
+         <wsdl:input message="impl:getServerDatetimeNewRequest" name="getServerDatetimeNewRequest"/>
+
+         <wsdl:output message="impl:getServerDatetimeNewResponse" name="getServerDatetimeNewResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByName" parameterOrder="departmentCode password childName birthDay sex motherName regCountyCode">
+
+         <wsdl:input message="impl:downloadVaccByNameRequest" name="downloadVaccByNameRequest"/>
+
+         <wsdl:output message="impl:downloadVaccByNameResponse" name="downloadVaccByNameResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByFarName" parameterOrder="departmentCode password childName birthDay sex fatherName regCountyCode">
+
+         <wsdl:input message="impl:downloadVaccByFarNameRequest" name="downloadVaccByFarNameRequest"/>
+
+         <wsdl:output message="impl:downloadVaccByFarNameResponse" name="downloadVaccByFarNameResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByChildID" parameterOrder="departmentCode password childID">
+
+         <wsdl:input message="impl:downloadVaccByChildIDRequest" name="downloadVaccByChildIDRequest"/>
+
+         <wsdl:output message="impl:downloadVaccByChildIDResponse" name="downloadVaccByChildIDResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByBirthNo" parameterOrder="departmentCode password birthNo">
+
+         <wsdl:input message="impl:downloadVaccByBirthNoRequest" name="downloadVaccByBirthNoRequest"/>
+
+         <wsdl:output message="impl:downloadVaccByBirthNoResponse" name="downloadVaccByBirthNoResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="main" parameterOrder="args">
+
+         <wsdl:input message="impl:mainRequest" name="mainRequest"/>
+
+         <wsdl:output message="impl:mainResponse" name="mainResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getHighestLevelDepartment">
+
+         <wsdl:input message="impl:getHighestLevelDepartmentRequest" name="getHighestLevelDepartmentRequest"/>
+
+         <wsdl:output message="impl:getHighestLevelDepartmentResponse" name="getHighestLevelDepartmentResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="checkPassword" parameterOrder="str">
+
+         <wsdl:input message="impl:checkPasswordRequest" name="checkPasswordRequest"/>
+
+         <wsdl:output message="impl:checkPasswordResponse" name="checkPasswordResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="genRandomNum" parameterOrder="pwd_len">
+
+         <wsdl:input message="impl:genRandomNumRequest" name="genRandomNumRequest"/>
+
+         <wsdl:output message="impl:genRandomNumResponse" name="genRandomNumResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="ChildServiceSoapBinding" type="impl:ServiceChild">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="downloadChildrenCount">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadChildrenCountRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadChildrenCountResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildren">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadChildrenRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadChildrenResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadTransfer">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadTransferRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadTransferResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadInoculation">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadInoculationRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadInoculationResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadTimeModify">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadTimeModifyRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadTimeModifyResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadTimeModify">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadTimeModifyRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadTimeModifyResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenH1N1_old">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadChildrenH1N1_oldRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadChildrenH1N1_oldResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenH1N1">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadChildrenH1N1Request">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadChildrenH1N1Response">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenInfo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadChildrenInfoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadChildrenInfoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildrenInfoDG">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadChildrenInfoDGRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadChildrenInfoDGResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getChildrenCount">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getChildrenCountRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getChildrenCountResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childrenCountGet">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="childrenCountGetRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="childrenCountGetResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childrenDownload">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="childrenDownloadRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="childrenDownloadResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadDepartmentHabiaddress">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadDepartmentHabiaddressRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadDepartmentHabiaddressResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadPoIntensifyListReport">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadPoIntensifyListReportRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadPoIntensifyListReportResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadPoIntensifyInocReport">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadPoIntensifyInocReportRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadPoIntensifyInocReportResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadPoIntensifyDetailList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadPoIntensifyDetailListRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadPoIntensifyDetailListResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadImmunization">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadImmunizationRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadImmunizationResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateCommunal">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornInoculateCommunalRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornInoculateCommunalResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadNewbornBackCommunal">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadNewbornBackCommunalRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadNewbornBackCommunalResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornFJCommunal">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornFJCommunalRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornFJCommunalResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="updateChildAttributive">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateChildAttributiveRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateChildAttributiveResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildRepeatLeave">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadChildRepeatLeaveRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadChildRepeatLeaveResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDepartmentHabiaddress">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadDepartmentHabiaddressRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadDepartmentHabiaddressResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByChildNoInside_15">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByChildNoInside_15Request">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByChildNoInside_15Response">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByTicketno">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByTicketnoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByTicketnoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornFJCondition">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornFJConditionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornFJConditionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushClientMessageToAppS1">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="pushClientMessageToAppS1Request">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="pushClientMessageToAppS1Response">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVersion">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadVersionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadVersionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccCertiInspection">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccCertiInspectionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccCertiInspectionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="checkChildHere">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="checkChildHereRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="checkChildHereResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadCaseReportData">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadCaseReportDataRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadCaseReportDataResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVaccineReportData">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadVaccineReportDataRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadVaccineReportDataResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVaccinateRatioReportData">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadVaccinateRatioReportDataRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadVaccinateRatioReportDataResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="immigrateChild">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="immigrateChildRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="immigrateChildResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildA">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildARequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildAResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildB">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildBRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildBResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildC">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildCRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildCResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildren">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenA">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenARequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenAResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenB">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenBRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenBResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenBatch">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenBatchRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenBatchResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenC">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenCRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenCResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenD">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenDRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenDResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenE">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenERequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenEResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenF">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenFRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenFResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenG">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenGRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenGResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryChildrenH">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryChildrenHRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryChildrenHResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryPiats">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryPiatsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryPiatsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushMessageInfoToApps">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="pushMessageInfoToAppsRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="pushMessageInfoToAppsResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushClientMessageToAppS">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="pushClientMessageToAppSRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="pushClientMessageToAppSResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="ipvSetup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="ipvSetupRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="ipvSetupResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="bopvSetup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="bopvSetupRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="bopvSetupResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="noticeDownload">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="noticeDownloadRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="noticeDownloadResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="notificationDownloadState">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="notificationDownloadStateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="notificationDownloadStateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadBaseInfo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadBaseInfoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadBaseInfoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="pushChild">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="pushChildRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="pushChildResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDigitalClinicInfos">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadDigitalClinicInfosRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadDigitalClinicInfosResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadDoseInfoChange">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadDoseInfoChangeRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadDoseInfoChangeResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childInoculationControl">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="childInoculationControlRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="childInoculationControlResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadEpiManagerVersion">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadEpiManagerVersionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadEpiManagerVersionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateBatchGz">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornInoculateBatchGzRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornInoculateBatchGzResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadNewbornBackCommunalGz">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadNewbornBackCommunalGzRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadNewbornBackCommunalGzResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="childlowbirthweight">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="childlowbirthweightRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="childlowbirthweightResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccination">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccinationRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccinationResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByCardNo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByCardNoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByCardNoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadClientSet">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadClientSetRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadClientSetResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildRepeatCode">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadChildRepeatCodeRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadChildRepeatCodeResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculate">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornInoculateRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornInoculateResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateNew">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornInoculateNewRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornInoculateNewResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateByIdNew">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornInoculateByIdNewRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornInoculateByIdNewResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateByCardNo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornInoculateByCardNoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornInoculateByCardNoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadNewBornInoculateBatch">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadNewBornInoculateBatchRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadNewBornInoculateBatchResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadNewbornBack">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadNewbornBackRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadNewbornBackResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadReportAEFI">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadReportAEFIRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadReportAEFIResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadVaccCompletionReport">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadVaccCompletionReportRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadVaccCompletionReportResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadRoutineImmuTimesReport">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadRoutineImmuTimesReportRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadRoutineImmuTimesReportResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadRoutineImmuTimesReport">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadRoutineImmuTimesReportRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadRoutineImmuTimesReportResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getServerDatetime">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getServerDatetimeRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getServerDatetimeResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadMigrationFromCity">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadMigrationFromCityRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadMigrationFromCityResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadRoutineImmuReportFromCity">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadRoutineImmuReportFromCityRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadRoutineImmuReportFromCityResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadSecondImmuReportFromCity">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadSecondImmuReportFromCityRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadSecondImmuReportFromCityResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadChildTransInfo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadChildTransInfoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadChildTransInfoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadMigrationChildNo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadMigrationChildNoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadMigrationChildNoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByChildNo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByChildNoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByChildNoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadRoutineImmuReport">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadRoutineImmuReportRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadRoutineImmuReportResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadClientBackup">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadClientBackupRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadClientBackupResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="uploadSecondImmuReport">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="uploadSecondImmuReportRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="uploadSecondImmuReportResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="queryEmigratedChildren">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="queryEmigratedChildrenRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="queryEmigratedChildrenResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadChildRepeatDelete">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadChildRepeatDeleteRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadChildRepeatDeleteResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getServerDatetimeNew">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getServerDatetimeNewRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getServerDatetimeNewResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByName">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByNameRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByNameResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByFarName">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByFarNameRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByFarNameResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByChildID">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByChildIDRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByChildIDResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="downloadVaccByBirthNo">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="downloadVaccByBirthNoRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="downloadVaccByBirthNoResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="main">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="mainRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="mainResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getHighestLevelDepartment">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getHighestLevelDepartmentRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getHighestLevelDepartmentResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="checkPassword">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="checkPasswordRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="checkPasswordResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="genRandomNum">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="genRandomNumRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://webservices.web.vaccine.nipm.jwx.com" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="genRandomNumResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://222.85.149.105:7001/vaccine/services/ChildService" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="ServiceChildService">
+
+      <wsdl:port binding="impl:ChildServiceSoapBinding" name="ChildService">
+
+         <wsdlsoap:address location="http://222.85.149.105:7001/vaccine/services/ChildService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>疫苗使用情况6-1详情</title>
+    #parse("sys/header.html")
+    <link rel="stylesheet" href="../statics/plugins/layui/css/layui.css" media="all" />
+    <script type="text/javascript" src="../statics/plugins/layui/layui.js"></script>
+    <script type="application/javascript">
+        var orgId="$shiro.getBaseInfo('orgId')";
+    </script>
+    <style>
+        /*设置jqGrid头部行高度，启用多行后头部高度不够*/
+        .ui-jqgrid .ui-jqgrid-htable .ui-th-div{
+            height: 22px;
+        }
+        /*隐藏jqGrid底部滚动条*/
+        .ui-jqgrid .ui-jqgrid-bdiv{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div class="row" style="padding: 15px 0 0 15px;">
+        <form class="form-inline">
+           <!-- <div class="form-group">
+                &lt;!&ndash;<label class="col-sm-4 control-label" for="queryNian">查询年份:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="layui-input" id="queryNian" placeholder="请选择年">
+                </div>&ndash;&gt;
+                查询年份:
+                <input type="text" id="yearDate" class="form-control" placeholder="请选择年">
+            </div>
+            <div class="form-group">
+                月份:
+                <select class="selectpicker" id="monthDate" name="month">
+                    <option value="01">一月</option>
+                    <option value="02">二月</option>
+                    <option value="03">三月</option>
+                    <option value="04">四月</option>
+                    <option value="05">五月</option>
+                    <option value="06">六月</option>
+                    <option value="07">七月</option>
+                    <option value="08">八月</option>
+                    <option value="09">九月</option>
+                    <option value="10">十月</option>
+                    <option value="11">十一月</option>
+                    <option value="12">十二月</option>
+                </select>
+            </div>-->
+
+            <div class="form-group">
+                <label>开始时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="yearDate">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;&nbsp;结束时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="monthDate">
+            </div>
+            <button type="button" class="btn btn-warning" @click="query">
+                <span class="glyphicon glyphicon-search" ></span>&nbsp;&nbsp;查询
+            </button>
+            <button type="button" class="btn btn-info" @click="excel">
+                <span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;导出
+            </button>
+            <button type="button" class="btn btn-info" @click="print">
+                <span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;打印
+            </button>
+        </form>
+    </div>
+
+    <div class="row" style="margin-top:20px;padding: 0px 0px 0px 0px;">
+        <table class="table" id="vacc_use_report_detail6-1">
+
+        </table>
+        <div id="vacc_use_report_detail6-1Pager"></div>
+    </div>
+</div>
+<script src="${rc.contextPath}/statics/js/statistics/vacc_use_report_detail6-1.js?_${date.systemTime}"></script>
+</body>
+</html>

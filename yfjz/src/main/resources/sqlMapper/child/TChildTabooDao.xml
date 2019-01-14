@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.TChildTabooDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildTabooEntity">
+		select * from t_child_taboo where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildTabooEntity">
+		select
+		taboo.`id`,
+		taboo.`chil_code`,
+		dict.text as `ista_code` ,
+		vac.bio_cn_sortname as `ista_bio_code` ,
+		`ista_check_date`,
+		taboo.`create_user_name`,
+		taboo.`create_user_id`,
+		taboo.`delete_status`,
+		taboo.`create_time`,
+		taboo.`update_time`,
+		taboo.remark,
+		taboo.type,
+		taboo.syncstatus,
+		taboo.delete_status,
+		taboo.status
+		from t_child_taboo taboo
+		left join t_vac_info vac on vac.bio_code = taboo.ista_bio_code
+		left join sys_dict dict on dict.ttype='code_avoid' and dict.value = taboo.ista_code
+		<where>
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=(select chil_code from  t_child_info where chil_name=#{chilCode}) and taboo.delete_status = 0
+			</if>
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=#{chilCode} and taboo.delete_status = 0
+			</if>
+
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_taboo
+		<where>
+
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=(select chil_code from  t_child_info where chil_name=#{chilCode}) and delete_status = 0
+			</if>
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=#{chilCode} and delete_status = 0
+			</if>
+		</where>
+	</select>
+	<!--禁忌For上传-->
+	<select id="findIstabus" parameterType="string" resultType="Map">
+		SELECT id,chil_code,
+		CASE WHEN ista_code is null THEN '' else ista_code END as ista_code
+		from t_child_taboo
+		WHERE chil_code = #{childCode} and `type` = 0 and syncstatus = 0 and  delete_status = 0
+	</select>
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildTabooEntity">
+		insert into t_child_taboo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+						<if test="chilCode != null">`chil_code` , </if>
+					<if test="istaCode != null">`ista_code` , </if>
+					<if test="istaBioCode != null">`ista_bio_code` , </if>
+					<if test="istaCheckDate != null">`ista_check_date` , </if>
+					<if test="type != null">`type` , </if>
+					<if test="syncstatus != null">`syncstatus` , </if>
+					<if test="status != null">`status` , </if>
+					<if test="createUserId != null">`create_user_id` , </if>
+					<if test="createUserName != null">`create_user_name` , </if>
+					<if test="createTime != null">`create_time` , </if>
+					<if test="remark != null">`remark` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						<if test="chilCode != null">#{chilCode} , </if>
+					<if test="istaCode != null">#{istaCode} , </if>
+					<if test="istaBioCode != null">#{istaBioCode} , </if>
+					<if test="istaCheckDate != null">#{istaCheckDate} , </if>
+					<if test="type != null">#{type} , </if>
+					<if test="syncstatus != null">#{syncstatus} , </if>
+					<if test="status != null">#{status} , </if>
+					<if test="createUserId != null">#{createUserId} , </if>
+					<if test="createUserName != null">#{createUserName} , </if>
+					<if test="createTime != null">#{createTime} , </if>
+					<if test="remark != null">#{remark} </if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.child.TChildTabooEntity">
+		update t_child_taboo 
+		<set>
+			<if test="chilCode != null">`chil_code` = #{chilCode}, </if>
+			<if test="istaCode != null">`ista_code` = #{istaCode}, </if>
+			<if test="istaBioCode != null">`ista_bio_code` = #{istaBioCode}, </if>
+			<if test="istaCheckDate != null">`ista_check_date` = #{istaCheckDate}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="syncstatus != null">`syncstatus` = #{syncstatus}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserName != null">`create_user_name` = #{createUserName}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="remark != null">`remark` = #{remark}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_taboo where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_taboo where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

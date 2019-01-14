@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.basesetting.TVacInfoDao">
+
+    <!-- 可根据自己需要-->
+    <sql id="allColumnsAlias">
+		bio_code as bioCode ,bio_name as bioName ,bio_class_id as bioClassId ,bio_type as bioType ,bio_cn_sortname as bioCnSortname ,bio_en_sortname as bioEnSortname ,pinyin_initials as pinyinInitials ,status as status ,create_time as createTime
+	</sql>
+    <!-- 可根据自己需要-->
+    <sql id="allColumns">
+		bio_code ,bio_name ,bio_class_id ,bio_type,bio_spec_id,bio_cn_sortname ,bio_en_sortname ,pinyin_initials ,status ,create_time
+	</sql>
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yfjz.entity.basesetting.TVacInfoEntity" id="tVacInfoMap">
+        <result property="bioCode" column="bio_code"/>
+        <result property="bioName" column="bio_name"/>
+        <result property="bioClassId" column="bio_class_id"/>
+        <result property="bioType" column="bio_type"/>
+        <result property="bioSpecId" column="bio_spec_id"/>
+        <result property="bioCnSortname" column="bio_cn_sortname"/>
+        <result property="bioEnSortname" column="bio_en_sortname"/>
+        <result property="pinyinInitials" column="pinyin_initials"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="io.yfjz.entity.basesetting.TVacInfoEntity">
+        select <include refid="allColumns"></include> from t_vac_info where bio_code = #{value}
+    </select>
+
+    <select id="queryList" resultType="io.yfjz.entity.basesetting.TVacInfoEntity">
+        select <include refid="allColumns"></include> from t_vac_info
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by bio_code
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from t_vac_info
+	</select>
+    <select id="getAllVaccine" resultType="io.yfjz.entity.basesetting.TVacInfoEntity">
+        select * from t_vac_info where delete_status=0 order by bio_code
+    </select>
+    <select id="queryListByType" resultType="io.yfjz.entity.basesetting.TVacInfoEntity">
+        select info.* from t_vac_info info where info.bio_code
+        <choose>
+            <when test="type!=null and type!=''">
+                not in
+            </when>
+            <otherwise>
+                in
+            </otherwise>
+        </choose>
+        ( select vaccine_id from t_mgr_vaccine_workbench
+        <where>
+            <if test="posId!=null and posId!=''">
+                and workbench_id=#{posId}
+            </if>
+            <if test="orgId!=null and orgId!=''">
+                and org_id=#{orgId}
+            </if>
+        </where>
+        )
+        order by bio_code
+    </select>
+
+    <insert id="save" parameterType="io.yfjz.entity.basesetting.TVacInfoEntity">
+        insert into t_vac_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            `bio_code`,
+            <if test="bioName != null">`bio_name` , </if>
+            <if test="bioClassId != null">`bio_class_id` , </if>
+            <if test="bioType != null">`bio_type` , </if>
+            <if test="bioSpecId != null">`bio_spec_id` , </if>
+            <if test="bioCnSortname != null">`bio_cn_sortname` , </if>
+            <if test="bioEnSortname != null">`bio_en_sortname` , </if>
+            <if test="bioPhoneticize != null">`bio_phoneticize` , </if>
+            <if test="status != null">`status` , </if>
+            <if test="createTime != null">`create_time` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            uuid(),
+            <if test="bioName != null">#{bioName} , </if>
+            <if test="bioClassId != null">#{bioClassId} , </if>
+            <if test="bioType != null">#{bioType} , </if>
+            <if test="bioSpecId != null">#{bioSpecId} , </if>
+            <if test="bioCnSortname != null">#{bioCnSortname} , </if>
+            <if test="bioEnSortname != null">#{bioEnSortname} , </if>
+            <if test="bioPhoneticize != null">#{bioPhoneticize} , </if>
+            <if test="status != null">#{status} , </if>
+            <if test="createTime != null">#{createTime} </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.basesetting.TVacInfoEntity">
+        update t_vac_info
+        <set>
+            <if test="bioName != null">`bio_name` = #{bioName}, </if>
+            <if test="bioClassId != null">`bio_class_id` = #{bioClassId}, </if>
+            <if test="bioType != null">`bio_type` = #{bioType}, </if>
+            <if test="bioSpecId != null">`bio_spec_id`=#{bioSpecId} , </if>
+            <if test="bioCnSortname != null">`bio_cn_sortname` = #{bioCnSortname}, </if>
+            <if test="bioEnSortname != null">`bio_en_sortname` = #{bioEnSortname}, </if>
+            <if test="bioPhoneticize != null">`bio_phoneticize` = #{bioPhoneticize}, </if>
+            <if test="status != null">`status` = #{status}, </if>
+            <if test="createTime != null">`create_time` = #{createTime}</if>
+        </set>
+        where bio_code = #{bioCode}
+    </update>
+
+    <delete id="delete">
+		delete from t_vac_info where bio_code = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from t_vac_info where bio_code in
+        <foreach item="bioCode" collection="array" open="(" separator="," close=")">
+            #{bioCode}
+        </foreach>
+    </delete>
+
+</mapper>

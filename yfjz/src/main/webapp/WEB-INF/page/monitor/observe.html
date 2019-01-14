@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>留观</title>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <style>
+        html,body,.container {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .row {
+            width: 100%;
+            font-size: 0;
+            text-align: center;
+        }
+        .row-items {
+            box-sizing: border-box;
+            vertical-align: top;
+            width: 33.333333333%;
+            font-size: 30px;
+            color: red;
+        }
+        .items-top {
+            font-size: 30px;
+        }
+        .green {
+            color: #22cd44;
+        }
+        .items-top {
+            padding: 35px 0 20px 0;
+        }
+        .item-content {
+            position: relative;
+            box-sizing: border-box;
+            min-height: 500px;
+            padding-bottom: 60px;
+            border: 1px solid red;
+
+        }
+        .num-wrap {
+            position: absolute;
+            left: 0;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+<body>
+<div id="observe">
+    <div class="container">
+        <div class="row">
+            <div class="row-items">
+                <p class="items-top">留观队列</p>
+                <div class="item-content">
+                    <div class="clearfix mt30" v-for="item in observeList">
+                        <span class="name green fl ml30">{{item.childName}}</span>
+                        <span class="order green">{{item.noText}}</span>
+                        <span class="pos fr mr30">{{item.count|countDown}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+<script src="${rc.contextPath}/statics/libs/vue.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/sockjs.min.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/libs/stomp.min.js?_${date.systemTime}"></script>
+<script>
+    Vue.filter("countDown",function(count){
+        var min,sec;
+        if(count == 0){
+            return "留观完成！"
+        }else{
+            min = Math.floor(count/60)<10?'0'+Math.floor(count/60):Math.floor(count/60);
+            sec = count % 60 < 10?'0'+count % 60:count % 60;
+        }
+        return min +":"+ sec;
+    });
+
+    var Vm = new Vue({
+        self:this,
+        el:'#observe',
+        data:{
+            observeList:[],
+            type:"observe",
+            host:'',
+            client:undefined
+
+        },
+        methods:{
+            init:function(host){
+                if(this.client && this.client.connected){
+                    return;
+                }
+                var client=Stomp.client(host);
+                client.connect({},host,this.connected_cb,this.disconnect_cb);
+                return client;
+            },
+            //连接成功的回调函数
+            connected_cb:function(frame){
+                this.subscribe(this.type)
+            },
+            //失去连接或连接失败的回调
+            disconnect_cb:function(){
+                this.client = null;
+                this.client = this.init(this.host,this.type,this.user);
+            },
+            //订阅
+            subscribe:function(topic){
+                this.client.subscribe('/topic/yfjz.'+topic,this.onMessage,{});
+            },
+            //消息处理
+            onMessage:function(frame){
+                var self = this;
+                var msg = JSON.parse(frame.body);
+                switch (msg.action){
+                    case "CREATE":
+                        msg.count = 1800;
+                        self.observeList.push(msg);
+                        break;
+                    default:
+                        break;
+                }
+            },
+        },
+        mounted:function(){
+            var self = this;
+            this.client = this.init("ws://"+window.location.host.split(":")[0]+":61616",">")
+            window.setInterval(function(){
+                self.observeList.forEach(function(item){
+                    if(item.count>0)item.count--;
+                })
+
+            },1000)
+        }
+
+    })
+</script>
+</html>

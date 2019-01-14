@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.bus.TBusEvaluateDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.bus.TBusEvaluateEntity">
+		select * from t_bus_evaluate where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.bus.TBusEvaluateEntity">
+		select * from t_bus_evaluate 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_bus_evaluate 
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.bus.TBusEvaluateEntity">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select uuid()
+        </selectKey>
+        insert into t_bus_evaluate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+`id`,
+<if test="fkDoctorId != null and fkDoctorId  != ''">`fk_doctor_id` , </if>
+<if test="evaluateType != null">`evaluate_type`  , </if>
+<if test="status != null">`status`  , </if>
+<if test="createTime != null">`create_time`  , </if>
+<if test="orgid != null and orgid  != ''">`orgid` , </if>
+<if test="fkChildCode != null and fkChildCode  != ''">`fk_child_code` </if>
+<if test="towerId != null and towerId  != ''">`tower_id` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#{id},
+<if test="fkDoctorId != null and fkDoctorId  != ''">#{fkDoctorId} , </if>
+<if test="evaluateType != null">#{evaluateType} , </if>
+<if test="status != null">#{status} , </if>
+<if test="createTime != null">#{createTime} , </if>
+<if test="orgid != null and orgid  != ''">#{orgid} , </if>
+<if test="fkChildCode != null and fkChildCode  != ''">#{fkChildCode} </if>
+<if test="towerId != null and towerId  != ''">#{towerId} </if>
+	</trim>
+    </insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.bus.TBusEvaluateEntity">
+		update t_bus_evaluate 
+		<set>
+	<if test="fkDoctorId != null and fkDoctorId  != ''">`fk_doctor_id` = #{fkDoctorId}, </if>
+	<if test="evaluateType != null">`evaluate_type` = #{evaluateType} , </if>
+	<if test="status != null">`status` = #{status} , </if>
+	<if test="createTime != null">`create_time` = #{createTime} , </if>
+	<if test="orgid != null and orgid  != ''">`orgid` = #{orgid}, </if>
+	<if test="fkChildCode != null and fkChildCode  != ''">`fk_child_code` = #{fkChildCode}</if>
+	<if test="towerId != null and towerId  != ''">`tower_id` = #{towerId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_bus_evaluate where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_bus_evaluate where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

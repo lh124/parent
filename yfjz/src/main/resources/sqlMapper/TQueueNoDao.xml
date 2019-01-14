@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.queue.TQueueNoDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select * from t_queue_no where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select * from t_queue_no 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_queue_no 
+	</select>
+	<!--查询当日取号总数-->
+	<select id="queryTodayTotal" resultType="int">
+		select count(*) from t_queue_no where create_time > CURRENT_DATE
+	</select>
+	<!--邓召仕添加：根据工作台当前查询排队人总数-->
+	<select id="queryTodayTotalByPosition" resultType="int">
+		select count(*) from t_queue_no where create_time > CURRENT_DATE AND position =#{position}
+	</select>
+	<!--查询属于当前桌台的号码，position为空的也属于当前桌台-->
+	<select id="getOwnQueueList" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select * from t_queue_no where step = #{step} and (position is null or position =#{position}) and status = 0 and create_time > CURRENT_DATE ORDER BY create_time ASC
+	</select>
+	<!--查询属于当前桌台的延迟号码，position为空的也属于当前桌台-->
+	<select id="getOwnDelayQueueList" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select * from t_queue_no where step = #{step} and (position is null or position =#{position}) and status = 1 and create_time > CURRENT_DATE ORDER BY create_time ASC
+	</select>
+	<!--查询当前步骤的未处理号码，position为空的也属于当前桌台-->
+	<select id="getStepQueueList" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		select * from t_queue_no where step = #{step} <!--and position is null--> and status <![CDATA[ <> ]]> '-1' and create_time > CURRENT_DATE ORDER BY status,create_time ASC
+	</select>
+	<!--获取本次登记疫苗-->
+	<select id="getRegisterVaccine" resultType="String">
+		select vac.bio_cn_sortname from t_bus_register reg,t_vac_info vac where reg.fk_vaccine_code=vac.bio_code and reg.create_time > CURRENT_DATE and reg.fk_child_code = #{childCode}
+	</select>
+    <!--获取本次登记疫苗编码集合-->
+	<select id="getRegisterVaccineIds" resultType="String">
+		select vac.bio_code from t_bus_register reg,t_vac_info vac where reg.fk_vaccine_code=vac.bio_code and reg.create_time > CURRENT_DATE and reg.fk_child_code = #{childCode}
+	</select>
+	<select id="queryTodayWaitingNum" resultType="int">
+		select count(*) from t_queue_no where create_time > CURRENT_DATE and step = 'register' and position is null
+	</select>
+	<update id="updateChildCode">
+		update t_queue_no
+		<set>
+			<if test="childCode != null and childCode  != ''">`child_code` = #{childCode}, </if>
+			<if test="childName != null and childName  != ''">`child_name` = #{childName}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<insert id="save" parameterType="io.yfjz.entity.queue.TQueueNoEntity">
+		<selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+			select uuid()
+		</selectKey>
+		insert into t_queue_no
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="no != null">`no` ,</if>
+			<if test="noText != null and noText  != ''">`no_text` ,</if>
+			<if test="type != null">`type` ,</if>
+			<if test="childCode != null and childCode  != ''">`child_code` ,</if>
+			<if test="childName != null and childName  != ''">`child_name` ,</if>
+			<if test="createTime != null">`create_time` ,</if>
+			<if test="step != null and step  != ''">`step` ,</if>
+			<if test="position != null and position  != ''">`position` ,</if>
+			<if test="status != null">`status`</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{id},
+			<if test="no != null">#{no} ,</if>
+			<if test="noText != null and noText  != ''">#{noText} ,</if>
+			<if test="type != null">#{type} ,</if>
+			<if test="childCode != null and childCode  != ''">#{childCode} ,</if>
+			<if test="childName != null and childName  != ''">#{childName} ,</if>
+			<if test="createTime != null">#{createTime} ,</if>
+			<if test="step != null and step  != ''">#{step} ,</if>
+			<if test="position != null and position  != ''">#{position} ,</if>
+			<if test="status != null">#{status}</if>
+		</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.queue.TQueueNoEntity">
+		update t_queue_no 
+		<set>
+	        <if test="no != null">`no` = #{no} , </if>
+		        <if test="noText != null and noText  != ''">`no_text` = #{noText}, </if>
+		        <if test="type != null">`type` = #{type} , </if>
+		        <if test="childCode != null and childCode  != ''">`child_code` = #{childCode}, </if>
+		        <if test="childName != null and childName  != ''">`child_name` = #{childName}, </if>
+		        <if test="createTime != null">`create_time` = #{createTime} , </if>
+		        <if test="step != null and step  != ''">`step` = #{step}, </if>
+		        <if test="position != null and position  != ''">`position` = #{position}, </if>
+				<if test="position == null">`position` = null, </if>
+		        <if test="status != null">`status` = #{status} </if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_queue_no where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_queue_no where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	<!--正在留观儿童-->
+	<select id="getObserveNo" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+		SELECT
+		no_text,
+		child_name,
+		1800 - (
+				UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(
+					(SELECT
+						operate_time
+					FROM
+						t_queue_no_operate
+					WHERE
+						fk_queue_no_id = qno.id
+					AND operate_type = 'FINISH'
+					ORDER BY operate_time DESC LIMIT 1)
+				)
+		) AS status
+		FROM
+		t_queue_no qno
+		WHERE
+		TO_DAYS(NOW()) = TO_DAYS(create_time)
+		AND step = 'observe'
+		AND (
+			SELECT
+			round(
+			(
+				UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(
+					(SELECT
+					operate_time
+					FROM
+					t_queue_no_operate
+					WHERE
+					fk_queue_no_id = qno.id
+					AND operate_type = 'FINISH'
+					ORDER BY operate_time DESC LIMIT 1)
+					)
+			) / 60
+			)
+		) <![CDATA[ <= ]]> 30;
+	</select>
+</mapper>

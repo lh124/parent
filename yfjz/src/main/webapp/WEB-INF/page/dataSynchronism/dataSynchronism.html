@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据同步</title>
+    #parse("sys/header.html")
+    <script src="${rc.contextPath}/statics/js/jquery-ui-jqLoding.js" type="text/javascript"></script>
+    <script>
+        var orgId = "$shiro.getBaseInfo('orgId')";
+        var orgName = "$shiro.getBaseInfo('orgName')";
+        var userName = "$shiro.getBaseInfo('userName')";
+    </script>
+    <style>
+        #syncTable a{
+            font-size: 20px;
+            float: left;
+        }
+    </style>
+</head>
+<body style="padding:10px 10px;">
+        <div class="panel panel-success" style="display: none;">
+            <div class="panel-heading">
+                <h3 class="panel-title">根据表同步数据</h3>
+            </div>
+            <div class="panel-body" style="height: 200px;">
+                <div class="col-sm-9">
+                    <form class="form-horizontal" role="form" style="width: 100%;">
+                        <div class="form-group">
+                            <label for="tableName" class="col-sm-1 control-label" style="padding-top: 5px;">表名：</label>
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control" id="tableName" placeholder="请输入表名">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label for="tableWhere" class="col-sm-1 control-label" style="padding-top: 5px;">查询条件：</label>
+                            <div class="col-sm-11">
+                                <input type="text" class="form-control" id="tableWhere" placeholder="请输查询条件">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-3">
+                    <button type="submit" class="btn btn-success" onclick="updateTableData()">同步数据</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">同步全表数据</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-success" onclick="updateFullData()">同步数据</button>
+                </div>
+                <div class="col-md-11">
+                    <h4 class="col-md-2">同步表有：</h4>
+                    <div class="col-md-10" id="syncTable">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-success" style="display: none;">
+            <div class="panel-heading">
+                <h3 class="panel-title">上传行政村和学校数据到平台</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-success" onclick="uploadingPlatformData()">上传数据到平台</button>
+                </div>
+            </div>
+        </div>
+
+<script>
+    $(function(){
+
+
+
+
+    })
+
+    function updateTableData(){
+        var tableName = $("#tableName").val();
+        var tableWhere = $("#tableWhere").val();
+        var json;
+
+        if(tableName == null || tableName.trim() == ""){
+            alert("表名不能为空！");
+            return false;
+        }
+        //Ewin.alert('请选择有效数据');
+        if(!isJSON(tableWhere) && tableWhere != null && tableWhere.trim() != ""){
+            alert("不是JSON字符串！");
+            return false;
+        }else if(tableWhere == null || tableWhere.trim() == ""){
+            json = {tableName:tableName};
+        }else if(isJSON(tableWhere)){
+            var json = JSON.parse(tableWhere);
+            json["tableName"] = tableName;
+        }
+
+       $(this).jqLoading({width: 300, text: "正在同步数据当中，请耐心等待...." });
+        $.ajax({
+            url:'../webService/updateTableData',
+            data:json,
+            type:"POST",
+            dataType:"JSON",
+            timeout:1000*60*2,
+            success:function(data){
+                $.fn.jqLoading("destroy");
+                if(data.code != 200){
+                    alert(data.msg);
+                }else{
+                    alert("同步表 \""+tableName+"\" 数据成功！");
+                }
+            },
+            error:function(){
+                $.fn.jqLoading("destroy");
+                alert("同步表 \""+tableName+"\" 数据失败！，请联系管理员");
+            }
+        });
+    }
+
+    function updateFullData(){
+        $(this).jqLoading({width: 300, text: "正在同步数据当中，请耐心等待...." });
+        $.ajax({
+            url:'../webService/updateFullData',
+            data:{},
+            type:"POST",
+            dataType:"JSON",
+            timeout:1000*60*10,
+            success:function(data){
+                $.fn.jqLoading("destroy");
+                if(data.code != 200){
+                    alert(data.msg);
+                }else{
+                    var table = data.table;
+                    var html = "";
+                    for(var i in table){
+                        if(isJSON(table[i])){
+                            var jsonTable = JSON.parse(table[i]);
+                            for(var key in jsonTable){
+                                if(jsonTable[key].code == 10001){
+                                    html += "<a>&nbsp"+key+"&nbsp(没有最新数据)</a>";
+                                }else{
+                                    html += "<a style='color: red;'>&nbsp"+key+"(表数据同步失败提示："+jsonTable[key].code+")&nbsp</a>";
+                                }
+                            }
+
+                        }else{
+                            html += "<a>&nbsp"+table[i]+"&nbsp</a>";
+                        }
+                    }
+                    $("#syncTable p").html(html);
+                    alert(data.msg);
+                }
+            },
+            error:function(){
+                $.fn.jqLoading("destroy");
+                alert("同步数据失败！，请联系管理员");
+            }
+        });
+    }
+
+    //判断是不是JSON字符串
+    function isJSON(str) {
+        if (typeof str == 'string') {
+            try {
+                var obj=JSON.parse(str);
+                if(typeof obj == 'object' && obj ){
+                    return true;
+                }else{
+                    return false;
+                }
+
+            } catch(e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    function uploadingPlatformData(){
+        $(this).jqLoading({width: 300, text: "正在上传数据当中，请耐心等待...." });
+        $.ajax({
+            url:'../webService/updatePlatform',
+            data:{},
+            type:"POST",
+            dataType:"JSON",
+            //timeout:1000*60*10,
+            success:function(data){
+                $.fn.jqLoading("destroy");
+                if(data.result.code == 0){
+                    alert(data.result.msg);
+                }else{
+                    alert(data.result.msg);
+                }
+            },
+            error:function(){
+                $.fn.jqLoading("destroy");
+                alert("同步数据失败！，请联系管理员");
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.bus.ReceiveDao">
+
+    <select id="queryStockList" resultType="hashmap">
+        select info.id,info.fk_store_id as storeId,
+        base.product_name as productName,
+        base.id as baseId,base.batchnum,
+        base.factory_name as factoryName,
+        (select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) as dosenorm,
+        (select text from sys_dict where ttype='code_drug' AND value=base.drug) as drug,
+        (select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) as doseminUnitCode,
+        info.amount,
+        base.price,DATE_FORMAT( base.expiry_date ,'%Y-%m-%d') as expiryDate,
+        info.person_amount as personAmount,
+        base.conversion,
+        base.lot_release as lotRelease,
+        base.license_number as licenseNumber,
+        store.`name` as storeName,
+        base.type,
+        equip.`name` as equipmentName,
+        equip.id as equipId
+        from t_mgr_stock_info info
+        left join t_mgr_stock_base base on info.fk_base_info=base.id
+        left join t_mgr_store store on info.fk_store_id=store.id
+        left join t_mgr_equipment equip on info.fk_equipment_id=equip.id
+        <include refid="whereBase"/>
+        ORDER BY base.type,base.fk_vaccine_code
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryStockTotal" resultType="int">
+        select count(info.id) from t_mgr_stock_info info
+        left join t_mgr_stock_base base on info.fk_base_info=base.id
+        left join t_mgr_store store on info.fk_store_id=store.id
+        left join t_mgr_equipment equip on info.fk_equipment_id=equip.id
+        <include refid="whereBase"/>
+    </select>
+
+    <sql id="whereBase">
+        <where>
+            store.ttype=0  and base.status=0
+            <![CDATA[ and to_days(base.expiry_date) > to_days(now()) ]]>
+            <if test="searchProductName != null and searchProductName!=-1 ">
+                AND  base.fk_vaccine_code=#{searchProductName}
+            </if>
+            <if test="searchFactoryName != null and searchFactoryName!=-1 ">
+                AND  base.factory_id=#{searchFactoryName}
+            </if>
+            <if test="searchBatch != null">
+                AND  base.batchnum like concat('%',#{searchBatch},'%')
+            </if>
+            <if test="searchDate != null">
+                AND  base.expiry_date &lt;= #{searchDate}
+            </if>
+            <if test="searchType != null">
+                AND  base.`type` = #{searchType}
+            </if>
+            <if test="storeId != null">
+                AND  info.fk_store_id = #{storeId}
+            </if>
+            <if test="type!=null and type!=''">
+                AND info.person_amount>0
+            </if>
+            <if test="vacList!=null">
+                AND base.fk_vaccine_code IN
+                <foreach collection="vacList" open="(" close=")" item="item" separator="," >
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+    <select id="queryBindVac" resultType="string">
+          select vaccine_id from t_mgr_vaccine_workbench where workbench_id=#{towerId}
+    </select>
+    <select id="queryReceiveList" resultType="map">
+        select info.id,info.fk_store_id as storeId,base.product_name as productName,base.fk_vaccine_code as bioCode,base.id as baseId,base.batchnum,base.factory_name as factoryName,info.amount,base.dosenorm,base.drug,base.dosemin_unit_code as doseminUnitCode,base.price,DATE_FORMAT( base.expiry_date ,'%Y-%m-%d') as
+        expiryDate,info.person_amount as personAmount,info.receive_amount as receiveAmount,base.conversion,base.lot_release as lotRelease,base.license_number as licenseNumber,store.`name` as storeName,base.type,equip.`name` as equipmentName,equip.id as equipId
+        from t_mgr_stock_info info
+        left join t_mgr_stock_base base on info.fk_base_info=base.id
+        left join t_mgr_store store on info.fk_store_id=store.id
+        left join t_mgr_equipment equip on info.fk_equipment_id=equip.id
+        <where>
+           base.status=0 AND  <![CDATA[  to_days(base.expiry_date) > to_days(now()) ]]>
+            <if test="storeId!=null and storeId!=''">
+               and info.fk_store_id=#{storeId}
+            </if>
+            <if test="type!=null and type!=''">
+                and info.person_amount>0
+            </if>
+        </where>
+        ORDER BY base.type,base.fk_vaccine_code
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryReceiveListTotal" resultType="int">
+        select count(*)
+        from t_mgr_stock_info info
+        left join t_mgr_stock_base base on info.fk_base_info=base.id
+        left join t_mgr_store store on info.fk_store_id=store.id
+        left join t_mgr_equipment equip on info.fk_equipment_id=equip.id
+        <where>
+            base.status=0 AND  <![CDATA[  to_days(base.expiry_date) > to_days(now()) ]]>
+            <if test="storeId!=null and storeId!=''">
+                and info.fk_store_id=#{storeId}
+            </if>
+            <if test="type!=null and type!=''">
+                and info.person_amount>0
+            </if>
+        </where>
+    </select>
+    <select id="queryBatchNum" resultType="map">
+        		SELECT
+                    DISTINCT
+        			factory_name factoryName,
+					factory_id factoryCode,
+                    base.batchnum,
+                    if(base.price>0,0,1) ismf,
+                    DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+                    base.channel,
+                    base.inoculation_site site
+                FROM
+                    t_mgr_stock_info info
+                    JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+                WHERE
+                    <choose>
+                        <when test="type=='remove'">
+                            fk_store_id = #{inStoreId}  and base.status=0
+                            AND base.fk_vaccine_code = #{code}
+                            AND TO_DAYS( base.expiry_date ) > TO_DAYS( NOW( ) )
+                            AND info.person_amount>0
+                        </when>
+                        <otherwise>
+                            base.fk_vaccine_code = #{code}
+                        </otherwise>
+                    </choose>
+
+                ORDER BY
+                    base.expiry_date
+    </select>
+    <select id="queryReceiveListByExcel" resultType="map">
+
+        select
+            base.product_name AS productName,
+            base.fk_vaccine_code AS bioCode,
+            base.batchnum,
+            base.factory_name AS factoryName,
+            info.amount,
+            (select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) dosenorm,
+            (select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) unitCode,
+            base.conversion,
+            base.price,
+            DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+            info.person_amount AS personAmount,
+            base.lot_release AS lotRelease,
+            base.license_number AS licenseNumber
+        from t_mgr_stock_info info
+        left join t_mgr_stock_base base on info.fk_base_info=base.id
+        left join t_mgr_store store on info.fk_store_id=store.id
+        left join t_mgr_equipment equip on info.fk_equipment_id=equip.id
+        <where>
+            base.status=0 AND  <![CDATA[  to_days(base.expiry_date) > to_days(now()) ]]>
+            <if test="storeId!=null and storeId!=''">
+                and info.fk_store_id=#{storeId}
+            </if>
+            <if test="type!=null">
+                and info.person_amount>0
+            </if>
+        </where>
+        ORDER BY base.type,base.fk_vaccine_code
+    </select>
+    <select id="queryOtherBatchNum" resultType="map">
+        SELECT
+            factory_name factoryName,
+            factory_id factoryCode,
+            base.batchnum,
+        IF
+            ( base.price > 0, 0, 1 ) ismf,
+            DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+           	tower.tower_name towerName,
+	        store.id storeId
+        FROM
+            t_mgr_stock_info info
+            JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+             join t_mgr_store store on info.fk_store_id=store.id
+             join t_base_tower tower on store.pos_id=tower.id
+        WHERE
+            fk_store_id not in (#{inStoreId})  and base.status=0
+
+            AND base.fk_vaccine_code = #{code}
+            and store.ttype=1
+            AND TO_DAYS( base.expiry_date ) > TO_DAYS( NOW( ) )
+            AND info.person_amount > 0
+        ORDER BY
+        base.expiry_date
+    </select>
+</mapper>

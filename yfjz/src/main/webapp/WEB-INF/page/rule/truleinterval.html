@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>计划针剂间隔表</title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			#if($shiro.hasPermission("truleinterval:save"))
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			#end
+			#if($shiro.hasPermission("truleinterval:update"))
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			#end
+			#if($shiro.hasPermission("truleinterval:delete"))
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			#end
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">需间隔剂次规划字典表ID</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleInterval.sourceClassId" placeholder="需间隔剂次规划字典表ID"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">需间隔剂次</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleInterval.sourceTimes" placeholder="需间隔剂次"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">与谁间隔的目标剂次字典表ID（参照表classid）</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleInterval.targetClassId" placeholder="与谁间隔的目标剂次字典表ID（参照表classid）"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">需间隔目标剂次，0代表所有剂次</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleInterval.targetTimes" placeholder="需间隔目标剂次，0代表所有剂次"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">间隔自然月</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleInterval.intervalMonth" placeholder="间隔自然月"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">间隔自然日</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tRuleInterval.intervalDay" placeholder="间隔自然日"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/rule/truleinterval.js?_${date.systemTime}"></script>
+</body>
+</html>

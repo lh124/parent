@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.yfjz.dao.sys.SysDictDao">
+    <select id="queryObject" resultType="io.yfjz.entity.sys.SysDictEntity">
+		select * from sys_dict where id = #{id}
+	</select>
+
+    <select id="queryList" parameterType="map" resultType="io.yfjz.entity.sys.SysDictEntity">
+        select * from sys_dict
+        where `status`=0
+            <if test="ttype != null and ttype != ''">
+                and `ttype` like concat('%',#{ttype},'%')
+            </if>
+            <if test="text != null and text != ''">
+                and `text` like concat('%',#{text},'%')
+            </if>
+              order by sort_order
+            <if test="offset != null and limit != null">
+                limit #{offset}, #{limit}
+            </if>
+        order by sort_order
+    </select>
+
+    <!--接种界面初始化公共数据，缓存到界面vue对象-->
+    <select id="queryMapList" resultType="io.yfjz.entity.sys.SysDictEntity">
+        select * from sys_dict
+        where  `status`=0
+        and ttype = #{ttype}
+        ORDER BY sort_order
+    </select>
+
+    <select id="queryListName" resultType="io.yfjz.entity.sys.SysDictEntity" >
+        select  * from sys_dict where `value`=#{value} and ttype=#{ttype} and `status`=0 ORDER BY sort_order
+
+    </select>
+
+    <select id="queryTotal" parameterType="map" resultType="int">
+        select count(*) from sys_dict
+        <where>
+            `status`=0
+            <if test="text != null and text != ''">
+                and `text` like concat('%',#{text},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--新增，如果有空的字段，直接过滤掉 (`ttype`,`text`,`value`,`remark`) values(#{ttype},#{text},#{value},#{remark})-->
+    <insert id="save" parameterType="io.yfjz.entity.sys.SysDictEntity">
+        insert into sys_dict
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="ttype != null">
+                `ttype`,
+            </if>
+            <if test="text != null">
+                `text`,
+            </if>
+            <if test="value != null">
+               `value`,
+            </if>
+            <if test="remark != null">
+                `remark`,
+            </if>
+            <if test="sortOrder != null">
+                `sort_order`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            uuid(),
+            <if test="ttype != null">
+                #{ttype},
+            </if>
+            <if test="text != null">
+                #{text},
+            </if>
+            <if test="value != null">
+                #{value},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            <if test="sortOrder != null">
+                #{sortOrder},
+            </if>
+        </trim>
+    </insert>
+
+    <!--更新，根据条件更新，如果有空的字段，直接过滤掉-->
+    <update id="update" parameterType="io.yfjz.entity.sys.SysDictEntity">
+        update sys_dict
+        <set>
+            <if test="ttype != null">
+                `ttype`=#{ttype},
+            </if>
+            <if test="text != null">
+                `text` = #{text},
+            </if>
+            <if test="value != null">
+                `value` = #{value},
+            </if>
+            <if test="remark != null">
+                `remark` = #{remark},
+            </if>
+            <if test="sortOrder != null">
+                `sort_order` = #{sortOrder},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 根据text，更新value -->
+    <update id="updateValueBytext" parameterType="map">
+        update sys_dict set `value` = #{value} where `text` = #{text}
+    </update>
+
+    <!-- 根据text，查询value -->
+    <select id="queryByText" parameterType="String" resultType="String">
+		select value from sys_dict where `text` = #{text}
+	</select>
+    <select id="selectListByType" resultType="io.yfjz.entity.sys.SysDictEntity">
+        select id,text,`value`,status from sys_dict where ttype=#{type} and status!=-1 order by sort_order
+    </select>
+
+    <delete id="deleteBatch" parameterType="int">
+        delete from sys_dict where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <!-- 批量启用记录 -->
+    <update id="startUsingBatch" parameterType="String">
+        update sys_dict set status = '0'
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!-- 批量禁用记录 -->
+    <update id="forbiddenBatch" parameterType="String">
+        update sys_dict set status = '-1'
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 是否关闭取号功能 -->
+    <select id="isDisableQueue" resultType="String">
+        select value from sys_dict where ttype = "disable_queue"
+    </select>
+    <select id="queryInoculateSiteList" resultType="string">
+        select text from sys_dict where ttype='code_inoculation_site'
+    </select>
+    <select id="queryValueByText" resultType="string">
+        select value from sys_dict where ttype=#{type} AND text=#{text}
+    </select>
+
+    <!-- 打开或关闭取号功能 -->
+    <update id="disableQueue" parameterType="String">
+        update sys_dict set value = #{value}
+        where ttype = 'disable_queue'
+    </update>
+</mapper>

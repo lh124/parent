@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.rule.TRuleDicDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.rule.TRuleDicEntity">
+		select * from t_rule_dic where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.rule.TRuleDicEntity">
+		select * from t_rule_dic 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_rule_dic 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.rule.TRuleDicEntity">
+		insert into t_rule_dic
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				`id` , 
+				<if test="name != null">`name` , </if>
+				<if test="enName != null">`en_name` , </if>
+				<if test="sortOrder != null">`sort_order` , </if>
+				<if test="bioSortId != null">`bio_sort_id` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				#{id} ,
+				<if test="name != null">#{name} , </if>
+				<if test="enName != null">#{enName} , </if>
+				<if test="sortOrder != null">#{sortOrder} , </if>
+				<if test="bioSortId != null">#{bioSortId} </if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.rule.TRuleDicEntity">
+		update t_rule_dic 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="enName != null">`en_name` = #{enName}, </if>
+			<if test="sortOrder != null">`sort_order` = #{sortOrder}, </if>
+			<if test="bioSortId != null">`bio_sort_id` = #{bioSortId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_rule_dic where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_rule_dic where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

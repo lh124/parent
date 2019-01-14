@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.InoculateLosgDao">
+
+	<!--接种日志-->
+	<select id="getInoulateLogs" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		select tchil.chil_name,tchil.chil_code,
+		if(tchil.chil_sex = 1, '男', '女')                                    as chil_sex,
+		DATE_FORMAT(tchil.chil_birthday, '%Y-%m-%d')                        as chil_birthday,
+		tchil.chil_mother,
+		tchil.chil_father,
+		tchil.chil_mobile                                                   as chilMobile,
+		tchil.chil_tel                                                      as chilTel,
+		residenceDic.text                                                   as chil_residence,
+		moveDic.text                                                        as chil_account,
+		DATE_FORMAT(tchil.create_card_time, '%Y-%m-%d')                     as create_card_time,
+		hereDic.text                                                        as chil_here,
+		tchil.chil_address,
+		tci.inoc_time,
+		tci.inoc_batchno,
+		DATE_FORMAT(tci.inoc_validdate, '%Y-%m-%d')                         as inoc_validdate,
+		DATE_FORMAT(tci.inoc_date, '%Y-%m-%d')                              as inoc_date,
+		concat(tvi.bio_cn_sortname, concat('(', concat(tvi.bio_code, ')'))) as bio_cn_sortname,
+		if(tci.inoc_free=1,'免费','收费') as inoc_free,
+		tbc.name as chil_committee,
+		tci.inoc_nurse,
+		specDic.text as spec_name,
+		inplDic.text as inpl_name,
+		tvf.factory_cn_name as factoryname,
+		sd.name as inoc_depa_name
+		from t_child_inoculate tci
+		left join t_vac_info tvi on tci.inoc_bact_code = tvi.bio_code
+		left join t_child_info tchil on tci.chil_code = tchil.chil_code
+		left join sys_dict hereDic on hereDic.value = tchil.chil_here and hereDic.ttype = 'child_info_status'
+		left join sys_dict specDic on tvi.bio_spec_id= specDic.value and specDic.ttype='code_inoculation_route'
+		left join sys_dict inplDic on tci.inoc_inpl_id= inplDic.value and inplDic.ttype='code_inoculation_site'
+		left join sys_dict moveDic on tchil.chil_account= moveDic.value and moveDic.ttype='movetype_code'
+		left join sys_dict residenceDic on tchil.chil_residence= residenceDic.value and residenceDic.ttype='child_residence_code' and residenceDic.status!=-1
+		left join t_base_committee tbc on tchil.chil_committee = tbc.code
+		left join t_vac_factory tvf on tvf.factory_code=tci.inoc_corp_code
+		left join sys_depart sd on sd.id = tci.inoc_depa_code
+		<where>
+			tci.inoc_nationcode = right(#{org_id},4) and (tci.inoc_union_code is null or TRIM(tci.inoc_union_code)='' )
+			<if test="chilBirthdayStart != null and chilBirthdayStart != ''">
+				<![CDATA[ and to_days(tchil.chil_birthday) >= to_days(#{chilBirthdayStart})]]>
+			</if>
+			<if test="chilBirthdayEnd != null and chilBirthdayEnd != ''">
+				<![CDATA[ and to_days(tchil.chil_birthday) <= to_days(#{chilBirthdayEnd})]]>
+			</if>
+			<if test="inoculateStart != null and inoculateStart != ''">
+				<![CDATA[ and to_days(tci.inoc_date) >= to_days(#{inoculateStart})]]>
+			</if>
+			<if test="inoculateEnd != null and inoculateEnd != ''">
+				<![CDATA[ and to_days(tci.inoc_date) <= to_days(#{inoculateEnd})]]>
+			</if>
+			<if test="chilCommittees != null">
+				and tchil.chil_committee in
+				<foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="chilResidence != null">
+				and tchil.chil_residence  in
+				<foreach collection="chilResidence" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="infostatus != null">
+				and tchil.chil_here in
+				<foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="biotypes != null">
+				and tvi.bio_class_id in
+				<foreach collection="biotypes" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="bioNos != null">
+				and tci.inoc_time in
+				<foreach collection="bioNos" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+
+			<if test="inocDoctors != null">
+				and tci.inoc_nurse in
+				<foreach collection="inocDoctors" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="school != null">
+				and tchil.chil_school in
+				<foreach collection="school" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="inocbatchno != null">
+				and tci.inoc_batchno in
+				<foreach collection="inocbatchno" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		order by tchil.chil_committee,tchil.chil_name
+	</select>
+
+	<!--接种日志母亲姓名为空出来 打印和导出 -->
+<select id="getInoulateLogss" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+
+	select tchil.chil_name,tchil.chil_code,
+	if(tchil.chil_sex = 1, '男', '女')                                    as chil_sex,
+	DATE_FORMAT(tchil.chil_birthday, '%Y-%m-%d')                        as chil_birthday,
+	case when (tchil.chil_mother is  null or tchil.chil_mother = '') then tchil.chil_father else tchil.chil_mother end as chil_mother,
+	-- 		tchil.chil_father,
+	tchil.chil_mobile                                                   as chilMobile,
+	tchil.chil_tel                                                      as chilTel,
+	residenceDic.text                                                   as chil_residence,
+	moveDic.text                                                        as chil_account,
+	DATE_FORMAT(tchil.create_card_time, '%Y-%m-%d')                     as create_card_time,
+	hereDic.text                                                        as chil_here,
+	tchil.chil_address,
+	tci.inoc_time,
+	tci.inoc_batchno,
+	DATE_FORMAT(tci.inoc_validdate, '%Y-%m-%d')                         as inoc_validdate,
+	DATE_FORMAT(tci.inoc_date, '%Y-%m-%d')                              as inoc_date,
+	concat(tvi.bio_cn_sortname, concat('(', concat(tvi.bio_code, ')'))) as bio_cn_sortname,
+	if(tci.inoc_free=1,'免费','收费') as inoc_free,
+	tbc.name as chil_committee,
+	tci.inoc_nurse,
+	specDic.text as spec_name,
+	inplDic.text as inpl_name,
+	tvf.factory_cn_name as factoryname,
+	sd.name as inoc_depa_name
+	from t_child_inoculate tci
+	left join t_vac_info tvi on tci.inoc_bact_code = tvi.bio_code
+	left join t_child_info tchil on tci.chil_code = tchil.chil_code
+	left join sys_dict hereDic on hereDic.value = tchil.chil_here and hereDic.ttype = 'child_info_status'
+	left join sys_dict specDic on tvi.bio_spec_id= specDic.value and specDic.ttype='code_inoculation_route'
+	left join sys_dict inplDic on tci.inoc_inpl_id= inplDic.value and inplDic.ttype='code_inoculation_site'
+	left join sys_dict moveDic on tchil.chil_account= moveDic.value and moveDic.ttype='movetype_code'
+	left join sys_dict residenceDic on tchil.chil_residence= residenceDic.value and residenceDic.ttype='child_residence_code' and residenceDic.status!=-1
+	left join t_base_committee tbc on tchil.chil_committee = tbc.code
+	left join t_vac_factory tvf on tvf.factory_code=tci.inoc_corp_code
+	left join sys_depart sd on sd.id = tci.inoc_depa_code
+	<where>
+		tci.inoc_nationcode = right(#{org_id},4) and (tci.inoc_union_code is null or TRIM(tci.inoc_union_code)='' )
+		<if test="chilBirthdayStart != null and chilBirthdayStart != ''">
+			<![CDATA[ and to_days(tchil.chil_birthday) >= to_days(#{chilBirthdayStart})]]>
+		</if>
+		<if test="chilBirthdayEnd != null and chilBirthdayEnd != ''">
+			<![CDATA[ and to_days(tchil.chil_birthday) <= to_days(#{chilBirthdayEnd})]]>
+		</if>
+		<if test="inoculateStart != null and inoculateStart != ''">
+			<![CDATA[ and to_days(tci.inoc_date) >= to_days(#{inoculateStart})]]>
+		</if>
+		<if test="inoculateEnd != null and inoculateEnd != ''">
+			<![CDATA[ and to_days(tci.inoc_date) <= to_days(#{inoculateEnd})]]>
+		</if>
+		<if test="chilCommittees != null">
+			and tchil.chil_committee in
+			<foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="chilResidence != null">
+			and tchil.chil_residence  in
+			<foreach collection="chilResidence" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="infostatus != null">
+			and tchil.chil_here in
+			<foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="biotypes != null">
+			and tvi.bio_class_id in
+			<foreach collection="biotypes" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="bioNos != null">
+			and tci.inoc_time in
+			<foreach collection="bioNos" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="inocDoctors != null">
+			and tci.inoc_nurse in
+			<foreach collection="inocDoctors" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="school != null">
+			and tchil.chil_school in
+			<foreach collection="school" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="inocbatchno != null">
+			and tci.inoc_batchno in
+			<foreach collection="inocbatchno" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</where>
+	order by tchil.chil_committee,tchil.chil_name
+
+</select>
+
+	<!--按照疫苗接种属性来分组统计-->
+	<select id="getInoulateLogsGroupInocProperty" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT ifnull(bio_cn_sortname,'无疫苗名称') as 疫苗 ,
+		MAX(CASE inoc_property WHEN '基础' THEN num ELSE 0 END ) 基础,
+		MAX(CASE inoc_property WHEN '加强' THEN num ELSE 0 END ) 加强,
+		MAX(CASE inoc_property WHEN '强化' THEN num ELSE 0 END ) 强化,
+		MAX(CASE inoc_property WHEN '应急' THEN num ELSE 0 END ) 应急
+		FROM
+		(select
+		concat(tvi.bio_cn_sortname, concat('(', concat(tvi.bio_code, ')'))) as bio_cn_sortname,
+		inocproDic.text as inoc_property,
+		count(0) as num
+		from t_child_inoculate tci
+		left join t_vac_info tvi on tci.inoc_bact_code = tvi.bio_code
+		left join t_child_info tchil on tci.chil_code = tchil.chil_code
+		left join sys_dict hereDic on hereDic.value = tchil.chil_here and hereDic.ttype = 'child_info_status'
+		left join sys_dict inocproDic on inocproDic.value = tci.inoc_property and inocproDic.ttype = 'code_vaccine_property'
+		left join t_base_committee tbc on tchil.chil_committee = tbc.code
+		<where>
+			tci.inoc_nationcode = right(#{org_id},4) and (tci.inoc_union_code is null or TRIM(tci.inoc_union_code)='' )
+			<if test="chilBirthdayStart != null">
+				<![CDATA[ and to_days(tchil.chil_birthday) >= to_days(#{chilBirthdayStart})]]>
+			</if>
+			<if test="chilBirthdayEnd != null ">
+				<![CDATA[ and to_days(tchil.chil_birthday) <= to_days(#{chilBirthdayEnd})]]>
+			</if>
+			<if test="inoculateStart != null">
+				<![CDATA[ and to_days(tci.inoc_date) >= to_days(#{inoculateStart})]]>
+			</if>
+			<if test="inoculateEnd != null ">
+				<![CDATA[ and to_days(tci.inoc_date) <= to_days(#{inoculateEnd})]]>
+			</if>
+			<if test="chilCommittees != null">
+				and tchil.chil_committee in
+				<foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="chilResidence != null">
+				and tchil.chil_residence  in
+				<foreach collection="chilResidence" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="infostatus != null">
+				and tchil.chil_here in
+				<foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="biotypes != null">
+				and tvi.bio_class_id in
+				<foreach collection="biotypes" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="bioNos != null">
+				and tci.inoc_time in
+				<foreach collection="bioNos" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="inocDoctors != null">
+				and tci.inoc_nurse in
+				<foreach collection="inocDoctors" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="school != null">
+				and tchil.chil_school in
+				<foreach collection="school" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="inocbatchno != null">
+				and tci.inoc_batchno in
+				<foreach collection="inocbatchno" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		group by tvi.bio_code,tci.inoc_property
+		order by tvi.bio_code)
+		a
+		GROUP BY a.bio_cn_sortname;
+	</select>
+
+	<!--按照疫苗接种剂次来分组统计-->
+	<select id="getInoulateLogsGroupDose" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT ifnull(bio_cn_sortname,'无疫苗名称') as 疫苗,
+		MAX(CASE inoc_time WHEN '1' THEN num ELSE 0 END ) as 剂次1,
+		MAX(CASE inoc_time WHEN '2' THEN num ELSE 0 END ) as 剂次2,
+		MAX(CASE inoc_time WHEN '3' THEN num ELSE 0 END ) as 剂次3,
+		MAX(CASE inoc_time WHEN '4' THEN num ELSE 0 END ) as 剂次4,
+		MAX(CASE inoc_time WHEN '5' THEN num ELSE 0 END ) as 剂次5,
+		MAX(CASE inoc_time WHEN '6' THEN num ELSE 0 END ) as 剂次6,
+		MAX(CASE inoc_time WHEN '7' THEN num ELSE 0 END ) as 剂次7,
+		MAX(CASE inoc_time WHEN '8' THEN num ELSE 0 END ) as 剂次8
+		FROM( select
+		concat(tvi.bio_cn_sortname, concat('(', concat(tvi.bio_code, ')'))) as bio_cn_sortname,
+		tci.inoc_time,
+		count(0) as num
+		from t_child_inoculate tci
+		left join t_vac_info tvi on tci.inoc_bact_code = tvi.bio_code
+		left join t_child_info tchil on tci.chil_code = tchil.chil_code
+		left join sys_dict hereDic on hereDic.value = tchil.chil_here and hereDic.ttype = 'child_info_status'
+		left join t_base_committee tbc on tchil.chil_committee = tbc.code
+		<where>
+			tci.inoc_nationcode = right(#{org_id},4) and (tci.inoc_union_code is null or TRIM(tci.inoc_union_code)='' )
+			<if test="chilBirthdayStart != null">
+				<![CDATA[ and to_days(tchil.chil_birthday) >= to_days(#{chilBirthdayStart})]]>
+			</if>
+			<if test="chilBirthdayEnd != null ">
+				<![CDATA[ and to_days(tchil.chil_birthday) <= to_days(#{chilBirthdayEnd})]]>
+			</if>
+			<if test="inoculateStart != null">
+				<![CDATA[ and to_days(tci.inoc_date) >= to_days(#{inoculateStart})]]>
+			</if>
+			<if test="inoculateEnd != null ">
+				<![CDATA[ and to_days(tci.inoc_date) <= to_days(#{inoculateEnd})]]>
+			</if>
+			<if test="chilCommittees != null">
+				and tchil.chil_committee in
+				<foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="chilResidence != null">
+				and tchil.chil_residence  in
+				<foreach collection="chilResidence" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="infostatus != null">
+				and tchil.chil_here in
+				<foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="biotypes != null">
+				and tvi.bio_class_id in
+				<foreach collection="biotypes" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="bioNos != null">
+				and tci.inoc_time in
+				<foreach collection="bioNos" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="inocDoctors != null">
+				and tci.inoc_nurse in
+				<foreach collection="inocDoctors" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="school != null">
+				and tchil.chil_school in
+				<foreach collection="school" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			<if test="inocbatchno != null">
+				and tci.inoc_batchno in
+				<foreach collection="inocbatchno" item="item" index="index"   open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		group by tvi.bio_code,tci.inoc_time
+		order by tvi.bio_code
+		) a
+		GROUP BY a.bio_cn_sortname;
+	</select>
+
+</mapper>

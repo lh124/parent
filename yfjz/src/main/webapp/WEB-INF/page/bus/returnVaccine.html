@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite" xmlns:v-validate="http://java.sun.com/jsf/core">
+<head>
+<title>归还疫苗</title>
+    #parse("sys/header.html")
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <style>
+
+    /*    .ui-jqgrid .ui-jqgrid-pager .ui-pager-table, .ui-jqgrid .ui-jqgrid-toppager .ui-pager-table {
+            table-layout: auto;
+        }*/
+
+    </style>
+    <script src="${rc.contextPath}/statics/libs/My97DatePicker/4.8/WdatePicker.js"></script>
+</head>
+<body>
+<ul id="myTab" class="nav nav-tabs">
+    <li class="active">
+        <a href="#ret" data-toggle="tab">
+            归还疫苗
+        </a>
+    </li>
+    <li><a href="#record" data-toggle="tab">归还记录</a>
+    </li>
+</ul>
+<div id="myTabContent" class="tab-content">
+    <div class="tab-pane fade in active" id="ret">
+        <div class="grid-btn">
+            <form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForm">
+                <div class="form-group">
+                    <label >疫苗名称:</label>
+                    <!--<input type="text" class="form-control" style="width: 150px" id="searchProductName" placeholder="疫苗名称">-->
+                    <select  class=" selectpicker" name="productName"    id="searchProductName"  data-live-search="true"  >
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >生产厂家:</label>
+                    <!--  <input type="text" class="form-control" style="width: 150px" id="searchFactoryName" placeholder="生产厂家">-->
+                    <select  class=" selectpicker" name="factoryId"    id="searchFactoryName"  data-live-search="true"  >
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label >批号:</label>
+                    <input type="text" class="form-control" style="width: 150px" id="searchBatch" placeholder="批号">
+                </div>
+                <div class="form-group">
+                    <label >失效期:</label>
+                    <input type="text" class="form-control" style="width: 150px"    id="searchDate" placeholder="失效期" data-date-format="yyyy-mm-dd">
+                </div>
+                <a class="btn btn-warning" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+            </form>
+            <div class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  >
+                <button class="btn btn-info" id="returnBtn" @click="returnVac"><i class="fa fa-repeat"></i>&nbsp;归还疫苗</button>
+                <button class="btn btn-success" id="returnBatch" @click="returnbatch" ><i class="fa fa-repeat"></i>&nbsp;批量归还</button>
+            </div>
+        </div>
+        <div>
+            <table id="returnVac"></table>
+            <table id="returnVacPage"></table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="record">
+        <table id="recordGird"></table>
+        <div id="recordGirdPage"></div>
+    </div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/bus/returnVaccine.js?_${date.systemTime}"></script>
+</body>
+</html>

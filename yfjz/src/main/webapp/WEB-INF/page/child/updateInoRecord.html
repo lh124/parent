@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite" xmlns:v-tolerious="http://java.sun.com/jsf/core">
+<head>
+    <meta charset="utf-8">
+    <title>修改接种记录</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/register.css" media="all" />
+
+    #parse("sys/header.html")
+    <script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('realName')";
+    </script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        #inocCorpCodeCass .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
+            width: 195px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-row" id="childrenBody" v-cloak>
+    <!--登记主界面开始-->
+    <div  class="layui-col-space20">
+
+            <form class="form-inline mb15" role="form" id="conditionForm">
+
+                <div class="form-group">
+                    儿童编码:<input type="text" class="form-control" v-model.trim="q.chilCode" @keyup.enter="query" id="chilCode" style="width: 180px" placeholder="儿童编码">
+                </div>
+
+                <div class="form-group">
+                    &nbsp;儿童姓名:	<input type="text" class="form-control" v-model.trim="q.chilName" @keyup.enter="query" id="chilName" style="width: 100px" placeholder="儿童姓名">
+
+                </div>
+
+                <div class="form-group">
+                    &nbsp;出生日期:<input type="text" class="form-control" v-model.trim="q.chilBirthdayStart" id="chilBirthdayStart" @keyup.enter="query" style="width: 100px" placeholder="">
+                </div>
+                <div class="form-group">
+                    —<input type="text" class="form-control" v-model.trim="q.chilBirthdayEnd" id="chilBirthdayEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+                </div>
+                <a class="btn btn-primary"  @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a class="btn btn-primary"  @click="resetCondition"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+            </form>
+
+                    <div class="borderWrap" style="height: 200px">
+                        <p class="section-title">查询结果</p>
+                        <div class="table-wrapper">
+                            <table id="selectResultTable" lay-filter="selectResult"></table>
+                        </div>
+                    </div>
+                <!--<table id="selectResultTable"></table>-->
+               <!-- <div id="jqGridPager"></div>-->
+
+                <div class="borderWrap" style="height: 600px">
+                    <div class="section-title">
+                        <span>历史接种记录</span>
+                        <ul class="fr clearfix">
+                            <li class="fl mr15 history-action-items">
+                            <li class="fl mr15 history-action-items" id="single" onclick="single()"  data-target="#myModal" >
+                                <i class="layui-icon layui-icon-edit pr5"  ></i>修改
+                            </li>
+
+                            <li class="fl mr15 history-action-items" onclick="deleteIno()">
+                                <i class="layui-icon layui-icon-close pr5"  ></i>删除
+                            </li>
+                        </ul>
+                    </div>
+                   <!-- <table id="historyTable" lay-filter="history"></table>-->
+                    <div id="inoculation_tabs" v-cloak>
+                        <iframe name="inoculation" style="width:100%; height:550px" frameborder="0"  id="inoculation_iframe" src="../child/tchildinoculate.html"></iframe>
+
+                    </div>
+                </div>
+
+    </div>
+</div>
+<!--修改接种记录弹框-->
+<div class="modal fade" id="myModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="width: 1567px;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width: 1200px;right: 350px;">
+            <div class="modal-header form-inline">
+                修改接种记录
+            </div>
+
+            <input type="hidden" id="bio" />
+            <input type="hidden" id="selectRowId" />
+
+            <div id="updateIno" class="modal-body" style="width: 1500px;padding-right: 300px">
+                <table style="border-collapse:separate; border-spacing:5px 10px; ">
+                    <tr>
+                        <td >疫苗名称:</td><td>
+                        <select class="selectpicker" id="inocBactCode" name="inocBactCode"  title="" data-live-search="true" style="width: 110px">
+                            <option value="" ></option>
+                        </select></td>
+                        <td >批号:</td><td><input type="text" v-model="ino.inocBatchno" id="inocBatchno" name="inocBatchno" class="form-control"  style="width: 110px"></td>
+                        <td >剂次:</td><td><input type="text" v-model="ino.inocTime" id="inocTime" name="inocTime" class="form-control"  style="width: 110px"></td>
+                        <td >接种属性:</td><td>
+                            <select type="text" v-model="ino.inocProperty" id="inocProperty" name="inocProperty" class="form-control"  style="width: 80px">
+                                <option value=""></option>
+                            </select></td>
+                        <td >接种日期:</td><td><input type="text" v-model="ino.inocDate" id="inocDate" name="inocDate" class="form-control"  style="width: 140px"></td>
+                    </tr>
+                    <tr>
+                        <td>接种部位:</td><td>
+                            <select type="text" v-model="ino.inocInplId" id="inocInplId" name="inocInplId" class="form-control"  style="width: 110px">
+                                <option value=""></option>
+                            </select></td>
+                        <td>修改单位:</td><td><input type="text" v-model="ino.inocModifyCode" id="inocModifyCode" name="inocModifyCode" class="form-control" readonly style="width: 150px"></td>
+                        <td>生产企业:</td><td id="inocCorpCodeCass"><select class="selectpicker" title="" id="inocCorpCode" name="inocCorpCode" data-live-search="true" style="width: 100px">
+                        <option value=""></option>
+                        </select></td>
+                        <td>是否免费:</td><td>
+                            <select type="text" v-model="ino.inocFree" id="inocFree" name="inocFree" class="form-control"  style="width: 80px">
+                                <option value="1">是</option>
+                                <option value="0">否</option>
+                            </select></td>
+                        <td>接种护士:</td><td><input type="text" v-model="ino.inocNurse" class="form-control"  style="width: 140px"></td>
+                    </tr>
+                    <tr>
+                        <td>修改原因:</td><td colspan="9"><textarea class="form-control" id="remark" name="remark" ></textarea></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-primary" id="createFileSureBut" onclick="saveIno()"  value="保存"/>
+                <input type="button" class="btn btn-primary" id="createFileSureBut1" onclick="colsedialog()" value="关闭"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="${rc.contextPath}/statics/plugins/layui/layui.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/updateInoRecord.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/mouseoverinocdata.js"></script>
+</body>
+<script>
+    $(function () {
+//日期插件
+        $('#datetimepicker,#inocDate').datetimepicker(
+            {
+                format: 'yyyy-mm-dd hh:ii:ss',
+                autoclose: true,
+                todayBtn: true,
+                startView: 'month',
+                minView:'month',
+                language:  'zh-CN'
+            }
+        );
+    })
+
+
+</script>
+
+</html>

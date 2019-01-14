@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.sys.SysDepartDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.sys.SysDepartEntity">
+		select * from sys_depart where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.sys.SysDepartEntity">
+		select * from sys_depart
+		<where>
+			<if test="pid != null">
+				pid = #{pid} and delete_status=0
+			</if>
+			<if test="name != null and name.trim() != ''">
+				name like   concat( #{name}, '%') and delete_status=0
+			</if>
+		</where>
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<!-- 异步加载机构数据 -->
+	<select id="getAsyncDepartMenuTree" parameterType="Map" resultType="io.yfjz.entity.sys.SysDepartEntity">
+		/*select id,name,pid from sys_depart where status = 0*/
+		select * from sys_depart
+		<where>
+			<if test="pid != null">
+				  pid = #{pid} and delete_status=0
+			</if>
+		</where>
+
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from sys_depart
+		<where>
+			<if test="pid != null">
+				pid = #{pid} and delete_status=0
+			</if>
+			<if test="name != null and name.trim() != ''">
+				name like   concat( #{name}, '%') and delete_status=0
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.sys.SysDepartEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_depart
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">`id` , </if>
+			<if test="name != null">`name` , </if>
+			<if test="description != null">`description` , </if>
+			<if test="pid != null">`pid` , </if>
+			<if test="status != null">`status` , </if>
+			<if test="createTime != null">`create_time`, </if>
+			<if test="deleteStatus != null">`delete_status` </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">#{id} , </if>
+			<if test="name != null">#{name} , </if>
+			<if test="description != null">#{description} , </if>
+			<if test="pid != null">#{pid} , </if>
+			<if test="status != null">#{status} , </if>
+			<if test="createTime != null">#{createTime} ,</if>
+			<if test="deleteStatus != null">#{deleteStatus} </if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.sys.SysDepartEntity">
+		update sys_depart
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="pid != null">`pid` = #{pid}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime},</if>
+			<if test="deleteStatus != null">`delete_status` = #{deleteStatus}</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!--禁用-->
+	<select id="updateStatusOff">
+		update sys_depart set `status`=1 where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<!--启用-->
+	<select id="updateStatusIn">
+		update sys_depart set `status`=0 where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<!--删除-->
+	<select id="updateDelStatus">
+		update sys_depart set `delete_status`=1 where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<delete id="delete">
+		delete from sys_depart where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from sys_depart where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="queryDepartList" parameterType="String" resultType="io.yfjz.entity.sys.SysDepartEntity">
+			select id,name,description,pid from sys_depart where pid = #{orgId} and  status = '0' and delete_status = '0'
+	</select>
+
+	<select id="queryDepartPidList" parameterType="String" resultType="io.yfjz.entity.sys.SysDepartEntity">
+		select id,name,description,pid from sys_depart where id = #{orgId} and  status = '0' and delete_status = '0'
+	</select>
+</mapper>

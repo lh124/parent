@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+<title>儿童基本信息表</title>
+<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+#parse("sys/header.html")
+<script>
+	var orgId="$shiro.getBaseInfo('orgId')";
+	var orgName="$shiro.getBaseInfo('orgName')";
+	var userName="$shiro.getBaseInfo('userName')";
+</script>
+	<script src="${rc.contextPath}/statics/libs/My97DatePicker/4.8/WdatePicker.js"></script>
+
+</head>
+<body class="childrenBody">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<form class="form-inline" role="form">
+				<div class="form-group">
+					儿童编码:<input type="text" class="form-control" v-model="q.chilCode" @keyup.enter="downloadChild" style="width: 180px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;儿童姓名:	<input type="text" class="form-control" v-model="q.chilName" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+
+				<div class="form-group">
+					&nbsp;出生日期:<input type="text" class="form-control" v-model="q.chilBirthdayStart" id="chilBirthdayStart" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model="q.chilBirthdayEnd" id="chilBirthdayEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group" id="chilCommitteeIdParent">
+					&nbsp;居委会/行政村:
+					<select  class="selectpicker" title="" @keyup.enter="query" id="chilCommittees" name="chilCommittees"  data-live-search="true">
+                        <option value="" ></option>
+                    </select>
+
+				</div>
+				<div class="form-group">
+					&nbsp;在册情况:
+					<select v-model="q.chilHere" class="form-control" @keyup.enter="query"  id="infostatus" name="infostatus" >
+                        <option value="" ></option>
+                    </select>
+				</div>
+				<!--<div class="form-group">
+					&nbsp;接种日期:<input type="text" class="form-control" v-model="q.inoculateDateStart" id="inoculateDateStart" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model="q.inoculateDateEnd" id="inoculateDateEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>-->
+				<div class="form-group">
+					<input type="checkbox"  v-model.trim="q.flag" id="flag" name="flag" @keyup.enter="query"  style="height:20px;margin-right:1px;margin-bottom:10px;width:20px;display:inline-block;position: relative;top: 4px" placeholder=""/>含补录
+				</div>
+
+				<!--<a class="btn btn-default" @click="query">查询</a>-->
+				<a class="btn btn-primary" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+				<br/>
+				<br/>
+				<a class="btn btn-primary" @click="printCard"><i class="fa fa-print"></i>&nbsp;接种卡打印</a>
+
+				<a class="btn btn-primary" @click="print"><i class="fa fa-print"></i>&nbsp;接种证打印</a>
+
+				<a class="btn btn-primary" @click="upload"><i class="fa fa-upload"></i>&nbsp;选中上传</a>
+				<a class="btn btn-primary" @click="uploadAll"><i class="fa fa-upload"></i>&nbsp;上传今日接种</a>
+				<a class="btn btn-primary" @click="uploadRecord"><i class="fa fa-tasks"></i>&nbsp;上传记录</a>
+
+			</form>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+		<!--<button style="float: right"><a href="#move" id="" data-toggle="tab">变更记录</a></button>-->
+		<!--接种记录、过敏史、异常反应等-->
+		<ul class="nav nav-tabs mt20">
+			<li class="active" style="font-weight: bold"><a href="#inoculation" data-toggle="tab">{{q.chilName}}接种记录</a></li>
+
+		</ul>
+		<!--以上类容展示-->
+		<div class="tab-content" style="margin-top: 5px">
+			<!--接种记录-->
+			<div class="tab-pane fade in active" id="inoculation">
+				<!--<div id="inoculation_tabs" v-cloak>
+					<div v-show="showList" class="panel panel-default">
+					<table id="historyTable"></table>
+					</div>
+				</div>-->
+				<div id="inoculation_tabs" v-cloak>
+					<iframe name="inoculation" style="width:100%; height:450px" frameborder="0"  id="inoculation_iframe" src="../child/tchildinoculate.html"></iframe>
+
+				</div>
+			</div>
+
+		</div>
+    </div>
+	<!--打印弹框选择开始-->
+	<div id="printDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+		<ul id="myTab" class="nav nav-tabs">
+			<!--接种记录-->
+			<li class="active"><a href="#inoculate" data-toggle="tab">接种记录</a></li>
+			<!--儿童信息-->
+			<li><a href="#info" data-toggle="tab">儿童信息</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content" style="margin-top: 10px;margin-left: 10px">
+			<div class="tab-pane fade in active" name="div1" id="inoculate" style="margin-left: 20px">
+				<h5 style="margin-left: 30px;">请选择接种证打印模板：</h5>
+				<div  style="width:100%; text-align:center">
+					<div style="display: inline-block">
+						接种证打印模板:
+						<select  class="form-control"  id="inocModelName" name="modelName" >
+
+						</select>
+					</div>
+					<br/>
+					<br/>
+					<div style="display: inline-block">
+						或输入打印行数:
+						<input  class="form-control"  id="lineCount" name="lineCount" />&nbsp;&nbsp;<input id="lineCountCheck" type="checkbox"/>下半页
+					</div>
+					<br/>
+					<div style="margin-top: 10px">接种记录打印字体大小：<input id="fontSize" style="width: 40px"></div>
+				</div>
+				<br/>
+				<div style="text-align: center">
+					<button onclick="printInoculation(1,$('#inocModelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打&nbsp;&nbsp;印</button>
+				</div>
+				<div style="text-align: left;margin-left:30px;color: red">
+					请注意：<br/>
+					<font color="red">1.“接种记录打印字体大小”默认值为"8"</font><br/>
+					<font color="red">2.不同的打印模板打印效果不同。</font><br/>
+					<font color="red">3.如果打印需要分页，请注意放置顺序：先放入接种记录（一）（二）再放入接种记录（三）（四）！</font><br/>
+					<font color="red">4.指定行打印主要针对接种证上没有标识的疫苗</font><br/>
+					<font color="red">5.指定行打印与选择打印模板无关</font>
+					<br/>
+				</div>
+			</div>
+			<div class="tab-pane fade in" id="info" name="info" style="margin-left: 20px">
+				<h5 style="margin-left: 30px">请选择接种证打印模板：</h5>
+				<div  style="width:100%; text-align:center">
+					<div style="display: inline-block">
+						接种证打印模板:
+						<select  class="form-control"  id="infoModelName" name="infoModelName" >
+
+						</select>
+					</div>
+				</div>
+				<br/>
+				<div style="text-align: center">
+					&nbsp;&nbsp;&nbsp;<button onclick="printChildInfo(1,$('#infoModelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打&nbsp;&nbsp;印</button>
+				</div>
+
+				<br/>
+				<div style="text-align: left;margin-left:30px;color: red">
+					请注意：
+					<font color="red">  不同的打印模板打印效果不同</font><br/>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div id="printCardDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+		<br/>
+
+		<br/>
+		<div style="text-align: center">
+			<div style="text-align: center">
+				请输入打印行数:
+				<input  class="form-control"  id="cardLineCount" name="lineCount" style="width: 80px;margin-right: 10px"/>
+			</div>
+			<br/>
+			<div>接种记录打印字体大小：<input id="cardFontSize" style="width: 40px"></div>
+			<br/>
+			<br/>
+		<div style="text-align: center">
+			<button onclick="printInoculation(2,'')" class="layui-btn" style="width: 150px;height: 50px;font-size: 16px" >打印接种记录</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="printChildInfoCard(1)" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >新卡打印</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="printChildInfoCard(5)" class="layui-btn" style="width: 150px;height: 50px;font-size: 16px" >打印儿童信息</button>
+		</div>
+		<br/>
+		<div style="text-align: left;margin-left:30px;color: red">
+			请注意：<br/>
+			<font color="red">  1.“接种记录打印字体大小”默认值为"8"</font><br/>
+			<font color="red">  2.“打印接种记录”按钮为打印所选择的接种记录</font><br/>
+			<font color="red">  3.新卡打印”按钮为打印儿童基本信息和所有历次接种记录</font><br/>
+			<font color="red">  4.指定行打印主要针对接种卡上没有标识的疫苗</font><br/>
+		</div>
+
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/currentdaychild.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/child/childvalidator.js?_${date.systemTime}"></script>
+</body>
+</html>

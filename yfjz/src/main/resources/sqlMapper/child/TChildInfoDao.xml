@@ -1,0 +1,1246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.TChildInfoDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildInfoEntity">
+		select
+		 `chil_code` ,
+		 /*dic1.text as chil_sex,*/
+		 chil_sex,
+		`chil_name`,
+		`chil_birthday` ,
+		`chil_birthweight`,
+		 /*dic2.text as `chil_nati_id` ,*/
+		`chil_nati_id` ,
+		`chil_cardno`,
+		trim(`chil_no`) as chil_no ,
+		`chil_birthno`,
+		`chil_mother`,
+		`chil_father` ,
+		`chil_committee`,
+		`chil_habiaddress` ,
+		`chil_address`,
+		`chil_school` ,
+		trim(`chil_tel`) as chil_tel ,
+		trim(`chil_mobile`) as chil_mobile,
+		`chil_carddate` ,
+		`chil_healthno`,
+		`chil_residenceclient` ,
+		 /*dic5.text as `chil_residence`,*/
+		 `chil_residence`,
+		 /*dic4.text as `chil_account`,*/
+		 `chil_account`,
+		`chil_habi_id` ,
+		`chil_sensitivity` ,
+		/* dic3.text as `chil_here`,*/
+		`chil_here`,
+		`chil_leavedate`,
+		`chil_leave`,
+		`chil_leaveremark`,
+		`chil_curdepartment` ,
+		`chil_predepartment`,
+		`chil_createcounty`,
+		depart.name as `chil_createsite`,
+		/*left(`chil_createdate`,10) as chil_createdate ,*/
+		chil_createdate,
+		`chil_createman`,
+		`chil_unitimmu` ,
+		`chil_birthhospital` ,
+		`chil_birthhospitalname` ,
+		`chil_bcg_scar` ,
+		trim(`chil_motherno`) as chil_motherno ,
+		trim(`chil_fatherno`) as chil_fatherno,
+		`chil_edit_date`,
+		`create_card_time`,
+		info.create_user_name,
+		info.remark,
+		chil_habiaddress_town_id,
+		chil_address_town_id,
+		`type`,
+		`chil_motherhb`,
+		 info.update_time,
+		`syncstatus`
+		from t_child_info info
+		LEFT JOIN sys_dict dic1 on  dic1.ttype='sex_code' and info.chil_sex = dic1.value
+		LEFT JOIN sys_dict dic2 on  dic2.ttype='nation_code' and info.chil_nati_id = dic2.value
+		LEFT JOIN sys_dict dic3 on  dic3.ttype='child_info_status' and info.chil_here = dic3.value
+		LEFT JOIN sys_dict dic4 on  dic4.ttype='movetype_code' and info.chil_account = dic4.value
+		LEFT JOIN sys_dict dic5 on  dic5.ttype='child_residence_code' and info.chil_residence = dic5.value and dic5.status!=-1
+		LEFT JOIN t_base_hospital hos on  hos.hospital_code = info.chil_birthhospital
+		LEFT JOIN sys_depart depart on  depart.id = info.chil_createsite
+		 where chil_code = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildInfoEntity">
+		select distinct
+		info.`chil_code` ,
+		dic1.text as chil_sex,
+		trim(info.chil_name) as chil_name,
+		info.chil_birthday,
+		info.chil_birthweight,
+		dic2.text as chil_nati_id,
+		info.chil_cardno,
+		trim(info.chil_no) as chil_no ,
+		info.chil_birthno,
+		info.chil_mother,
+		info.chil_father,
+		com.name as chil_committee,
+		info.chil_habiaddress,
+		info.chil_address,
+		school.name as chil_school,
+		trim(info.chil_tel) as chil_tel ,
+		trim(info.chil_mobile) as chil_mobile,
+		info.chil_carddate ,
+		info.chil_healthno,
+		info.chil_residenceclient,
+		dic5.text as chil_residence,
+		dic4.text as chil_account,
+		info.chil_habi_id ,
+		info.chil_sensitivity,
+		dic3.text as chil_here,
+		info.chil_leavedate,
+		info.chil_leave,
+		info.chil_leaveremark,
+		depart.name as chil_curdepartment,
+		info.chil_predepartment,
+		info.chil_createcounty,
+		creator.name as chil_createsite,
+		left(info.chil_createdate,10) as chil_createdate ,
+		info.chil_createman,
+		info.create_user_name,
+		info.chil_unitimmu ,
+		info.chil_birthhospital ,
+		hospital.hospital_name as chil_birthhospitalname,
+		info.chil_bcg_scar,
+		trim(info.chil_motherno) as chil_motherno ,
+		trim(info.chil_fatherno) as chil_fatherno,
+		info.chil_edit_date,
+		info.remark,
+		info.create_card_time ,
+		info.type,
+		info.syncstatus
+		from t_child_info info
+		LEFT JOIN (select * from sys_dict where ttype='sex_code') dic1 on info.chil_sex = dic1.value
+		LEFT JOIN (select * from sys_dict where ttype='nation_code') dic2 on info.chil_nati_id = dic2.value
+		LEFT JOIN (select * from sys_dict where ttype='child_info_status') dic3 on info.chil_here = dic3.value
+		LEFT JOIN (select * from sys_dict where ttype='movetype_code') dic4 on info.chil_account = dic4.value
+		LEFT JOIN (select * from sys_dict where ttype='child_residence_code' and status!=-1) dic5 on info.chil_residence = dic5.value
+		left join (select * from t_base_committee where org_id = #{org_id}) com on info.chil_committee = com.code
+		left join (select * from t_base_school where org_id = #{org_id}) school on info.chil_school = school.code
+		left join t_base_hospital hospital on info.chil_birthhospital = hospital.hospital_code
+		left join sys_depart depart on info.chil_curdepartment = depart.id
+		left join sys_depart creator on info.chil_createsite = creator.id
+		<if test="(inoculateDateStart != null and inoculateDateStart != '' and inoculateDateStart != 'null') or  (inoculateDateEnd != null and inoculateDateEnd != 'null' and inoculateDateEnd != '') " >
+			LEFT JOIN t_child_inoculate inoculate ON inoculate.chil_code = info.chil_code
+		</if>
+		<if test="isUpload == 'true' and inoculateDateStart == null and inoculateDateEnd==null">
+			LEFT JOIN t_child_inoculate inoculate ON inoculate.chil_code = info.chil_code
+		</if>
+		<where>
+			info.delete_status = 0
+			<if test="chilCode != null and chilCode != '' and chilCode != 'null'">
+				and info.chil_code = #{chilCode}
+			</if>
+
+			<if test="chilSex != null and chilSex != '' and chilSex != 'null'">
+				and info.chil_sex = #{chilSex}
+			</if>
+
+			<if test="chilName != null and chilName != '' and chilName != 'null'">
+				and info.chil_name like concat('%',#{chilName},'%')
+			</if>
+			<if test="chilCommittee != null and chilCommittee != '' and chilCommittee != 'null'">
+				and info.chil_committee = #{chilCommittee}
+			</if>
+			<if test="chilHere != null and chilHere.trim() != '' and chilHere != 'null' and chilHere != 'undefined'">
+				and info.chil_here = #{chilHere}
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd != null   and chilBirthdayEnd != 'null' and chilBirthdayStart != 'null'" >
+				and TO_DAYS(info.chil_birthday) >= TO_DAYS(#{chilBirthdayStart})
+				and TO_DAYS(#{chilBirthdayEnd}) >= TO_DAYS(info.chil_birthday)
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd == null and chilBirthdayEnd != 'null' and chilBirthdayStart != 'null'" >
+				and TO_DAYS(info.chil_birthday) = TO_DAYS(#{chilBirthdayStart})
+			</if>
+			<if test="inoculateDateStart != null and inoculateDateEnd != null  and inoculateDateEnd != 'null' and inoculateDateStart != 'null'">
+				and TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inoculateDateStart})
+				and TO_DAYS(#{inoculateDateEnd}) >= TO_DAYS(inoculate.inoc_date)
+				and inoculate.inoc_depa_code = #{org_id}
+			</if>
+			<if test="inoculateDateStart != null and inoculateDateEnd == null  and inoculateDateEnd != 'null' and inoculateDateStart != 'null'" >
+				and TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inoculateDateStart})
+				and inoculate.inoc_depa_code = #{org_id}
+			</if>
+
+			<if test="chilCreatedateStart != null and chilCreatedateEnd != null   and chilCreatedateEnd != 'null' and chilCreatedateStart != 'null'">
+				and TO_DAYS(info.chil_createdate) >= TO_DAYS(#{chilCreatedateStart})
+				and TO_DAYS(#{chilCreatedateEnd}) >= TO_DAYS(info.chil_createdate)
+			</if>
+			<if test="chilCreatedateStart != null and chilCreatedateEnd == null  and chilCreatedateEnd != 'null' and chilCreatedateStart != 'null'" >
+				and TO_DAYS(info.chil_createdate) = TO_DAYS(#{chilCreatedateStart})
+			</if>
+			<if test="chilLeavedateStart != null and chilLeavedateEnd != null and chilLeavedateEnd != 'null' and chilLeavedateStart != 'null' ">
+				and TO_DAYS(info.chil_leavedate) >= TO_DAYS(#{chilLeavedateStart})
+				and TO_DAYS(#{chilLeavedateEnd}) >= TO_DAYS(info.chil_leavedate)
+			</if>
+			<if test="chilLeavedateStart != null and chilLeavedateEnd == null and chilLeavedateEnd != 'null' and chilLeavedateStart != 'null'  " >
+				and TO_DAYS(info.chil_leavedate) = TO_DAYS(#{chilLeavedateStart})
+			</if>
+			<if test="chilCardno != null and chilCardno.trim() != '' and chilCardno != 'null' ">
+				and  info.chil_carno=#{chilCardno}
+			</if>
+			<if test="chilMother != null and chilMother.trim() != ''  and chilMother != 'null'">
+
+				and  info.chil_mother=#{chilMother} or info.chil_father=#{chilMother}
+			</if>
+
+			/*邓，添加条形码支持*/
+			<if test="chilBarcode != null and chilBarcode.trim() != ''  and chilBarcode != 'null'">
+
+				and  info.chil_barcode=#{chilBarcode} or info.chil_barcode=#{chilBarcode}
+			</if>
+			<if test="isUpload == 'true'">
+				and info.syncstatus = 0
+			</if>
+			<if test="currentDepartChild == 'true' and currentDepartChild != 'null'">
+				and info.chil_curdepartment = #{org_id}
+			</if>
+		</where>
+		<if test="sidx != null and order !='' and order != null and sidx != ''">
+			ORDER BY info.${sidx} ${order}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(distinct info.chil_code) from t_child_info info
+		<if test="inoculateDateStart != null or inoculateDateEnd != null">
+			 JOIN t_child_inoculate inoculate ON inoculate.chil_code = info.chil_code
+		</if>
+		<if test="isUpload == 'true' and inoculateDateStart == null and inoculateDateEnd==null">
+			JOIN t_child_inoculate inoculate ON inoculate.chil_code = info.chil_code
+		</if>
+
+		<where>
+			info.delete_status = 0
+			<if test="chilCode != null and chilCode != ''">
+				and chil_code = #{chilCode}
+			</if>
+			<if test="chilSex != null and chilSex != '' and chilSex != 'null'">
+				and info.chil_sex = #{chilSex}
+			</if>
+			<if test="chilName != null and chilName != ''">
+				and chil_name like concat('%',#{chilName},'%')
+			</if>
+			<if test="chilCommittee != null and chilCommittee.trim() != ''">
+				and chil_committee = #{chilCommittee}
+			</if>
+			<if test="chilHere != null and chilHere.trim() != ''">
+				and chil_here = #{chilHere}
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd != null">
+				and chil_birthday >= #{chilBirthdayStart}
+				and #{chilBirthdayEnd} >= chil_birthday
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd == null">
+				and chil_birthday = #{chilBirthdayStart}
+			</if>
+			<if test="inoculateDateStart != null and inoculateDateEnd != null ">
+				and TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inoculateDateStart}) and inoculate.delete_status = 0
+				and TO_DAYS(#{inoculateDateEnd}) >= TO_DAYS(inoculate.inoc_date)
+				and inoculate.inoc_depa_code = #{org_id}
+			</if>
+			<if test="inoculateDateStart != null and inoculateDateEnd == null ">
+				and TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inoculateDateStart}) and inoculate.delete_status = 0
+				and inoculate.inoc_depa_code = #{org_id}
+			</if>
+			<if test="chilCreatedateStart != null and chilCreatedateEnd != null ">
+				and TO_DAYS(info.chil_createdate) >= TO_DAYS(#{chilCreatedateStart})
+				and TO_DAYS(#{chilCreatedateEnd}) >= TO_DAYS(info.chil_createdate)
+			</if>
+			<if test="chilCreatedateStart != null and chilCreatedateEnd == null " >
+				and TO_DAYS(info.chil_createdate) = TO_DAYS(#{chilCreatedateStart})
+			</if>
+			<if test="chilLeavedateStart != null and chilLeavedateEnd != null ">
+				and TO_DAYS(info.chil_leavedate) >= TO_DAYS(#{chilLeavedateStart})
+				and TO_DAYS(#{chilLeavedateEnd}) >= TO_DAYS(info.chil_leavedate)
+			</if>
+			<if test="chilLeavedateStart != null and chilLeavedateEnd == null " >
+				and TO_DAYS(info.chil_leavedate) = TO_DAYS(#{chilLeavedateStart})
+			</if>
+			<if test="chilCardno != null and chilCardno.trim() != ''">
+				and chil_carno=#{chilCardno}
+			</if>
+			<if test="chilMother != null and chilMother.trim() != ''">
+
+				and chil_mother=#{chilMother} or chil_father=#{chilMother}
+			</if>
+			/*邓，添加条形码支持*/
+			<if test="chilBarcode != null and chilBarcode.trim() != ''">
+
+				and  chil_barcode=#{chilBarcode} or chil_barcode=#{chilBarcode}
+			</if>
+			<if test="isUpload == 'true' and isUpload != 'null'">
+				and (info.syncstatus = 0 or inoculate.syncstatus = 0)
+			</if>
+			<if test="currentDepartChild == 'true' and currentDepartChild != 'null'">
+				and info.chil_curdepartment = #{org_id}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryForPrint" resultType="java.util.HashMap">
+		select
+		info.`chil_code` as childcode,dic1.text as sexcode,`chil_name` as cname,`chil_birthday`,
+		`chil_birthweight`,dic2.text as `chil_nati_id`,`chil_cardno`,
+		`chil_no` as chilNo ,`chil_birthno` as chil_birthno,
+		/*case when (chil_mother is  null or chil_mother = '') then chil_father else chil_mother end as guardianname,*/
+-- 		`chil_mother` as guardianname,
+		`chil_father`,
+		`chil_mother`,
+		`chil_habiaddress` ,`chil_address`,
+		`chil_tel` ,`chil_mobile`,
+		CASE
+		WHEN ( info.chil_sex = 1 AND chil_mother!="" and chil_father = "" ) = TRUE THEN
+		'母子'
+		WHEN ( info.chil_sex = 2 AND chil_mother!="" and chil_father = "") = TRUE THEN
+		'母女'
+		WHEN ( info.chil_sex = 1 AND chil_father!="" and chil_mother=""  ) = TRUE THEN
+		'父子'
+		WHEN ( info.chil_sex = 2 AND chil_father!="" and chil_mother=""  ) = TRUE THEN
+		'父女'
+		WHEN ( info.chil_sex = 1 AND chil_father is not null and chil_father!=""   and chil_mother is not null and chil_mother!=""  ) = TRUE THEN
+		'父子 母子'
+		WHEN ( info.chil_sex = 2 AND chil_father is not null and chil_father!=""   and chil_mother is not null and chil_mother!=""  ) = TRUE THEN
+		'父女 母女'
+	END AS text,
+		`chil_carddate` ,
+		`chil_leavedate`,
+		case when chil_tel is not null then chil_tel else chil_mobile end as chilTel,
+		`chil_leave`,
+		`chil_leaveremark`,
+		`chil_createsite`,
+		`chil_createdate`,
+		`chil_createman`,
+		info.create_user_name,
+		`chil_birthhospital`,
+		hospital.hospital_name as hos_name,
+		org.phone as unittel,
+		create_card_time,
+		info.remark
+		from t_child_info info
+		LEFT JOIN sys_dict dic1 on  dic1.ttype='sex_code' and info.chil_sex = dic1.value
+		LEFT JOIN sys_dict dic2 on  dic2.ttype='nation_code' and info.chil_nati_id = dic2.value
+		left join t_base_hospital hospital on hospital.hospital_code = info.chil_birthhospital
+		left join t_base_org_info org on org.org_id=info.chil_curdepartment
+		where info.chil_code=#{chilCode}
+
+	</select>
+	<!--查询上传儿童信息-->
+	<select id="findChildInfoForUpload" parameterType="string" resultType="java.util.HashMap">
+		SELECT
+		chil_code,
+		CASE WHEN chil_cardno is not null THEN chil_cardno ELSE "" END  as chil_cardno,
+
+
+		CASE WHEN chil_name is not null THEN chil_name ELSE "" END  as chil_name,
+
+		chil_sex,
+		CASE WHEN chil_no is not null THEN chil_no ELSE "" END  as chilNo,
+
+		case  WHEN chil_birthno is null then "" else chil_birthno end as chil_birthno,
+		case  WHEN chil_birthday is null then "" else chil_birthday end as chil_birthday,
+		case  WHEN chil_birthweight is null then "0" else chil_birthweight end as chil_birthweight,
+
+		CASE WHEN chil_nati_id is not null THEN chil_nati_id ELSE "" END  as chil_nati_id,
+
+		case  WHEN chil_mother is null then "" else chil_mother end as chil_mother,
+		case  WHEN chil_father is null then "" else chil_father end as chil_father,
+		case  WHEN chil_address is null then "" else chil_address end as chil_address,
+		case  WHEN chil_habiaddress is null then "" else chil_habiaddress end as chil_habiaddress,
+		case  WHEN chil_tel is null then "" else chil_tel end as chilTel,
+
+		CASE WHEN chil_mobile is not null THEN chil_mobile ELSE "" END  as chilMobile,
+
+		CASE WHEN chil_sensitivity is not null THEN chil_sensitivity ELSE "" END  as chil_sensitivity,
+		CASE WHEN chil_habi_id is not null THEN chil_habi_id ELSE "" END  as chil_habi_id,
+
+		CASE WHEN chil_motherhb is not null THEN chil_motherhb ELSE "" END  as chil_motherhb,
+		CASE WHEN chil_motherhiv is not null THEN chil_motherhiv ELSE "" END  as chil_motherhiv,
+
+		/*CASE WHEN chil_here is not null THEN  chil_here ELSE "" END  as chil_here,*/
+		CASE chil_here WHEN 6 then 1 when 7 then 1 when 10 then 1 when 8 then 9 ELSE chil_here END  as chil_here,
+		CASE WHEN chil_leavedate is not null THEN chil_leavedate ELSE "" END  as chil_leavedate,
+
+		CASE  WHEN chil_carddate is null then '' ELSE chil_carddate END as chil_carddate,
+		CASE WHEN chil_curdepartment is not null THEN chil_curdepartment ELSE "" END  as chil_curdepartment,
+		CASE WHEN chil_predepartment is not null THEN chil_predepartment ELSE "" END  as chil_predepartment,
+
+		CASE  when chil_createcounty is null then chil_createcounty else "" end as chil_createcounty,
+		/*LEFT (t.org_id,6) as chil_createcounty,*/
+
+		/*CASE WHEN t.org_id is not null THEN t.org_id ELSE "" END  as chil_createsite,*/
+		CASE WHEN chil_createsite is not null THEN chil_createsite  ELSE "" END  as chil_createsite,
+		CASE WHEN chil_createman is not null THEN chil_createman ELSE "" END  as chil_createman,
+		CASE WHEN chil_unitimmu is not null THEN chil_unitimmu ELSE "" END  as chil_unitimmu,
+		CASE WHEN chil_birthhospital is not null THEN chil_birthhospital ELSE "" END  as chil_birthhospital,
+
+
+		CASE WHEN chil_bcg_scar is not null THEN chil_bcg_scar ELSE "0" END  as chil_bcg_scar,
+
+		/*CASE WHEN t.child_residence is not null THEN t.child_residence ELSE "1" END  as chil_residence,*/
+		CASE when chil_residence  is not null then chil_residence ELSE "" end as chil_residence,
+		CASE WHEN chil_residenceclient is not null THEN chil_residenceclient ELSE "1" END  as chil_residenceclient,
+		/*CASE WHEN chil_age is not null THEN chil_age ELSE "" END  as chil_age,*/
+
+		CASE WHEN chil_account is not null then chil_account ELSE "" END as chil_account,
+
+		CASE WHEN chil_motherno is null then "" else chil_motherno end as chilMotherno,
+		CASE WHEN chil_fatherno is null then "" else chil_fatherno end as chilFatherno,
+
+		CASE WHEN chil_inoctype is not null THEN chil_inoctype ELSE "1" END  as chil_inoctype,
+
+	    chil_createdate,
+		CASE WHEN chil_edit_date is not null THEN chil_edit_date ELSE NOW() END  as chil_edit_date
+
+		FROM
+		t_child_info
+		WHERE
+		chil_code =#{childCode} and delete_status = 0
+	</select>
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildInfoEntity">
+		insert into t_child_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				chil_code,
+				<if test="chilName != null">`chil_name` , </if>
+				<if test="chilSex != null">`chil_sex` , </if>
+				<if test="chilBirthday != null">`chil_birthday` , </if>
+				<if test="chilBirthweight != null">`chil_birthweight` , </if>
+				<if test="chilNatiId != null">`chil_nati_id` , </if>
+				<if test="chilCardno != null">`chil_cardno` , </if>
+				<if test="chilNo != null">`chil_no` , </if>
+				<if test="chilBirthno != null">`chil_birthno` , </if>
+				<if test="chilMother != null">`chil_mother` , </if>
+				<if test="chilFather != null">`chil_father` , </if>
+				<if test="chilCommittee != null">`chil_committee` , </if>
+				<if test="chilSchool != null">`chil_school` , </if>
+				<if test="chilHabiaddress != null">`chil_habiaddress` , </if>
+				<if test="chilAddress != null">`chil_address` , </if>
+				<if test="chilTel != null">`chil_tel` , </if>
+				<if test="chilMobile != null">`chil_mobile` , </if>
+				<if test="chilCarddate != null">`chil_carddate` , </if>
+				<if test="chilHealthno != null">`chil_healthno` , </if>
+				<if test="chilResidenceclient != null">`chil_residenceclient` , </if>
+				<if test="chilResidence != null">`chil_residence` , </if>
+				<if test="chilAccount != null">`chil_account` , </if>
+				<if test="chilHabiId != null">`chil_habi_id` , </if>
+				<if test="chilInoctype != null">`chil_inoctype` , </if>
+				<if test="chilSensitivity != null">`chil_sensitivity` , </if>
+				<if test="chilMotherhb != null">`chil_motherhb` , </if>
+				<if test="chilMotherhiv != null">`chil_motherhiv` , </if>
+				<if test="chilHere != null">`chil_here` , </if>
+				<if test="chilLeavedate != null">`chil_leavedate` , </if>
+				<if test="chilLeave != null">`chil_leave` , </if>
+				<if test="chilLeaveremark != null">`chil_leaveremark` , </if>
+				<if test="chilCurdepartment != null">`chil_curdepartment` , </if>
+				<if test="chilPredepartment != null">`chil_predepartment` , </if>
+				<if test="chilCreatecounty != null">`chil_createcounty` , </if>
+				<if test="chilCreatesite != null">`chil_createsite` , </if>
+				<if test="chilCreatedate != null">`chil_createdate` , </if>
+				<if test="chilCreateman != null">`chil_createman` , </if>
+				<if test="chilUnitimmu != null">`chil_unitimmu` , </if>
+				<if test="chilBirthhospital != null">`chil_birthhospital` , </if>
+				<if test="chilBirthhospitalname != null">`chil_birthhospitalname` , </if>
+				<if test="chilBcgScar != null">`chil_bcg_scar` , </if>
+				<if test="chilMotherno != null">`chil_motherno` , </if>
+				<if test="chilFatherno != null">`chil_fatherno` , </if>
+				<if test="chilProvince != null">`chil_province` , </if>
+				`chil_edit_date` ,
+				<if test="createCardTime != null">`create_card_time` , </if>
+				<if test="type != null">`type` , </if>
+				<if test="syncstatus != null">`syncstatus` , </if>
+				<if test="status != null">`status` , </if>
+				<if test="createUserId != null">`create_user_id` , </if>
+				<if test="createUserName != null">`create_user_name` , </if>
+				`create_time` ,
+				<if test="chilHabiaddressTownId != null">`chil_habiaddress_town_id`, </if>
+				<if test="chilAddressTownId != null">`chil_address_town_id`, </if>
+				<if test="remark != null">`remark` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				#{chilCode},
+				<if test="chilName != null">#{chilName} , </if>
+				<if test="chilSex != null">#{chilSex} , </if>
+				<if test="chilBirthday != null">#{chilBirthday} , </if>
+				<if test="chilBirthweight != null">#{chilBirthweight} , </if>
+				<if test="chilNatiId != null">#{chilNatiId} , </if>
+				<if test="chilCardno != null">#{chilCardno} , </if>
+				<if test="chilNo != null">#{chilNo} , </if>
+				<if test="chilBirthno != null">#{chilBirthno} , </if>
+				<if test="chilMother != null">#{chilMother} , </if>
+				<if test="chilFather != null">#{chilFather} , </if>
+				<if test="chilCommittee != null">#{chilCommittee} , </if>
+				<if test="chilSchool != null">#{chilSchool} , </if>
+				<if test="chilHabiaddress != null">#{chilHabiaddress} , </if>
+				<if test="chilAddress != null">#{chilAddress} , </if>
+				<if test="chilTel != null">#{chilTel} , </if>
+				<if test="chilMobile != null">#{chilMobile} , </if>
+				<if test="chilCarddate != null">#{chilCarddate} , </if>
+				<if test="chilHealthno != null">#{chilHealthno} , </if>
+				<if test="chilResidenceclient != null">#{chilResidenceclient} , </if>
+				<if test="chilResidence != null">#{chilResidence} , </if>
+				<if test="chilAccount != null">#{chilAccount} , </if>
+				<if test="chilHabiId != null">#{chilHabiId} , </if>
+				<if test="chilInoctype != null">#{chilInoctype} , </if>
+				<if test="chilSensitivity != null">#{chilSensitivity} , </if>
+				<if test="chilMotherhb != null">#{chilMotherhb} , </if>
+				<if test="chilMotherhiv != null">#{chilMotherhiv} , </if>
+				<if test="chilHere != null">#{chilHere} , </if>
+				<if test="chilLeavedate != null">#{chilLeavedate} , </if>
+				<if test="chilLeave != null">#{chilLeave} , </if>
+				<if test="chilLeaveremark != null">#{chilLeaveremark} , </if>
+				<if test="chilCurdepartment != null">#{chilCurdepartment} , </if>
+				<if test="chilPredepartment != null">#{chilPredepartment} , </if>
+				<if test="chilCreatecounty != null">#{chilCreatecounty} , </if>
+				<if test="chilCreatesite != null">#{chilCreatesite} , </if>
+				<if test="chilCreatedate != null">#{chilCreatedate} , </if>
+				<if test="chilCreateman != null">#{chilCreateman} , </if>
+				<if test="chilUnitimmu != null">#{chilUnitimmu} , </if>
+				<if test="chilBirthhospital != null">#{chilBirthhospital} , </if>
+				<if test="chilBirthhospitalname != null">#{chilBirthhospitalname} , </if>
+				<if test="chilBcgScar != null">#{chilBcgScar} , </if>
+				<if test="chilMotherno != null">#{chilMotherno} , </if>
+				<if test="chilFatherno != null">#{chilFatherno} , </if>
+				<if test="chilProvince != null">#{chilProvince} , </if>
+				now() ,
+				<if test="createCardTime != null">#{createCardTime} , </if>
+				<if test="type != null">#{type} , </if>
+				<if test="syncstatus != null">#{syncstatus} , </if>
+				<if test="status != null">#{status} , </if>
+				<if test="createUserId != null">#{createUserId} , </if>
+				<if test="createUserName != null">#{createUserName} , </if>
+				now() ,
+				<if test="chilHabiaddressTownId != null">#{chilHabiaddressTownId}, </if>
+				<if test="chilAddressTownId != null">#{chilAddressTownId}, </if>
+				<if test="remark != null">#{remark} </if>
+			</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.child.TChildInfoEntity">
+		update t_child_info
+		<set>
+			<if test="chilName != null">`chil_name` = #{chilName}, </if>
+			<if test="chilSex != null">`chil_sex` = #{chilSex}, </if>
+			<if test="chilBirthday != null">`chil_birthday` = #{chilBirthday}, </if>
+			<if test="chilBirthweight != null">`chil_birthweight` = #{chilBirthweight}, </if>
+			<if test="chilNatiId != null">`chil_nati_id` = #{chilNatiId}, </if>
+			<if test="chilCardno != null">`chil_cardno` = #{chilCardno}, </if>
+			<if test="chilNo != null">`chil_no` = #{chilNo}, </if>
+			<if test="chilBirthno != null">`chil_birthno` = #{chilBirthno}, </if>
+			<if test="chilMother != null">`chil_mother` = #{chilMother}, </if>
+			<if test="chilFather != null">`chil_father` = #{chilFather}, </if>
+			<if test="chilCommittee != null">`chil_committee` = #{chilCommittee}, </if>
+			<if test="chilSchool != null">`chil_school` = #{chilSchool}, </if>
+			<if test="chilHabiaddress != null">`chil_habiaddress` = #{chilHabiaddress}, </if>
+			<if test="chilAddress != null">`chil_address` = #{chilAddress}, </if>
+			<if test="chilTel != null">`chil_tel` = #{chilTel}, </if>
+			<if test="chilMobile != null">`chil_mobile` = #{chilMobile}, </if>
+			<if test="chilCarddate != null">`chil_carddate` = #{chilCarddate}, </if>
+			<if test="chilHealthno != null">`chil_healthno` = #{chilHealthno}, </if>
+			<if test="chilResidenceclient != null">`chil_residenceclient` = #{chilResidenceclient}, </if>
+			<if test="chilResidence != null">`chil_residence` = #{chilResidence}, </if>
+			<if test="chilAccount != null">`chil_account` = #{chilAccount}, </if>
+			<if test="chilHabiId != null">`chil_habi_id` = #{chilHabiId}, </if>
+			<if test="chilInoctype != null">`chil_inoctype` = #{chilInoctype}, </if>
+			<if test="chilSensitivity != null">`chil_sensitivity` = #{chilSensitivity}, </if>
+			<if test="chilMotherhb != null">`chil_motherhb` = #{chilMotherhb}, </if>
+			<if test="chilMotherhiv != null">`chil_motherhiv` = #{chilMotherhiv}, </if>
+			<if test="chilHere != null">`chil_here` = #{chilHere}, </if>
+			<if test="chilLeavedate != null">`chil_leavedate` = #{chilLeavedate}, </if>
+			<if test="chilLeave != null">`chil_leave` = #{chilLeave}, </if>
+			<if test="chilLeaveremark != null">`chil_leaveremark` = #{chilLeaveremark}, </if>
+			<if test="chilCurdepartment != null">`chil_curdepartment` = #{chilCurdepartment}, </if>
+			<if test="chilPredepartment != null">`chil_predepartment` = #{chilPredepartment}, </if>
+			<if test="chilCreatecounty != null">`chil_createcounty` = #{chilCreatecounty}, </if>
+			<if test="chilCreatesite != null">`chil_createsite` = #{chilCreatesite}, </if>
+			<if test="chilCreatedate != null">`chil_createdate` = #{chilCreatedate}, </if>
+			<if test="chilCreateman != null">`chil_createman` = #{chilCreateman}, </if>
+			<if test="chilUnitimmu != null">`chil_unitimmu` = #{chilUnitimmu}, </if>
+			<if test="chilBirthhospital != null">`chil_birthhospital` = #{chilBirthhospital}, </if>
+			<if test="chilBirthhospitalname != null">`chil_birthhospitalname` = #{chilBirthhospitalname}, </if>
+			<if test="chilBcgScar != null">`chil_bcg_scar` = #{chilBcgScar}, </if>
+			<if test="chilMotherno != null">`chil_motherno` = #{chilMotherno}, </if>
+			<if test="chilFatherno != null">`chil_fatherno` = #{chilFatherno}, </if>
+			<if test="chilProvince != null">`chil_province` = #{chilProvince}, </if>
+			`chil_edit_date` = now(),
+			<if test="chilHabiaddressTownId != null">`chil_habiaddress_town_id` = #{chilHabiaddressTownId}, </if>
+			<if test="chilAddressTownId != null">`chil_address_town_id` = #{chilAddressTownId}, </if>
+			<if test="createCardTime != null">`create_card_time` = #{createCardTime}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="syncstatus != null">`syncstatus` = #{syncstatus}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserName != null">`create_user_name` = #{createUserName}, </if>
+			<!--<if test="createTime != null">`create_time` = #{createTime}, </if>-->
+			<if test="remark != null">`remark` = #{remark}</if>
+		</set>
+		where chil_code = #{chilCode}
+	</update>
+
+
+	<update id="updatainfo" parameterType="io.yfjz.entity.child.TChildInfoEntity">
+		update t_child_info
+		<set>
+			<if test="chilName != null">`chil_name` = #{chilName}, </if>
+			<if test="chilSex != null">`chil_sex` = #{chilSex}, </if>
+			<if test="chilBirthday != null">`chil_birthday` = #{chilBirthday}, </if>
+			<if test="chilBirthweight != null">`chil_birthweight` = #{chilBirthweight}, </if>
+			<if test="chilNatiId != null">`chil_nati_id` = #{chilNatiId}, </if>
+			<if test="chilCardno != null">`chil_cardno` = #{chilCardno}, </if>
+			<if test="chilNo != null">`chil_no` = #{chilNo}, </if>
+			<if test="chilBirthno != null">`chil_birthno` = #{chilBirthno}, </if>
+			<if test="chilMother != null">`chil_mother` = #{chilMother}, </if>
+			<if test="chilFather != null">`chil_father` = #{chilFather}, </if>
+			<if test="chilCommittee != null">`chil_committee` = #{chilCommittee}, </if>
+			<if test="chilSchool != null">`chil_school` = #{chilSchool}, </if>
+			<if test="chilHabiaddress != null">`chil_habiaddress` = #{chilHabiaddress}, </if>
+			<if test="chilAddress != null">`chil_address` = #{chilAddress}, </if>
+			<if test="chilTel != null">`chil_tel` = #{chilTel}, </if>
+			<if test="chilMobile != null">`chil_mobile` = #{chilMobile}, </if>
+			<if test="chilCarddate != null">`chil_carddate` = #{chilCarddate}, </if>
+			<if test="chilHealthno != null">`chil_healthno` = #{chilHealthno}, </if>
+			<if test="chilResidenceclient != null">`chil_residenceclient` = #{chilResidenceclient}, </if>
+			<if test="chilResidence != null">`chil_residence` = #{chilResidence}, </if>
+			<if test="chilAccount != null">`chil_account` = #{chilAccount}, </if>
+			<if test="chilHabiId != null">`chil_habi_id` = #{chilHabiId}, </if>
+			<if test="chilInoctype != null">`chil_inoctype` = #{chilInoctype}, </if>
+			<if test="chilSensitivity != null">`chil_sensitivity` = #{chilSensitivity}, </if>
+			<if test="chilMotherhb != null">`chil_motherhb` = #{chilMotherhb}, </if>
+			<if test="chilMotherhiv != null">`chil_motherhiv` = #{chilMotherhiv}, </if>
+			<if test="chilHere != null">`chil_here` = #{chilHere}, </if>
+			<if test="chilLeavedate != null">`chil_leavedate` = #{chilLeavedate}, </if>
+			<if test="chilLeave != null">`chil_leave` = #{chilLeave}, </if>
+			<if test="chilLeaveremark != null">`chil_leaveremark` = #{chilLeaveremark}, </if>
+			<if test="chilCurdepartment != null">`chil_curdepartment` = #{chilCurdepartment}, </if>
+			<if test="chilPredepartment != null">`chil_predepartment` = #{chilPredepartment}, </if>
+			<if test="chilCreatecounty != null">`chil_createcounty` = #{chilCreatecounty}, </if>
+			<if test="chilCreatesite != null">`chil_createsite` = #{chilCreatesite}, </if>
+			<if test="chilCreatedate != null">`chil_createdate` = #{chilCreatedate}, </if>
+			<if test="chilCreateman != null">`chil_createman` = #{chilCreateman}, </if>
+			<if test="chilUnitimmu != null">`chil_unitimmu` = #{chilUnitimmu}, </if>
+			<if test="chilBirthhospital != null">`chil_birthhospital` = #{chilBirthhospital}, </if>
+			<if test="chilBirthhospitalname != null">`chil_birthhospitalname` = #{chilBirthhospitalname}, </if>
+			<if test="chilBcgScar != null">`chil_bcg_scar` = #{chilBcgScar}, </if>
+			<if test="chilMotherno != null">`chil_motherno` = #{chilMotherno}, </if>
+			<if test="chilFatherno != null">`chil_fatherno` = #{chilFatherno}, </if>
+			<if test="chilProvince != null">`chil_province` = #{chilProvince}, </if>
+			`chil_edit_date` = now(),
+			<if test="chilHabiaddressTownId != null">`chil_habiaddress_town_id` = #{chilHabiaddressTownId}, </if>
+			<if test="chilAddressTownId != null">`chil_address_town_id` = #{chilAddressTownId}, </if>
+			<if test="createCardTime != null">`create_card_time` = #{createCardTime}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="syncstatus != null">`syncstatus` = #{syncstatus}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserName != null">`create_user_name` = #{createUserName}, </if>
+			<if test="remark != null">`remark` = #{remark}</if>
+		</set>
+		where chil_code = #{chilCode}
+	</update>
+
+	<delete id="delete">
+		delete from t_child_info where chil_code = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from t_child_info where chil_code in
+		<foreach item="chilCode" collection="array" open="(" separator="," close=")">
+			#{chilCode}
+		</foreach>
+	</delete>
+
+	<select id="getIntegrityRateByCondition"      resultType="io.yfjz.entity.child.IntegrityRateEntity">
+		select count(DISTINCT info.chil_code) as totalChild, LEFT(info.chil_birthday,4) as `year`,
+		COUNT(DISTINCT t1.chil_code) as fullCount,
+		count( case when length(trim(info.chil_name))>0 then info.chil_name end) as fullNameCount,
+		count( case when length(trim(info.chil_sex))>0 then info.chil_sex end) as fullSexCount,
+		count( case when length(trim(info.chil_birthday))>0 then info.chil_birthday end)  as fullBirthTimeCount,
+		count( length(trim(info.chil_tel))>0 || length(trim(info.chil_mobile))>0) as fullTelCount,
+
+		count( case when length(trim(info.chil_mother))>0 then info.chil_mother else info.chil_father end)  as fullMothernameCount,
+		count( case when length(trim(info.chil_habi_id))>0 then info.chil_habi_id end)  as fullHabiIdCount,
+		count( case when length(trim(info.chil_habiaddress))>0 then info.chil_habiaddress end)  as fullHukouAddressCount,
+		count( case when length(trim(info.chil_createsite))>0 then info.chil_createsite end)  as fullCreateSiteCount,
+		count( case when length(trim(info.chil_address))>0 then info.chil_address end)  as fullContactAddressCount
+		from t_child_info info
+		LEFT JOIN
+		(
+		SELECT DISTINCT * from t_child_info WHERE chil_name is not null and LENGTH(trim(chil_name))>0 and LENGTH(trim(chil_sex))>0 and LENGTH(trim(chil_birthday))>0
+		and (LENGTH(trim(chil_tel))>0 or LENGTH(trim(chil_mobile))>0) and LENGTH(trim(chil_mother))>0 and LENGTH(trim(chil_habiaddress))>0
+		and LENGTH(trim(chil_address))>0 and LENGTH(trim(chil_habi_id))>0
+		<if test="childInfoStatus != null">
+			and chil_here IN
+			<foreach collection="childInfoStatus" item="item" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+		)t1  on t1.chil_name = info.chil_name and  t1.chil_birthday= info.chil_birthday and t1.chil_sex = info.chil_sex  and t1.delete_status=0
+
+		WHERE info.delete_status = 0
+		<if test="year_start == null or year_start == '' and yearList == null  ">
+			and LEFT(info.chil_birthday,4)=LEFT(NOW(),4)
+		</if>
+		<if test="year_start != null and year_start != '' and yearList == null  ">
+			and LEFT(info.chil_birthday,4)=#{year_start}
+		</if>
+		<if test="yearList != null">
+			<foreach collection="yearList"  item="item" separator=" OR  "   open=" AND ("   close=")">
+				LEFT(info.chil_birthday,4)=#{item}
+			</foreach>
+		</if>
+        <if test="org_id!=null">
+            and info.chil_curdepartment = #{org_id}
+        </if>
+		<if test="childInfoStatus != null">
+			and info.chil_here IN
+			<foreach collection="childInfoStatus" item="item" separator="," open="(" close=")">
+					#{item}
+			</foreach>
+		</if>
+		GROUP by `year`
+	</select>
+
+	<!-- 根据不同查询条件，儿童信息不完整筛选列表-数据 -->
+	<select id="getListImperfectDataChild"   resultType="io.yfjz.entity.child.TChildInfoEntity">
+		select
+		info.chil_code,
+		info.chil_no,
+		info.chil_father,
+		info.chil_mother,
+		info.chil_name,
+		info.chil_sex,
+		info.chil_birthday,
+		info.chil_mobile,
+		case when info.chil_motherno is null then info.chil_fatherno else info.chil_motherno end as chil_motherno,
+		info.chil_tel as chil_tel,
+		case when depart.name is null then chil_createsite else depart.name end as chil_createsite,
+		dic3.text AS chil_residence,
+		info.chil_habi_id,
+		info.chil_address,
+		info.chil_habiaddress,
+		committee.name AS chil_committee,
+		dict.text as chil_here,
+		case when info.create_card_time is not null then left(info.create_card_time,10) else null end as create_card_time
+		from t_child_info info
+		left join  sys_dict dict on dict.ttype='child_info_status' and dict.value = info.chil_here
+		LEFT JOIN  t_base_committee committee ON committee.code = info.chil_committee and committee.org_id = #{org_id}
+		LEFT JOIN  sys_depart depart ON  depart.id = info.chil_createsite
+		LEFT JOIN sys_dict dic3 ON  dic3.ttype = 'child_residence_code' and dic3.value = info.chil_residence and dic3.status!=-1
+		where info.delete_status = 0
+		<if test="cname=='true'">
+			and (info.chil_name is null || length(trim(info.chil_name)) = 0)
+		</if>
+		<if test="sexcode=='true'">
+			and (info.chil_sex is null ||  length(trim(info.chil_sex)) = 0)
+		</if>
+		<if test="birthtime=='true'">
+			and (info.chil_birthday is null ||  length(trim(info.chil_birthday )) = 0)
+		</if>
+		<if test="mothername=='true'">
+			and (info.chil_mother is null ||  length(trim(info.chil_mother)) = 0)
+		</if>
+		<if test="fathername=='true'">
+			and (info.chil_father is null ||  length(trim(info.chil_father)) = 0)
+		</if>
+		<if test="detailaddress=='true'">
+			and (info.chil_address is null ||  length(trim(info.chil_address)) = 0)
+		</if>
+		<if test="child_residence=='true'">
+			and (info.chil_residence is null ||  length(trim(info.chil_residence)) = 0)
+		</if>
+		<if test="child_mobile=='true'">
+			and (info.chil_mobile is null ||  length(trim(info.chil_mobile )) = 0 )
+		</if>
+		<if test="homephone=='true'">
+			and (info.chil_tel is null ||  length(trim(info.chil_tel)) = 0)
+		</if>
+		<if test="familyregioncode=='true'">
+			and (info.chil_address is null ||  length(trim(info.chil_address)) = 0)
+		</if>
+		<if test="hukouregioncode=='true'">
+			and (info.chil_habiaddress is null ||  length(trim(info.chil_habiaddress)) = 0)
+		</if>
+		<if test="jkrq=='true'">
+			and (info.create_card_time is null ||  length(trim(info.create_card_time)) = 0)
+		</if>
+		<if test="identitycard=='true'">
+			and (info.chil_no is null ||  length(trim(info.chil_no)) = 0)
+		</if>
+		<if test="guardiancard=='true'">
+			and  ((info.chil_motherno is null || length(trim(info.chil_motherno)) = 0) and (info.chil_fatherno is null || length(trim(info.chil_fatherno)) = 0))
+		</if>
+		<if test="departname=='true'">
+			and  (info.chil_createsite is null ||  length(trim(info.chil_createsite)) = 0)
+		</if>
+		<if test="child_habi_id=='true'">
+			and  (info.chil_habi_id is null ||  length(trim(info.chil_habi_id)) = 0)
+		</if>
+
+		<if test="committee=='true'">
+			and (info.chil_committee is null ||  length(trim(info.chil_committee)) = 0)
+		</if>
+		<if test="here=='true'">
+			and (info.chil_here is null ||  length(trim(info.chil_here)) = 0)
+		</if>
+		<if test="org_id!=null">
+			and info.chil_curdepartment = #{org_id}
+		</if>
+		<if test="year!=null">
+			and LEFT(info.chil_birthday,4)=#{year}
+		</if>
+		<if test="childInfoStatus != null">
+			and info.chil_here IN
+			<foreach collection="childInfoStatus" item="item" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+
+	</select>
+	<select id="queryTotalImperfectChild" resultType="int">
+		select count(*) from t_child_info info
+		where info.delete_status = 0
+		<if test="cname=='true'">
+			and (info.chil_name is null || length(trim(info.chil_name)) = 0)
+		</if>
+		<if test="sexcode=='true'">
+			and (info.chil_sex is null ||  length(trim(info.chil_sex)) = 0)
+		</if>
+		<if test="birthtime=='true'">
+			and (info.chil_birthday is null ||  length(trim(info.chil_birthday )) = 0)
+		</if>
+		<if test="mothername=='true'">
+			and (info.chil_mother is null ||  length(trim(info.chil_mother)) = 0)
+		</if>
+		<if test="fathername=='true'">
+			and (info.chil_father is null ||  length(trim(info.chil_father)) = 0)
+		</if>
+		<if test="detailaddress=='true'">
+			and (info.chil_address is null ||  length(trim(info.chil_address)) = 0)
+		</if>
+		<if test="child_residence=='true'">
+			and (info.chil_residence is null ||  length(trim(info.chil_residence )) = 0)
+		</if>
+		<if test="child_mobile=='true'">
+			and (info.chil_mobile is null ||  length(trim(info.chil_mobile )) = 0)
+		</if>
+		<if test="homephone=='true'">
+			and (info.chil_tel is null ||  length(trim(info.chil_tel)) = 0)
+		</if>
+		<if test="familyregioncode=='true'">
+			and (info.chil_address is null ||  length(trim(info.chil_address)) = 0)
+		</if>
+		<if test="hukouregioncode=='true'">
+			and (info.chil_habiaddress is null ||  length(trim(info.chil_habiaddress)) = 0)
+		</if>
+		<if test="jkrq=='true'">
+			and (info.create_card_time is null ||  length(trim(info.create_card_time)) = 0)
+		</if>
+		<if test="identitycard=='true'">
+			and (info.chil_no is null ||  length(trim(info.chil_no)) = 0)
+		</if>
+		<if test="guardiancard=='true'">
+			and  ((info.chil_motherno is null || length(trim(info.chil_motherno)) = 0) and (info.chil_fatherno is null || length(trim(info.chil_fatherno)) = 0))
+		</if>
+		<if test="departname=='true'">
+			and  (info.chil_createsite is null ||  length(trim(info.chil_createsite)) = 0)
+		</if>
+		<if test="child_habi_id=='true'">
+			and  (info.chil_habi_id is null ||  length(trim(info.chil_habi_id)) = 0)
+		</if>
+
+		<if test="committee=='true'">
+			and (info.chil_committee is null ||  length(trim(info.chil_committee)) = 0)
+		</if>
+		<if test="here=='true'">
+			and (info.chil_here is null ||  length(trim(info.chil_here)) = 0)
+		</if>
+		<if test="org_id!=null">
+			and info.chil_curdepartment = #{org_id}
+		</if>
+		<if test="year!=null">
+			and LEFT(info.chil_birthday,4)=#{year}
+		</if>
+		<if test="childInfoStatus != null">
+			and info.chil_here IN
+			<foreach collection="childInfoStatus" item="item" separator="," open="(" close=")">
+				#{item}
+			</foreach>
+		</if>
+
+	</select>
+	<select id="getListImperfectInocChild" resultType="java.util.HashMap">
+		select
+			info.chil_code as chilCode,
+			info.chil_name as chilName,
+			info.chil_sex as chilSex,
+			info.chil_birthday as chilBirthday,
+			vac.bio_cn_sortname as bioCnSortname,
+			inoculate.id,
+			inoculate.inoc_time as inocTime,
+			inoculate.inoc_date as inocDate,
+			inoculate.inoc_bact_code as inocBactCode,
+			trim(inoculate.inoc_corp_code) as inocCorpCode,
+			trim(inoculate.inoc_pay) as inocPay,
+			trim(inoculate.inoc_batchno) as inocBatchno,
+			trim(inoculate.inoc_nurse) as inocNurse,
+			trim(inoculate.inoc_inpl_id) as inocInplId,
+			trim(inoculate.inoc_depa_code) as inocDepaCode
+	    from t_child_info info
+	    left join t_child_inoculate inoculate on inoculate.chil_code = info.chil_code
+		left join t_vac_info vac on vac.bio_code = inoculate.inoc_bact_code
+	    <where>
+			1=1
+			<if test="bioCode !=null">
+				and inoculate.inoc_bact_code = #{bioCode}
+			</if>
+
+			<if test="inocDateStart != null and inocDateEnd != null">
+				and TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inocDateStart})
+				and TO_DAYS(#{inocDateEnd}) >= TO_DAYS(inoculate.inoc_date)
+			</if>
+			<if test="inocDateStart != null and inocDateEnd == null">
+				and TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inocDateStart})
+			</if>
+			<if test="birthDayStart != null and birthDayEnd != null">
+				and TO_DAYS(info.chil_birthday) >= TO_DAYS(#{birthDayStart})
+				and TO_DAYS(#{birthDayEnd}) >= TO_DAYS(info.chil_birthday)
+			</if>
+			<if test="birthDayStart != null and birthDayEnd == null">
+				and TO_DAYS(info.chil_birthday) = TO_DAYS(#{birthDayStart})
+			</if>
+			<if test="childInfoStatus != null">
+				and info.chil_here = #{childInfoStatus}
+			</if>
+			<if test="inoVacc != null and bios == null">
+				and inoculate.inoc_bact_code = #{inoVacc}
+			</if>
+			<if test="bios != null">
+				<foreach collection="bios"  item="item" separator=" OR  "   open=" AND ("   close=")">
+					inoculate.inoc_bact_code = #{item}
+				</foreach>
+			</if>
+			<if test="chilAccount != null">
+				and info.chil_account = #{chilAccount}
+			</if>
+			<if test="chilResidence != null">
+				and info.chil_residence = #{chilResidence}
+			</if>
+			<if test="chilCommittees != null and Committee==null">
+				and info.chil_committee = #{chilCommittees}
+			</if>
+			<if test="Committee != null">
+				<foreach collection="Committee"  item="item" separator=" OR  "   open=" AND ("   close=")">
+					info.chil_committee = #{item}
+				</foreach>
+			</if>
+			<if test="org_id != null">
+				and inoculate.inoc_depa_code = #{org_id}
+			</if>
+			and (inoculate.inoc_date is null or inoculate.inoc_bact_code is null
+				or inoculate.inoc_corp_code is null or length(trim(inoculate.inoc_corp_code)) = 0  or inoculate.inoc_pay is null
+				or inoculate.inoc_nurse is null or length(trim(inoculate.inoc_nurse)) = 0 or inoculate.inoc_inpl_id is null
+				or length(trim(inoculate.inoc_inpl_id)) = 0 or inoculate.inoc_depa_code is null or length(trim(inoculate.inoc_depa_code)) = 0
+				or inoculate.inoc_batchno is null or length(trim(inoculate.inoc_batchno))=0
+			)
+
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<select id="queryTotalImperfectInocChild" resultType="int">
+		select count(info.chil_code) from  t_child_info info
+	    left join t_child_inoculate inoculate on inoculate.chil_code = info.chil_code
+		left join t_vac_info vac on vac.bio_code = inoculate.inoc_bact_code
+		<where>
+			1=1
+			<if test="bioCode !=null">
+				and inoculate.inoc_bact_code = #{bioCode}
+			</if>
+
+			<if test="inocDateStart != null and inocDateEnd != null">
+				and TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inocDateStart})
+				and TO_DAYS(#{inocDateEnd}) >= TO_DAYS(inoculate.inoc_date)
+			</if>
+			<if test="inocDateStart != null and inocDateEnd == null">
+				and TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inocDateStart})
+			</if>
+			<if test="birthDayStart != null and birthDayEnd != null">
+				and TO_DAYS(info.chil_birthday) >= TO_DAYS(#{birthDayStart})
+				and TO_DAYS(#{birthDayEnd}) >= TO_DAYS(info.chil_birthday)
+			</if>
+			<if test="birthDayStart != null and birthDayEnd == null">
+				and TO_DAYS(info.chil_birthday) = TO_DAYS(#{birthDayStart})
+			</if>
+			<if test="childInfoStatus != null">
+				and info.chil_here = #{childInfoStatus}
+			</if>
+			<if test="inoVacc != null and bios == null">
+				and inoculate.inoc_bact_code = #{inoVacc}
+			</if>
+			<if test="bios != null">
+				<foreach collection="bios"  item="item" separator=" OR  "   open=" AND ("   close=")">
+					inoculate.inoc_bact_code = #{item}
+				</foreach>
+			</if>
+			<if test="chilAccount != null">
+				and info.chil_account = #{chilAccount}
+			</if>
+			<if test="chilResidence != null">
+				and info.chil_residence = #{chilResidence}
+			</if>
+			<if test="chilCommittees != null and Committee==null">
+				and info.chil_committee = #{chilCommittees}
+			</if>
+			<if test="Committee != null">
+				<foreach collection="Committee"  item="item" separator=" OR  "   open=" AND ("   close=")">
+					info.chil_committee = #{item}
+				</foreach>
+			</if>
+			<if test="org_id != null">
+				and inoculate.inoc_depa_code = #{org_id}
+			</if>
+			and (inoculate.inoc_date is null or inoculate.inoc_bact_code is null
+			or inoculate.inoc_corp_code is null or length(trim(inoculate.inoc_corp_code)) = 0  or inoculate.inoc_pay is null
+			or inoculate.inoc_nurse is null or length(trim(inoculate.inoc_nurse)) = 0 or inoculate.inoc_inpl_id is null
+			or length(trim(inoculate.inoc_inpl_id)) = 0 or inoculate.inoc_depa_code is null or length(trim(inoculate.inoc_depa_code)) = 0
+			or inoculate.inoc_batchno is null or length(trim(inoculate.inoc_batchno))=0
+			)
+
+		</where>
+	</select>
+	<!--当日接种儿童-->
+	<select id="CurrentDayInoculateChild" resultType="io.yfjz.entity.child.TChildInfoEntity">
+		SELECT DISTINCT
+		info.`chil_code` ,
+		 dic1.text as chil_sex,
+		`chil_name`,
+		`chil_birthday` ,
+		`chil_birthweight`,
+		 dic2.text as `chil_nati_id` ,
+		`chil_mother`,
+		`chil_father` ,
+		com.name as `chil_committee`,
+		`chil_habiaddress` ,
+		`chil_address`,
+		`chil_school` ,
+		`chil_tel` ,
+		`chil_mobile`,
+		 dic5.text as `chil_residence`,
+		 dic4.text as `chil_account`,
+		 dic3.text as `chil_here`,
+		`chil_curdepartment` ,
+		`chil_predepartment`,
+		`chil_createsite`,
+		left(`chil_createdate`,10) as chil_createdate ,
+		info.`chil_createman`,
+		info.create_user_name,
+		`chil_unitimmu` ,
+		`chil_birthhospital` ,
+		`chil_birthhospitalname` ,
+		info.remark,
+		queue.no_text as create_user_id,/*create_user_id，排队号放在此字段中，为了返回类型为实体，使用时注意*/
+		info.`create_card_time`
+		from t_child_info info
+		LEFT JOIN sys_dict dic1 on  dic1.ttype='sex_code' and info.chil_sex = dic1.value
+		LEFT JOIN sys_dict dic2 on  dic2.ttype='nation_code' and info.chil_nati_id = dic2.value
+		LEFT JOIN sys_dict dic3 on  dic3.ttype='child_info_status' and info.chil_here = dic3.value
+		LEFT JOIN sys_dict dic4 on  dic4.ttype='movetype_code' and info.chil_account = dic4.value
+		LEFT JOIN sys_dict dic5 on  dic5.ttype='child_residence_code' and info.chil_residence = dic5.value and dic5.status!=-1
+		left join t_base_committee com on com.code = info.chil_committee and com.org_id = #{org_id}
+		LEFT JOIN t_child_inoculate inoculate ON inoculate.chil_code = info.chil_code
+		left join t_queue_no queue on queue.child_code = info.chil_code
+		<where>
+			inoculate.inoc_depa_code = #{org_id}
+			<!--<if test="inoculateDateStart!=null and inoculateDateEnd!=null">
+				and TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inoculateDateStart})
+				and TO_DAYS(#{inoculateDateEnd}) >= TO_DAYS(inoculate.inoc_date)
+			</if>
+			<if test="inoculateDateStart!=null and inoculateDateEnd==null">
+				and TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inoculateDateStart})
+
+			</if>-->
+			<if test="inoculateDateStart==null and inoculateDateEnd==null">
+				and TO_DAYS(inoculate.inoc_date) =TO_DAYS(now())
+
+			</if>
+			<if test="chilCommittee!=null and chilCommittee!=''">
+				and info.chil_Committee = #{chilCommittee}
+			</if>
+			<if test="chilHere!=null and chilHere!=''">
+				and info.chil_here = #{chilHere}
+			</if>
+
+			<if test="chilCode!=null and chilCode!=''">
+				and info.chil_code = #{chilCode}
+			</if>
+			<if test="flag=='false'">
+				and queue.step='observe'
+			</if>
+			<if test="chilName!=null and chilName!=''">
+				and info.chil_name like concat('%',#{chilName},'%')
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd != null">
+				and TO_DAYS(info.chil_birthday) >= TO_DAYS(#{chilBirthdayStart})
+				and TO_DAYS(#{chilBirthdayEnd}) >= TO_DAYS(info.chil_birthday)
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd == null" >
+				and TO_DAYS(info.chil_birthday) = TO_DAYS(#{chilBirthdayStart})
+			</if>
+		</where>
+		group by chil_code
+		<if test="sidx != null and order !='' and order != null and sidx != ''">
+			ORDER BY info.${sidx} ${order}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<select id="queryTotalCurrentDayInoculateChild" resultType="int">
+		SELECT count(distinct inoculate.chil_code) from t_child_inoculate inoculate
+        left join t_child_info info on info.chil_code = inoculate.chil_code
+        left join t_base_committee com on com.code = info.chil_committee and com.org_id = #{org_id}
+        left join t_queue_no queue on queue.child_code = info.chil_code
+		<where>
+			info.delete_status = 0 and inoculate.inoc_depa_code = #{org_id}
+			<if test="inoculateDateStart!=null and inoculateDateEnd!=null">
+				and TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inoculateDateStart})
+				and TO_DAYS(#{inoculateDateEnd}) >= TO_DAYS(inoculate.inoc_date)
+			</if>
+			<if test="inoculateDateStart!=null and inoculateDateEnd==null">
+				and TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inoculateDateStart})
+
+			</if>
+			<if test="inoculateDateStart==null and inoculateDateEnd==null">
+				and TO_DAYS(inoculate.inoc_date) =TO_DAYS(now())
+
+			</if>
+			<if test="chilCode!=null and chilCode!=''">
+				and info.chil_code = #{chilCode}
+			</if>
+			<if test="flag=='false'">
+				and queue.step='observe'
+			</if>
+			<if test="chilName!=null and chilName!=''">
+				and info.chil_name like concat('%',#{chilName},'%')
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd != null">
+				and TO_DAYS(info.chil_birthday) >= TO_DAYS(#{chilBirthdayStart})
+				and TO_DAYS(#{chilBirthdayEnd}) >= TO_DAYS(info.chil_birthday)
+			</if>
+			<if test="chilBirthdayStart != null and chilBirthdayEnd == null" >
+				and TO_DAYS(info.chil_birthday) = TO_DAYS(#{chilBirthdayStart})
+			</if>
+		</where>
+	</select>
+	<select id="currentDayWaitInoculateChild" resultType="io.yfjz.entity.child.TChildInfoEntity">
+		SELECT DISTINCT
+		info.`chil_code` ,
+		dic1.text as chil_sex,
+		`chil_name`,
+		`chil_birthday` ,
+		`chil_birthweight`,
+		dic2.text as `chil_nati_id` ,
+		`chil_mother`,
+		`chil_father` ,
+		com.name as `chil_committee`,
+		`chil_habiaddress` ,
+		`chil_address`,
+		`chil_school` ,
+		`chil_tel` ,
+		`chil_mobile`,
+		dic5.text as `chil_residence`,
+		dic4.text as `chil_account`,
+		dic3.text as `chil_here`,
+		`chil_curdepartment` ,
+		`chil_predepartment`,
+		`chil_createsite`,
+		left(`chil_createdate`,10) as chil_createdate ,
+		info.`chil_createman`,
+		info.create_user_name,
+		`chil_unitimmu` ,
+		`chil_birthhospital` ,
+		`chil_birthhospitalname` ,
+		info.remark,
+		queue.no_text as create_user_id,/*create_user_id，排队号放在此字段中，为了返回类型为实体，使用时注意*/
+		info.`create_card_time`
+		from t_child_info info
+		LEFT JOIN sys_dict dic1 on  dic1.ttype='sex_code' and info.chil_sex = dic1.value
+		LEFT JOIN sys_dict dic2 on  dic2.ttype='nation_code' and info.chil_nati_id = dic2.value
+		LEFT JOIN sys_dict dic3 on  dic3.ttype='child_info_status' and info.chil_here = dic3.value
+		LEFT JOIN sys_dict dic4 on  dic4.ttype='movetype_code' and info.chil_account = dic4.value
+		LEFT JOIN sys_dict dic5 on  dic5.ttype='child_residence_code' and info.chil_residence = dic5.value and dic5.status!=-1
+		left join t_base_committee com on com.code = info.chil_committee and com.org_id = #{org_id}
+		left join t_queue_no queue on queue.child_code = info.chil_code
+		where
+			TO_DAYS(queue.create_time) =TO_DAYS(now()) and queue.status != -1 and step = 'inoculate' and (`position` = #{towerId} or `position` is null)
+
+		order by queue.no_text
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+	<select id="queryTotalCurrentDayWaitInoculateChild" resultType="int">
+		SELECT count(distinct queue.child_code) from t_queue_no queue
+		left join t_child_info info on info.chil_code = queue.child_code
+		where
+			TO_DAYS(queue.create_time) =TO_DAYS(now()) and queue.status != -1 and step = 'inoculate' and `position` = #{towerId}
+	</select>
+	<!--查询儿童表中是否有数据-->
+	<select id="queryAllTotal" resultType="java.lang.Integer">
+		select count(0) from t_child_info
+	</select>
+<!--未同步儿童-->
+	<select id="getListUnSyncstatusInocChild" resultType="io.yfjz.entity.child.TChildInfoEntity">
+		select DISTINCT
+		info.`chil_code` ,
+		 chil_sex,
+		`chil_name`,
+		`chil_birthday`,
+		`chil_birthweight`,
+		`chil_nati_id`,
+		`chil_cardno`,
+		`chil_birthno`,
+		`chil_mother`,
+		`chil_father` ,
+		`chil_committee`,
+		`chil_habiaddress` from t_child_info info
+		 join t_child_inoculate inoc on info.chil_code=inoc.chil_code
+		where info.syncstatus = 0 or inoc.syncstatus = 0 and info.delete_status = 0 and inoc.delete_status = 0
+	</select>
+	<select id="queryHabiId" resultType="string">
+		select id from common_area where name =#{county}
+	</select>
+    <select id="getCurrentAddress" resultType="string">
+		select CONCAT(left(province_name,2),'/',city_name,'/',county_name,'/',town_name) from t_base_position where town_id=#{orgId} limit 1
+	</select>
+
+    <!--修改儿童条形码-->
+	<update id="updateBarCode" parameterType="java.util.Map">
+		update t_child_info
+		<set>
+			<if test="barCode != null">`chil_barcode` = #{barCode}</if>
+		</set>
+		where chil_code = #{childCode} AND delete_status = 0
+	</update>
+
+</mapper>

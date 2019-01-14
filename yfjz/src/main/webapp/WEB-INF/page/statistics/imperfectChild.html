@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童信息不完整明细表</title>
+	#parse("sys/header.html")
+	<!--选择城市控件-->
+	<link href="${rc.contextPath}/statics/plugins/city/css/city-picker.css" rel="stylesheet">
+	<link href="${rc.contextPath}/statics/plugins/city/css/main.css" rel="stylesheet">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+	<script src="${rc.contextPath}/statics/plugins/city/js/city-picker.data.js"></script>
+	<script src="${rc.contextPath}/statics/plugins/city/js/city-picker.js"></script>
+	<script src="${rc.contextPath}/statics/plugins/city/js/main.js"></script>
+	<script type="application/javascript">
+        var orgId="$shiro.getBaseInfo('orgId')";
+	</script>
+	<style type="text/css">
+		.condition{height:16px;margin-right:18px;width:20px;display:inline-block;}
+        /*#childImperfectForm input[type="checkbox"]{*/
+            /*-webkit-appearance: none;*/
+            /*vertical-align:middle;*/
+            /*margin-top:1px;*/
+            /*min-height: 12px;*/
+            /*min-width: 12px;*/
+        /*}*/
+	</style>
+</head>
+<body style="padding: 5px">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div  class="grid-btn">
+			<form id="childImperfectForm" class="form-inline" role="form">
+				<span style="font-size:12px;float: left;margin-top: 20px;margin-left: 20px;">查询条件：</span>
+				<div style="float: left;border:white 2px solid;padding: 4px;margin-right: 20px;">
+					<input type="checkbox"  v-model="q.cname" name="cname" class="condition" id="cname" value="cname" /><label>儿童姓名</label>
+					<input type="checkbox" v-model="q.sexcode" name="sexcode" class="condition" value="sexcode" /><label>儿童性别</label>
+					<input type="checkbox" v-model="q.birthtime" name="birthtime" class="condition" value="birthtime"  /><label>出生日期</label>
+					<input type="checkbox" v-model="q.mothername" name="mothername" class="condition" id="mothername" value="mothername"/><label>母亲姓名</label>
+					<input type="checkbox" v-model="q.fathername" name="fathername" class="condition" id="fathername" value="fathername" /><label>父亲姓名</label>
+					<input type="checkbox" v-model="q.homephone" name="homephone" class="condition" id="homephone" value="homephone" /><label>家庭电话</label>
+					<input type="checkbox" v-model="q.child_mobile" name="child_mobile" class="condition" id="child_mobile" value="child_mobile"/><label>手机号码</label>
+					<input type="checkbox" v-model="q.detailaddress" name="detailaddress" class="condition" id="detailaddress" value="detailaddress" /><label>通讯地址</label>
+					<input type="checkbox" v-model="q.identitycard" name="identitycard" class="condition" id="identitycard" value="identitycard" /><label>儿童身份证</label>
+					</br>
+					<input type="checkbox" v-model="q.here" name="here" class="condition" id="here" value="here"/><label>在册情况</label>
+					<input type="checkbox" v-model="q.child_residence" name="child_residence" class="condition" id="child_residence" value="child_residence"/><label>居住属性</label>
+					<input type="checkbox" v-model="q.jkrq" name="jkrq" class="condition" id="addtime" value="jkrq" /><label>建卡日期</label>
+					<input type="checkbox" v-model="q.committee" name="committee" class="condition" id="committee" value="committee" /><label>居委会/行政村</label>
+					<input type="checkbox" v-model="q.departname" name="departname" class="condition" id="departname" value="departname"/><label>建证单位</label>
+					<input type="checkbox" v-model="q.hukouregioncode" name="hukouregioncode" class="condition" id="hukouregioncode" value="hukouregioncode" /><label>户口地址</label>
+					<input type="checkbox" v-model="q.familyregioncode" name="familyregioncode" class="condition" id="familyregioncode" value="familyregioncode"/><label>现居地址</label>
+					<input type="checkbox" v-model="q.child_habi_id" name="child_habi_id" class="condition" id="child_habi_id" value="child_habi_id"/><label>户口县国标</label>
+					<input type="checkbox" v-model="q.guardiancard" name="guardiancard" class="condition" id="guardiancard" value="guardiancard" /><label>家长身份证</label>
+				</div>
+				&nbsp;
+				<a class="btn btn-primary" @click="query">查询</a>
+				<a class="btn btn-primary" @click="reset">重置</a>
+				<a class="btn btn-primary" @click="excel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+				<a class="btn btn-primary" @click="print">打印</a>
+			</form>
+		</div>
+		<div style="margin-top: 30px">
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+
+	</div>
+
+
+	<div v-show="!showList" class="panel panel-default h-auto" id="childModel">
+
+	</div>
+</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/statistics/imperfectChild.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/bus/createchild.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/child/childvalidator.js?_${date.systemTime}"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/allprovince.js"></script>
+</body>
+</html>
+
+
+
+
+
+<!--
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>儿童档案信息</title>
+	<style type="text/css">
+		a:link,a:visited,a:hover,a:active {
+			text-decoration: none;
+			outline:none;
+		}
+		.condition{vertical-align:middle;display:inline-block;height:16px;margin-right:8px;width:15px;line-height:1}
+
+	</style>
+
+&lt;!&ndash; 过滤数据js &ndash;&gt;
+&lt;!&ndash;<script type="text/javascript" src="$webPath/resource/easyui/datagrid-filter.js"></script>&ndash;&gt;
+<script type="text/javascript">
+var webpath="$webPath";
+var module="sys";
+var classname="SysChild";
+var rootid='';
+var orgid = "$!request.getSession().getAttribute('currentdepartid')";
+var sysuid="$!request.getSession().getAttribute('userid')";
+var sysfunctionid="$!request.getParameter('functionid')";
+var varusername="$!request.getSession().getAttribute('username')";
+var nodeid= "$!request.getSession().getAttribute('currentdepartid')";
+var  nodename= "$!request.getSession().getAttribute('currentdepartname')";
+var nodename=null;
+jQuery(function(){
+
+	setbutton("$!request.getParameter('znodeid')","$!request.getSession().getAttribute('role')");
+});
+function ww3(date){
+	var y = date.getFullYear();
+	var m = date.getMonth()+1;
+	var d = date.getDate();
+	var str = y+''+(m<10?('0'+m):m)+''+(d<10?('0'+d):d);
+	return str;
+}
+function w3(s){
+	if (!s) return new Date();
+	var y = s.substring(0,4);
+	var m =s.substring(4,6)-1;
+	var d = s.substring(6,8);
+	if (!isNaN(y) && !isNaN(m) && !isNaN(d) ){
+		return new Date(y,m,d);
+	} else {
+		return new Date();
+	}
+}
+
+function exportexcels_fields(classname){
+
+	var flag=confirm("是否导出excle报表？");
+
+	//if(flag){window.location.href=webpath+"reports/excelCommon/report7/"+classname+"/selectByCondition.jhtml"+params;}
+
+	if(flag){
+        //拼接需要导出的字段
+	    var field_all = $("#tt").datagrid("getColumnFields");
+	    var field_selecteds_new = [];
+	    for(var i in field_all){
+	        if(!$("#tt").datagrid("getColumnOption",field_all[i]).hidden){
+                field_selecteds_new.push({
+                    name: "selected_fields",
+                    value: field_all[i]
+                });
+			}
+		}
+		//获取查询条件
+		var url = $("#tt").datagrid("options").url;
+        var search_condition = [];
+		if(url.indexOf("?")>0){
+			var search_condition_arr = url.substr(url.indexOf("?")+1).split("&");
+			for(var i in search_condition_arr){
+			    var temp_str = search_condition_arr[i].split("=");
+			    if(temp_str.length>1 && temp_str[1]){
+					search_condition.push({
+                        name: temp_str[0],
+                        value: temp_str[1]
+                    });
+                }
+			}
+        }
+        var field_selecteds=[]
+        for(var i in field_selecteds_new){
+            var value=field_selecteds_new[i].value;
+            if(value!="id"){
+                field_selecteds.push(field_selecteds_new[i]);
+			}
+
+		}
+
+	}
+
+
+}
+function print_fields(classname){
+
+
+	//var flag=confirm("是否打印报表？");
+	//if(flag){window.open(webpath+"reports/pdfCommon/report7/"+classname+"/selectByCondition.jhtml");}
+
+	var flag=confirm("是否打印报表？");
+	if(flag){
+        //拼接需要导出的字段
+        var field_all = $("#tt").datagrid("getColumnFields");
+        var field_selecteds = [];
+        for(var i in field_all){
+            if(!$("#tt").datagrid("getColumnOption",field_all[i]).hidden){
+                field_selecteds.push({
+					name: "selected_fields",
+                    value: field_all[i]
+                });
+            }
+        }
+
+	}
+}
+//不跳转下载文件
+function DownLoadFile(options) {
+    var config = $.extend(true, { method: 'post' }, options);
+    var iframe = $('<iframe id="down-file-iframe" />');
+    var form = $('<form target="down-file-iframe" method="' + config.method + '" />');
+    form.attr('action', config.url);
+    for (var key in config.data) {
+        form.append('<input type="hidden" name="' + config.data[key].name + '" value="' + config.data[key].value + '" />');
+    }
+    iframe.append(form);
+    $(document.body).append(iframe);
+    form[0].submit();
+    iframe.remove();
+}
+
+ </script>
+ </head>
+<body class="easyui-layout">
+&lt;!&ndash;<div region="west" split="true" title="组织树"  style="width:200px" >
+<div class="zTreeDemoBackground left">
+	<ul id="treeDemo" class="ztree"></ul>
+</div>
+</div>&ndash;&gt;
+<div region="center" split="true" title="儿童信息不完整明细表" style="width:80%" collapsible="true">
+	<table  id="tt" style="width:100%;" class="easyui-datagrid" singleSelect="true" pagination="true"
+		data-options="selectOnCheck:false,onHeaderContextMenu: function(e, field){
+				e.preventDefault();
+				if (!cmenu){
+					createColumnMenu();
+				}
+				cmenu.menu('show', {
+					left:e.pageX,
+					top:e.pageY
+				});
+			},pageSize:euiFn.datagrid.settings.pageSize,pageList:euiFn.datagrid.settings.pageList,checkOnSelect:false,"
+ 		rownumbers="true" fit="true" toolbar="#tb"  url="$webPath/request/imperfectChild/pagelist/SysChild/listImperfectDataChild.jhtml?org_id=$!request.getSession().getAttribute('currentdepartid')">
+	<thead>
+
+	</thead>
+ 	</table>
+	<div id="tb" style="padding:10px;height:auto">
+
+	</div>
+</div>
+<div style="width:799px;height:505px;" id='div_child_cause_record'>
+	<table id='datagrid_child_cause_record'></table>
+</div>
+<script src="$webPath/resource/jytc/elsewhere_search.js"></script>
+ </body>
+<script>
+	window.onload = function()
+	{
+		/*document.getElementById("birthtime_start").focus();*/
+		$('#birthtime_start').combogrid('textbox').focus();
+		keyDownEventFun();
+	}
+
+	function formatter_childcode(value,row,index){
+		return "<a href='javascript: editChild(\"edit\",\"sys\",\"SysChild\");'>"+value+"</a>";
+	}
+	function editChild(){
+        var row = $('#tt').datagrid('getSelected');
+        showlayerCustom('修改',webpath+'gochild/sys-SysChild-SysChild/SysChild/selectByPK.jhtml?id='+row.id+"&orgid="+rootid,document.body.clientWidth*0.8,document.body.clientHeight*0.8);
+	}
+	function formatter_position(value,row,index){
+		var position;
+	    try {
+	        position = JSON.parse(value).position;
+		}catch (e){
+	        position = value;
+		}
+		return position;
+	}
+
+	}
+	function DownLoadFile(options) {
+		var config = $.extend(true, { method: 'post' }, options);
+		var iframe = $('<iframe id="down-file-iframe" />');
+		var form = $('<form target="down-file-iframe" method="' + config.method + '" />');
+		form.attr('action', config.url);
+		for (var key in config.data) {
+			form.append('<input type="hidden" name="' + config.data[key].name + '" value="' + config.data[key].value + '" />');
+		}
+		iframe.append(form);
+		$(document.body).append(iframe);
+		form[0].submit();
+		iframe.remove();
+	};
+	document.onkeydown=function(event){
+		var e = event || window.event || arguments.callee.caller.arguments[0];
+		if(e && e.keyCode==27){ // 按 Esc
+		}
+		if(e && e.keyCode==13){ // enter 键
+			do_search();
+		}
+	};
+
+	function keyDownEventFun(){
+		$('#birthtime_end').textbox('textbox').keydown(function (event) {
+			if (event.keyCode == 13) {
+				do_search();
+			}
+		});
+
+	}
+</script>
+ </html>
+-->

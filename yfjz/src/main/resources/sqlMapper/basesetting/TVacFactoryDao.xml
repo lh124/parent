@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.basesetting.TVacFactoryDao">
+
+    <!-- 可根据自己需要-->
+    <sql id="allColumnsAlias">
+		factory_code as factoryCode ,factory_name as factoryName ,factory_cn_name as factoryCnName ,status as status ,create_time as createTime ,update_time as updateTime ,deleteStatus as delete_status ,pinyinInitials as pinyinInitials
+	</sql>
+    <!-- 可根据自己需要-->
+    <sql id="allColumns">
+		factory_code ,factory_name ,factory_cn_name ,status ,create_time ,update_time,delete_status,pinyinInitials
+	</sql>
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yfjz.entity.basesetting.TVacFactoryEntity" id="tVacFactoryMap">
+        <result property="factoryCode" column="factory_code"/>
+        <result property="factoryName" column="factory_name"/>
+        <result property="factoryCnName" column="factory_cn_name"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="pinyinInitials" column="pinyinInitials"/>
+        <result property="deleteStatus" column="delete_status"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="io.yfjz.entity.basesetting.TVacFactoryEntity">
+        select <include refid="allColumns"></include> from t_vac_factory where factory_code = #{value}
+    </select>
+
+    <select id="queryList" resultType="io.yfjz.entity.basesetting.TVacFactoryEntity">
+        select <include refid="allColumns"></include> from t_vac_factory where delete_status=0
+            <if test="factoryName != null and factoryName != ''">
+               and  factory_name like  concat('%', #{factoryName}, '%')  or factory_cn_name like  concat('%', #{factoryName}, '%') and   delete_status=0
+            </if>
+
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by factory_code desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+              limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from t_vac_factory where delete_status=0
+        <if test="factoryName != null and factoryName.trim() != ''">
+                and  factory_name like concat('%', #{factoryName}, '%')   or factory_cn_name like concat('%', #{factoryName}, '%')  and   delete_status=0
+            </if>
+	</select>
+    <select id="getAllData" resultType="io.yfjz.entity.basesetting.TVacFactoryEntity">
+        select * from t_vac_factory where delete_status=0
+    </select>
+
+    <insert id="save" parameterType="io.yfjz.entity.basesetting.TVacFactoryEntity">
+        insert into t_vac_factory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="factoryCode != null">`factory_code` , </if>
+            <if test="factoryName != null">`factory_name` , </if>
+            <if test="factoryCnName != null">`factory_cn_name` , </if>
+            <if test="status != null">`status` , </if>
+            <if test="createTime != null">`create_time`, </if>
+            <if test="updateTime != null">`update_time` ,</if>
+            <if test="deleteStatus != null">`delete_status` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="factoryCode != null">#{factoryCode} , </if>
+            <if test="factoryName != null">#{factoryName} , </if>
+            <if test="factoryCnName != null">#{factoryCnName} , </if>
+            <if test="status != null">#{status} , </if>
+            <if test="createTime != null">#{createTime}, </if>
+            <if test="updateTime != null">#{updateTime} ,</if>
+            <if test="deleteStatus != null">#{deleteStatus} </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.basesetting.TVacFactoryEntity">
+        update t_vac_factory
+        <set>
+            <if test="factoryName != null">`factory_name` = #{factoryName}, </if>
+            <if test="factoryCnName != null">`factory_cn_name` = #{factoryCnName}, </if>
+            <if test="status != null">`status` = #{status}, </if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="deleteStatus != null">`delete_status` = #{deleteStatus}</if>
+        </set>
+        where factory_code = #{factoryCode}
+    </update>
+
+    <delete id="delete">
+		delete from t_vac_factory where factory_code = #{value}
+	</delete>
+
+
+    <select id="updateDelStatus">
+        update t_vac_factory set `delete_status`=1 where factory_code in
+        <foreach item="factoryCode" collection="array" open="(" separator="," close=")">
+            #{factoryCode}
+        </foreach>
+    </select>
+    <select id="updateStatusOff">
+        update t_vac_factory set `status`=1 where factory_code in
+        <foreach item="factoryCode" collection="array" open="(" separator="," close=")">
+            #{factoryCode}
+        </foreach>
+    </select>
+    <select id="updateStatusIn">
+        update t_vac_factory set `status`=0 where factory_code in
+        <foreach item="factoryCode" collection="array" open="(" separator="," close=")">
+            #{factoryCode}
+        </foreach>
+    </select>
+
+
+    <delete id="deleteBatch">
+        delete from t_vac_factory where factory_code in
+        <foreach item="factoryCode" collection="array" open="(" separator="," close=")">
+            #{factoryCode}
+        </foreach>
+    </delete>
+
+</mapper>

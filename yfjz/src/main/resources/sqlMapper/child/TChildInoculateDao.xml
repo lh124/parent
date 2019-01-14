@@ -1,0 +1,1192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="io.yfjz.dao.child.TChildInoculateDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+		select * from t_child_inoculate where id = #{value}
+	</select>
+
+	<select id="queryLastInoObject" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+		select * from t_child_inoculate where chil_code = #{value} and delete_status = 0 order by inoc_date desc limit 1
+	</select>
+
+	<select id="querylistjzbl" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+				SELECT
+	consult.id AS id,
+	dic11.NAME AS remark,
+CASE
+
+	WHEN inoc_time IS NULL THEN
+	consult.injection_times ELSE inoc_time
+	END AS inoc_time,
+	vac.bio_cn_sortname AS `inoc_bact_code`,
+	`inoc_date`,
+	`inoc_reinforce`,
+	`inoc_batchno`,
+	dic1.text AS `inoc_property`,
+	inoc_free,
+	`inoc_dose`,
+	`inoc_opinion`,
+	factory.factory_cn_name AS `inoc_corp_code`,
+CASE
+
+	WHEN depart.NAME IS NULL THEN
+	other_depa ELSE depart.NAME
+	END AS `inoc_depa_code`,
+	dic.text AS `inoc_inpl_id`,
+	`inoc_union_code`,
+	inoc_nurse,
+	vac.bio_code AS `inoc_nationcode`,
+	`inoc_validdate`
+FROM
+	t_rule_plan consult
+	LEFT JOIN t_rule_dic dic11 ON dic11.id = consult.class_id
+	LEFT JOIN t_child_inoculate inoculate ON inoculate.id = consult.inoculate_id
+	LEFT JOIN t_vac_info vac ON vac.bio_code = inoculate.inoc_bact_code
+	LEFT JOIN sys_dict dic ON dic.ttype = 'code_inoculation_site'
+	AND dic.
+VALUE
+	= inoculate.inoc_inpl_id
+	LEFT JOIN sys_dict dic1 ON dic1.ttype = 'code_vaccine_property'
+	AND dic1.
+VALUE
+	= inoculate.inoc_property
+	LEFT JOIN sys_depart depart ON depart.id = inoculate.inoc_depa_code
+	LEFT JOIN t_vac_factory factory ON factory.factory_code = inoculate.inoc_corp_code
+WHERE
+	child_id = #{chilCode}
+	UNION ALL
+SELECT
+	inoculates.id,
+	vacc.bio_cn_sortname AS remark,
+	inoc_time,
+	vacc.bio_cn_sortname AS `inoc_bact_code`,
+	`inoc_date`,
+	dic1.text AS `inoc_property`,
+	`inoc_reinforce`,
+	`inoc_batchno`,
+	inoc_free,
+	`inoc_dose`,
+	`inoc_opinion`,
+	factory.factory_cn_name AS `inoc_corp_code`,
+CASE
+
+	WHEN depart.NAME IS NULL THEN
+	other_depa ELSE depart.NAME
+	END AS `inoc_depa_code`,
+	dic.text AS `inoc_inpl_id`,
+	`inoc_union_code`,
+	inoc_nurse,
+	vacc.bio_code AS `inoc_nationcode`,
+	`inoc_validdate`
+FROM
+	t_child_inoculate inoculates
+	LEFT JOIN t_vac_info vacc ON vacc.bio_code = inoculates.inoc_bact_code
+	LEFT JOIN sys_dict dic ON dic.ttype = 'code_inoculation_site'
+	AND dic.
+VALUE
+	= inoculates.inoc_inpl_id
+	LEFT JOIN sys_dict dic1 ON dic1.ttype = 'code_vaccine_property'
+	AND dic1.
+VALUE
+	= inoculates.inoc_property
+	LEFT JOIN sys_depart depart ON depart.id = inoculates.inoc_depa_code
+	LEFT JOIN t_vac_factory factory ON factory.factory_code = inoculates.inoc_corp_code
+WHERE
+	chil_code = #{chilCode}
+	AND LEFT ( inoculates.inoc_bact_code, 2 ) NOT IN ( SELECT dict.bio_sort_id FROM t_rule_plan plan LEFT JOIN t_rule_dic dict ON plan.class_id = dict.id WHERE child_id = #{chilCode} )
+    </select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+		select
+		ino.id,
+		`chil_code`,
+		class.class_cn_name as `inoc_vcn_kind`,
+		vac.bio_cn_sortname as `inoc_bact_code`,
+		dic1.text as `inoc_property`,
+		`inoc_time` ,
+		`inoc_date`,
+		case when depart.name is null then other_depa else depart.name end as `inoc_depa_code` ,
+		`inoc_reinforce` ,
+		`inoc_batchno` ,
+		`inoc_dose` ,
+		`inoc_opinion`,
+		`inoc_union_code` ,
+		`inoc_validdate`,
+		factory.factory_cn_name as `inoc_corp_code` ,
+		`inoc_regulatory_code` ,
+		`inoc_pay`,
+		`inoc_free`,
+		`inoc_depa_id` ,
+		`inoc_county` ,
+		vac.bio_cn_sortname as `inoc_nationcode`,
+		dic.text as `inoc_inpl_id` ,
+		`inoc_nurse` ,
+
+		`zxhs`,
+		-- 返回疫苗编码
+		vac.bio_code  as `inoc_useticket` ,
+		`inoc_modify_code` ,
+		`inoc_editdate`,
+		`leave_time`,
+		`create_user_id`,
+		ino.`create_time` ,
+		ino.`remark`,
+		ino.channel
+
+		from t_child_inoculate ino
+		LEFT JOIN t_vac_info vac on vac.bio_code = ino.inoc_bact_code
+		LEFT JOIN sys_dict dic on dic.ttype = 'code_inoculation_site' and dic.value = ino.inoc_inpl_id
+		LEFT JOIN sys_dict dic1 on dic1.ttype = 'code_vaccine_property' and dic1.value = ino.inoc_property
+		LEFT JOIN sys_depart depart on depart.id = ino.inoc_depa_code
+		LEFT JOIN t_vac_factory factory on factory.factory_code = ino.inoc_corp_code
+		LEFT JOIN t_vac_class class on class.class_code = left(ino.inoc_bact_code,2)
+		<where>
+			<if test="chilCode != null">
+				and ino.chil_code= #{chilCode} and (ino.inoc_union_code is null or trim(ino.inoc_union_code)='') and ino.delete_status = 0
+
+			</if>
+		</where>
+		/* order by ino.inoc_bact_code,ino.inoc_time ASC*/
+		order by vac.sort_id,ino.inoc_time ASC
+		<!--<if test="offset != null and limit != null">-->
+		<!--limit #{offset}, #{limit}-->
+		<!--</if>-->
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_inoculate
+		<where>
+
+			<if test="chilCode != null">
+				chil_code= #{chilCode} and delete_status = 0 and (inoc_union_code is null or trim(inoc_union_code)='')
+			</if>
+
+		</where>
+		<!--<if test="offset != null and limit != null">-->
+		<!--limit #{offset}, #{limit}-->
+		<!--</if>-->
+	</select>
+
+	<!--查询留观今日接种记录-->
+	<select id="queryobservation" resultType="java.util.HashMap">
+	SELECT
+	queue.child_code,
+	queue.child_name,
+	queue.no_text,
+	queue.`no`,
+	dic1.text AS inoc_inpl_id,
+	inoc_time,
+	info.bio_cn_sortname AS inoc_bact_code,
+	cla.attention,
+	ino.inoc_date as  create_time,
+	ino.leave_time as id
+FROM
+	t_queue_no queue
+	LEFT JOIN t_child_inoculate ino ON ino.chil_code = queue.child_code
+	LEFT JOIN sys_dict dic1 ON dic1.ttype = 'code_inoculation_site'
+	AND ino.inoc_inpl_id = dic1.value
+	LEFT JOIN t_vac_info info ON info.bio_code = ino.inoc_bact_code
+	LEFT JOIN t_vac_class cla ON cla.class_code = LEFT ( info.bio_code, 2 )
+WHERE
+	step = 'observe'
+	AND to_days( queue.create_time ) = to_days( now( ) )
+	AND to_days( ino.inoc_date ) = to_days( now( ) )
+	AND no_text = #{notext}
+</select>
+
+	<!--查询留观历史接种记录-->
+	<select id="queryhistoryobservation" resultType="java.util.HashMap">
+	SELECT
+	queue.child_code,
+	queue.child_name,
+	queue.no_text,
+	queue.`no`,
+	dic1.text AS inoc_inpl_id,
+	inoc_time,
+	info.bio_cn_sortname AS inoc_bact_code,
+	ino.inoc_date as  create_time
+FROM
+	t_queue_no queue
+	LEFT JOIN t_child_inoculate ino ON ino.chil_code = queue.child_code
+	LEFT JOIN sys_dict dic1 ON dic1.ttype = 'code_inoculation_site'
+	AND ino.inoc_inpl_id = dic1.
+
+VALUE
+	LEFT JOIN t_vac_info info ON info.bio_code = ino.inoc_bact_code
+WHERE
+	step = 'observe'
+	AND to_days( queue.create_time ) = to_days( now( ) )
+	and child_code=#{chilCode}
+		ORDER BY inoc_time
+</select>
+
+	<!--留观完成人数-->
+	<select id="observelist" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+		SELECT DISTINCT
+		info.`chil_code` ,
+		 dic1.text as chil_sex,
+		`chil_name`,
+		`chil_birthday` ,
+		`chil_birthweight`,
+		 dic2.text as `chil_nati_id` ,
+		`chil_mother`,
+		`chil_father` ,
+		com.name as `chil_committee`,
+		`chil_habiaddress` ,
+		`chil_address`,
+		`chil_school` ,
+		`chil_tel` ,
+		`chil_mobile`,
+		 dic5.text as `chil_residence`,
+		 dic4.text as `chil_account`,
+		 dic3.text as `chil_here`,
+		`chil_curdepartment` ,
+		`chil_predepartment`,
+		`chil_createsite`,
+		left(`chil_createdate`,10) as chil_createdate ,
+		info.`chil_createman`,
+		info.create_user_name,
+		`chil_unitimmu` ,
+		`chil_birthhospital` ,
+		`chil_birthhospitalname` ,
+		info.remark,
+		queue.no_text as create_user_id,/*create_user_id，排队号放在此字段中，为了返回类型为实体，使用时注意*/
+		info.`create_card_time`
+		from t_child_info info
+		LEFT JOIN sys_dict dic1 on  dic1.ttype='sex_code' and info.chil_sex = dic1.value
+		LEFT JOIN sys_dict dic2 on  dic2.ttype='nation_code' and info.chil_nati_id = dic2.value
+		LEFT JOIN sys_dict dic3 on  dic3.ttype='child_info_status' and info.chil_here = dic3.value
+		LEFT JOIN sys_dict dic4 on  dic4.ttype='movetype_code' and info.chil_account = dic4.value
+		LEFT JOIN sys_dict dic5 on  dic5.ttype='child_residence_code' and info.chil_residence = dic5.value and dic5.status!=-1
+		left join t_base_committee com on com.code = info.chil_committee and com.org_id = #{orgid}
+		LEFT JOIN t_child_inoculate inoculate ON inoculate.chil_code = info.chil_code
+		left join t_queue_no queue on queue.child_code = info.chil_code
+
+		where TO_DAYS(inoculate.inoc_date) =TO_DAYS(now()) and inoculate.inoc_depa_code = #{orgid} and  queue.step='observe' and date_add(now(),interval -30 minute) >= inoc_date
+			GROUP BY info.chil_code
+	</select>
+
+	<select id="noobservelist" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+        SELECT
+        info.chil_name AS chil_code,
+        GROUP_CONCAT(vac.bio_cn_sortname  SEPARATOR ',') AS inoc_bact_code,
+        inoc_date,
+        inoc_batchno
+        FROM
+        t_child_inoculate inoc
+        LEFT JOIN t_child_info info ON info.chil_code = inoc.chil_code
+        LEFT JOIN t_vac_info vac ON inoc.inoc_bact_code = vac.bio_code
+        WHERE
+        to_days( inoc_date ) = to_days( now( ) )
+        AND inoc_date > date_add( now( ), INTERVAL - 30 MINUTE )
+        AND inoc.type !=3
+        GROUP BY chil_code
+	</select>
+
+	<!--接种统计-->
+
+	<select id="suminoculateall" resultType="io.yfjz.entity.queue.TQueueNoEntity">
+        select tower_name  as child_code ,count(position) as position  from t_queue_no queue
+left join t_base_tower tower on tower.id=queue.position
+WHERE   to_days(queue.create_time) = to_days(now())  and step = 'inoculate' and `status`!=-1   GROUP BY  position
+
+    </select>
+
+	<select id="suminoculate" resultType="int">
+		select count(*) from t_child_inoculate where to_days(inoc_date) = to_days(now()) AND  type !=3
+	</select>
+
+	<select id="inoculatelists" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+		SELECT
+	info.chil_name AS chil_code,
+	inoc_date,
+	GROUP_CONCAT(vac.bio_cn_sortname  SEPARATOR ',') AS inoc_bact_code,
+	inoc_batchno
+FROM
+	t_child_inoculate inoc
+	LEFT JOIN t_child_info info ON info.chil_code = inoc.chil_code
+	LEFT JOIN t_vac_info vac ON inoc.inoc_bact_code = vac.bio_code
+WHERE
+	to_days( inoc_date ) = to_days( now( ) )
+	AND inoc.type != 3 and inoc.inoc_depa_code = #{org_id}
+GROUP BY
+	chil_code
+	</select>
+	<!--根据儿童编码， 接种部位，日期判断同一天接种疫苗是否有接种过-->
+	<select id="queryInoculateNumByMap" resultType="int">
+		select count(*) from t_child_inoculate
+		<where>
+			chil_code = #{childCode}
+			and inoc_inpl_id = #{inoculateSiteCode}
+			and TO_DAYS(inoc_date) = TO_DAYS(now())
+			and delete_status = 0
+		</where>
+	</select>
+    <!--根据儿童编码， 接种部位，日期判断同一天接种疫苗是否有接种过-->
+	<select id="queryUpdateInoculateNumByMap" resultType="int">
+		select count(*) from t_child_inoculate
+		<where>
+			chil_code = #{childCode}
+			and inoc_inpl_id = #{inoculateSiteCode}
+			and inoc_date=#{inocDate}
+			and delete_status = 0
+			<if test="Id!=null and Id!=''">
+
+				and id !=#{Id}
+			</if>
+		</where>
+	</select>
+<!--根据儿童编码 疫苗大类判断同类疫苗的第二剂次时间是否小于第一次剂次时间-->
+<select id="queryUpdateInoculateDate" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+
+    select * from  t_child_inoculate where chil_code = #{chilCode}  and   LEFT(`inoc_bact_code`,2) = LEFT(#{inocBactCode},2)  and id !=#{Id}
+</select>
+	<!--根据疫苗编码在接种信息表中查询该儿童接种了多少剂次 疫苗前面两位是大类，查询大类下已经接种的总数-->
+	<select id="queryTotalByChildCodeAndVaccCode" resultType="int">
+		select count(0) from t_child_inoculate where `chil_code` = #{childCode} and LEFT(`inoc_bact_code`,2) = LEFT(#{vaccineCode},2)
+	</select>
+	<!--查询当天接种记录for 打印-->
+	<select id="queryCurrentDayInoculation" resultType="java.util.HashMap">
+		 select
+		 ino.id,
+		 vac.bio_cn_sortname as bio_name,
+		 `inoc_time`,/*剂次*/
+		 `inoc_date` as inoculate_date,/*接种日期*/
+		 depart.name as `departname` ,/*接种单位*/
+		 `inoc_batchno` as batchnum,/*疫苗批号*/
+		 `inoc_dose` ,
+		  left(`inoc_validdate`,10) as inoc_validdate,
+		  left(`inoc_validdate`,10) as expiration_date,
+		 factory.factory_cn_name as `factory_name` ,/*厂家*/
+		 `inoc_depa_id` ,
+		 `inoc_county` ,
+		 `inoc_nationcode`,
+		 dic.text as `text` ,/*接种部位*/
+  		 `inoc_nurse` as doctor/*医生*/
+		 from t_child_inoculate ino
+		 LEFT JOIN t_vac_info vac on vac.bio_code = ino.inoc_bact_code
+		 LEFT JOIN sys_dict dic on dic.ttype = 'code_inoculation_site' and dic.value = ino.inoc_inpl_id
+		 LEFT JOIN sys_depart depart on depart.id = ino.inoc_depa_code
+		 LEFT JOIN t_vac_factory factory on factory.factory_code = ino.inoc_corp_code
+		 where ino.chil_code= #{chilCode} and ino.delete_status = 0 and TO_DAYS(now())= TO_DAYS(ino.inoc_date) and (ino.inoc_union_code is null or trim(ino.inoc_union_code)='')
+
+	 </select>
+	<!--查询所有接种记录for 打印-->
+	<select id="queryAllInoculation" resultType="java.util.HashMap">
+		 select
+		 ino.id,
+		 vac.bio_cn_sortname as `bio_name`,
+		 `inoc_time`,/*剂次*/
+		 `inoc_date` as inoculate_date,/*接种日期*/
+		 depart.name as `departname` ,/*接种单位*/
+		 `inoc_batchno` as batchnum,/*疫苗批号*/
+		 `inoc_dose` ,
+		 left(`inoc_validdate`,10) as inoc_validdate,
+		 left(`inoc_validdate`,10) as expiration_date,
+		 factory.factory_cn_name as `factory_name` ,/*厂家*/
+		 `inoc_depa_id` ,
+		 `inoc_county` ,
+		 `inoc_nationcode`,
+		 dic.text as `text` ,/*接种部位*/
+  		 `inoc_nurse` as doctor/*医生*/
+		 from t_child_inoculate ino
+		 LEFT JOIN t_vac_info vac on vac.bio_code = ino.inoc_bact_code
+		 LEFT JOIN sys_dict dic on dic.ttype = 'code_inoculation_site' and dic.value = ino.inoc_inpl_id
+		 LEFT JOIN sys_depart depart on depart.id = ino.inoc_depa_code
+		 LEFT JOIN t_vac_factory factory on factory.factory_code = ino.inoc_corp_code
+		 where ino.chil_code= #{chilCode} and ino.delete_status = 0 and (ino.inoc_union_code is null or trim(ino.inoc_union_code)='')
+	</select>
+
+	<!--根据id获取接种记录-->
+	<select id="queryInoculationById" parameterType="java.util.HashMap"  resultType="java.util.HashMap">
+		SELECT
+		inoculate.id AS inoculate_id,
+		inoculate.inoc_date as inoculate_date,
+		dic.text as `text` ,/*接种部位*/
+		inoculate.inoc_batchno AS batchnum,
+		factory.factory_cn_name as `factory_name` ,/*厂家*/
+		depart.name as departname,
+		bacterinclass.class_cn_name as class_name,
+		bacterin.bio_cn_sortname as bio_name,
+		inoculate.inoc_nurse as doctor,
+		left(inoculate.inoc_validdate,10) as expiration_date,
+		inoculate.inoc_time AS agent_times
+		FROM t_child_inoculate inoculate
+		LEFT JOIN sys_dict dic on dic.ttype = 'code_inoculation_site' and dic.value = inoculate.inoc_inpl_id
+		LEFT JOIN sys_depart depart ON depart.id = inoculate.inoc_depa_code
+		LEFT JOIN t_vac_info bacterin ON bacterin.bio_code = inoculate.inoc_bact_code
+		LEFT JOIN t_vac_factory factory on factory.factory_code = inoculate.inoc_corp_code
+		LEFT JOIN t_vac_class bacterinclass ON bacterinclass.class_code = bacterin.bio_class_id
+		<where>
+			inoculate.delete_status=0
+			<if test="child_id != null and child_id != ''">
+				and inoculate.chil_code = #{child_id}
+			</if>
+			<if test="inoculate_id != null and inoculate_id != ''">
+				and inoculate.id = #{inoculate_id}
+			</if>
+
+		</where>
+	</select>
+
+	<!--根据id获取登记记录-->
+	<select id="queryWaitInocVaccById" parameterType="java.util.HashMap"  resultType="java.util.HashMap">
+		SELECT DISTINCT register.id,
+		register.batchnum AS batchnum,
+		register.create_time as inoculate_date,
+		register.dose_no as agent_times,
+		register.inoculate_site as text,
+		left(register.`expiry_date`,10) as expiration_date,
+		factory.factory_cn_name as factory_name,
+		/* dict.text as ino_road,*/
+		vac.bio_cn_sortname as bio_name,
+		dict2.text as dosenorm,
+		precheck.temp,
+		depart.name as departname,
+		stock.price as price
+		FROM t_bus_register register
+		LEFT JOIN t_mgr_stock_base stock on stock.batchnum = register.batchnum and stock.fk_vaccine_code = register.fk_vaccine_code
+		LEFT JOIN t_vac_info vac ON vac.bio_code = register.fk_vaccine_code
+		left join t_vac_factory  factory on factory.factory_code = register.factory_code
+		left join sys_dict dict2 on dict2.ttype='dose_code' and dict2.value = stock.dosenorm
+		left join t_child_precheck precheck on precheck.chil_code = register.fk_child_code
+		LEFT JOIN sys_depart depart ON depart.id = register.fk_org_id
+		<where>
+			1=1
+			<if test="child_id != null and child_id != ''">
+				and register.fk_child_code = #{child_id}
+			</if>
+			<if test="inoculate_id != null and inoculate_id != ''">
+				and register.id = #{inoculate_id}
+			</if>
+
+		</where>
+	</select>
+	<!--剂次-->
+	<select id="querydoses" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+		SELECT
+		id,
+		`chil_code`,
+		LEFT ( inoc_bact_code, 4 ) AS inoc_bact_code,
+		`inoc_property`,
+		`inoc_time`,
+		`inoc_date`,
+		`inoc_depa_code`,
+		`inoc_reinforce`,
+		`inoc_batchno`,
+		`inoc_dose`,
+		`inoc_opinion`,
+		`inoc_union_code`,
+		`inoc_validdate`,
+		`inoc_corp_code`,
+		`inoc_regulatory_code`,
+		`inoc_pay`,
+		`inoc_free`,
+		`inoc_depa_id`,
+		`inoc_county`,
+		`inoc_nationcode`,
+		`inoc_inpl_id`,
+		`inoc_nurse`,
+		`inoc_vcn_kind`,
+		`zxhs`,
+		`inoc_useticket`,
+		`inoc_modify_code`,
+		`inoc_editdate`,
+		`leave_time`,
+		`create_user_id`,
+		`create_time`,
+		`remark`
+		FROM
+		t_child_inoculate
+		<where>
+			<if test="chilCode != null || chilCode != ''">
+				and chil_code = #{chilCode}
+			</if>
+			<if test="inocBactCode != null || inocBactCode != '' || inocBactCode != 'null'">
+				AND LEFT ( inoc_bact_code, 2 ) = LEFT ( #{inocBactCode}, 2 )
+			</if>
+		</where>
+	</select>
+	<select id="queryListdoses" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+		SELECT
+		id,
+		`chil_code`,
+		LEFT ( inoc_bact_code, 4 ) AS inoc_bact_code,
+		`inoc_property`,
+		`inoc_time`,
+		`inoc_date`,
+		`inoc_depa_code`,
+		`inoc_reinforce`,
+		`inoc_batchno`,
+		`inoc_dose`,
+		`inoc_opinion`,
+		`inoc_union_code`,
+		`inoc_validdate`,
+		`inoc_corp_code`,
+		`inoc_regulatory_code`,
+		`inoc_pay`,
+		`inoc_free`,
+		`inoc_depa_id`,
+		`inoc_county`,
+		`inoc_nationcode`,
+		`inoc_inpl_id`,
+		`inoc_nurse`,
+		`inoc_vcn_kind`,
+		`zxhs`,
+		`inoc_useticket`,
+		`inoc_modify_code`,
+		`inoc_editdate`,
+		`leave_time`,
+		`create_user_id`,
+		`create_time`,
+		`remark`
+		FROM
+		t_child_inoculate
+		<where>
+			<if test="chilCode != null || chilCode != ''">
+				AND chil_code = #{chilCode}
+			</if>
+			<if test="BactCode != null || BactCode != ''">
+				AND LEFT ( inoc_bact_code, 2 ) = LEFT ( #{BactCode}, 2 )
+			</if>
+			<if test="inocDate != null || inocDate != ''">
+				AND inoc_date =  #{inocDate}
+			</if>
+			<if test="inocTime != null || inocTime != ''">
+				AND inoc_time =  #{inocTime}
+			</if>
+		</where>
+
+
+
+	</select>
+	<!--上传接种记录查询-->
+	<select id="findInoclationsForUpload" resultType="java.util.HashMap">
+	select
+		ino.inoc_bact_code,
+		ino.inoc_property,
+		ino.inoc_reinforce,
+		ino.inoc_time,
+		CASE WHEN inoc_useticket is null THEN '' else inoc_useticket END as inoc_useticket,
+		CASE WHEN inoc_modify_code is null THEN '' else inoc_modify_code END as inoc_modify_code,
+		CASE WHEN inoc_depa_id is null THEN '' else inoc_depa_id END as inoc_depa_id,
+		CASE WHEN inoc_opinion is null THEN '' else inoc_opinion END as inoc_opinion,
+		ino.inoc_date as inoc_date,
+		CASE WHEN inoc_union_code is null THEN '' else inoc_union_code END as inoc_union_code,
+		CASE WHEN inoc_batchno is null THEN '' else inoc_batchno END as inoc_batchno,
+		CASE WHEN inoc_validdate is null THEN '' else inoc_validdate END as inoc_validdate,
+		CASE WHEN inoc_corp_code is null THEN '' else inoc_corp_code END as inoc_corp_code,
+		CASE WHEN ino.inoc_regulatory_code is null then '' else ino.inoc_regulatory_code end as inoc_regulatory_code,
+		CASE WHEN inoc_free is null THEN '0' else inoc_free END as inoc_free,
+		CASE  when inoc_pay is null THEN '0' else inoc_pay END as inoc_pay,
+		CASE WHEN inoc_county is null THEN '' else inoc_county END as inoc_county,
+		CASE WHEN inoc_nationcode is null THEN '' else inoc_nationcode END as inoc_nationcode,
+		case  ino.inoc_inpl_id when 7 then 10 when 8 then 10 else inoc_inpl_id end as inoc_inpl_id,
+		case when ino.inoc_nurse is null then '' else ino.inoc_nurse end as inoc_nurse,
+		case when inoc_editdate is null then date_format(now(), '%Y-%m-%d %H:%i:%s') else  inoc_editdate end as inoc_editdate,
+		CASE WHEN zxhs is null THEN '0' else zxhs END as zxhs,
+		CASE WHEN inoc_vcn_kind is null THEN '' else inoc_vcn_kind END as inoc_vcn_kind,
+		CASE WHEN inoc_depa_code is null THEN '' else inoc_depa_code END as inoc_depa_code
+		 from t_child_inoculate ino
+		 where ino.chil_code= #{chilCode} and ino.delete_status = 0
+</select>
+	<!--上传记录-->
+	<select id="uploadRecord" parameterType="HashMap" resultType="HashMap">
+		SELECT
+		info.chil_code,
+		info.chil_name,
+		info.chil_sex,
+		DATE_FORMAT(info.chil_birthday,'%Y-%m-%d %H:%i:%s') as chil_birthday,
+		info.chil_mother,
+		info.chil_father,
+		CONCAT(vac.bio_cn_sortname,'(',vac.bio_code,')') as bio_name,
+		inoculate.inoc_batchno,
+		inoculate.inoc_time,
+		DATE_FORMAT(inoculate.inoc_date,'%Y-%m-%d %H:%i:%s') as inoc_date,
+		inoculate.inoc_nurse
+		FROM
+		t_child_inoculate inoculate
+		LEFT JOIN t_child_info info ON info.chil_code = inoculate.chil_code
+		LEFT JOIN t_vac_info  vac ON vac.bio_code = inoculate.inoc_bact_code
+		WHERE  inoculate.delete_status=0 and inoculate.syncstatus=1 and (inoculate.`type` =0  or inoculate.`type`=3)
+		<if test="inoculateDateStart == null and inoculateDateEnd == null and chilCode == null and chilName == null ">
+			and TO_DAYS(inoculate.update_time) = TO_DAYS(now())
+		</if>
+		<if test="inoculateDateStart != null and inoculateDateEnd != null">
+			AND TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inoculateDateStart})
+			AND  TO_DAYS(#{inoculateDateEnd})>=TO_DAYS(inoculate.inoc_time)
+		</if>
+		<if test="inoculateDateStart != null and inoculateDateEnd == null">
+			AND TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inoculateDateStart})
+		</if>
+		<if test="chilCode != null and chilCode != ''">
+			AND inoculate.chil_code = #{chilCode}
+		</if>
+		<if test="chilName != null and chilName != ''">
+			AND info.chil_name like concat('%',#{chilName},'%')
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+	<select id="uploadtotalRecord" resultType="int">
+		SELECT
+		count(0)
+		FROM
+		t_child_inoculate inoculate
+		LEFT JOIN t_child_info info ON info.chil_code = inoculate.chil_code
+		LEFT JOIN t_vac_info  vac ON vac.bio_code = inoculate.inoc_bact_code
+		WHERE  inoculate.delete_status=0 and inoculate.syncstatus=1 and (inoculate.`type` =0  or inoculate.`type`=3)
+		<if test="inoculateDateStart == null and inoculateDateEnd == null and chilCode == null and chilName == null ">
+			and TO_DAYS(inoculate.update_time) = TO_DAYS(now())
+		</if>
+		<if test="inoculateDateStart != null and inoculateDateEnd != null">
+			AND TO_DAYS(inoculate.inoc_date) >= TO_DAYS(#{inoculateDateStart})
+			AND  TO_DAYS(#{inoculateDateEnd})>=TO_DAYS(inoculate.inoc_time)
+		</if>
+		<if test="inoculateDateStart != null and inoculateDateEnd == null">
+			AND TO_DAYS(inoculate.inoc_date) = TO_DAYS(#{inoculateDateStart})
+		</if>
+		<if test="chilCode != null and chilCode != ''">
+			AND inoculate.chil_code = #{chilCode}
+		</if>
+		<if test="chilName != null and chilName != ''">
+			AND info.chil_name like concat('%',#{chilName},'%')
+		</if>
+	</select>
+
+    <!--接种信息完整性统计-->
+	<select id="getInocIntegrityRateByCondition" parameterType="HashMap" resultType="io.yfjz.entity.child.InoculateIntegrityRateEntity">
+        select
+        CONCAT(tvio.bio_cn_sortname,'(',tvio.bio_code,')') AS bioName,tcie.inoc_bact_code AS inocBactCode,COUNT(tcie.id) totalInoTimes,
+        sum(case when tcie.inoc_bact_code is not null and tcie.inoc_bact_code!=''
+        and tcie.inoc_date is not null
+        and tcie.inoc_batchno is not null and tcie.inoc_batchno!=''
+        and tcie.inoc_corp_code is not null and inoc_corp_code!=''
+        and tvio.bio_spec_id is not null and tvio.bio_spec_id!=''
+        and tcie.inoc_inpl_id is not null and tcie.inoc_inpl_id!=''
+        and tcie.inoc_county is not null and tcie.inoc_county!=''
+        and tcie.inoc_nurse is not null and tcie.inoc_nurse!=''
+        and tcie.inoc_free is not null and tcie.inoc_free!=''
+        <![CDATA[ and (TO_DAYS(tcie.inoc_date) - TO_DAYS(tcie.create_time)) <= 7 ]]>
+        and tcie.inoc_date is not null
+        and tcie.create_time is not null
+        then 1 else 0 end
+        )as fullCount,<!--完整数-->
+        sum(case when tcie.inoc_bact_code is not null and tcie.inoc_bact_code!=''
+        and tcie.inoc_date is not null
+        and tcie.inoc_batchno is not null and tcie.inoc_batchno!=''
+        and tcie.inoc_corp_code is not null and inoc_corp_code!=''
+        and tvio.bio_spec_id is not null and tvio.bio_spec_id!=''
+        and tcie.inoc_inpl_id is not null and tcie.inoc_inpl_id!=''
+        and tcie.inoc_county is not null and tcie.inoc_county!=''
+        and tcie.inoc_nurse is not null and tcie.inoc_nurse!=''
+        and tcie.inoc_free is not null and tcie.inoc_free!=''
+        <![CDATA[ and (TO_DAYS(tcie.inoc_date) - TO_DAYS(tcie.create_time)) <= 7 ]]>
+        and tcie.inoc_date is not null
+        and tcie.create_time is not null
+        then 1 else 0 end
+        )/count(tcie.id)*100 as inocIntegrityRate,<!--完整率(%)-->
+        sum(case when tcie.inoc_bact_code is not null and tcie.inoc_bact_code!='' then 1 else 0 end ) as fullBioNameCount, <!--接种疫苗录入数-->
+        sum(case when tcie.inoc_bact_code is not null and tcie.inoc_bact_code!='' then 1 else 0 end ) /count(tcie.id) as bioNameEntryRate, <!--接种疫苗录入率-->
+        sum(case when tcie.inoc_date is not null and tcie.inoc_date!='' then 1 else 0 end ) AS fullInoDateCount,<!--接种日期录入数-->
+        sum(case when tcie.inoc_date is not null and tcie.inoc_date!='' then 1 else 0 end )/count(tcie.id) as inoDateEntryRate,<!--接种日期录入率-->
+        sum(case when tcie.inoc_batchno is not null and tcie.inoc_batchno!='' then 1 else 0 end ) as fullInocBatchnoCount,<!--疫苗批号录入数-->
+        sum(case when tcie.inoc_batchno is not null and tcie.inoc_batchno!='' then 1 else 0 end )/count(tcie.id) as inocBatchnoEntryRate,<!--疫苗批号录入率-->
+        sum(case when tcie.inoc_corp_code is not null and tcie.inoc_corp_code!='' then 1 else 0 end ) as fullInocCorpCodeCount, <!--生产企业数-->
+        sum(case when tcie.inoc_corp_code is not null and tcie.inoc_corp_code!='' then 1 else 0 end )/count(tcie.id) as inocCorpCodeEntryRate, <!--生产企业录入率-->
+        sum(case when tvio.bio_spec_id is not null and tvio.bio_spec_id!='' then 1 else 0 end ) as fullInocRoadCount,<!--接种途径录入数-->
+        sum(case when tvio.bio_spec_id is not null and tvio.bio_spec_id!='' then 1 else 0 end )/count(tcie.id) as inocRoadEntryRate,<!--接种途径录入率-->
+        sum(case when tcie.inoc_inpl_id is not null and tcie.inoc_inpl_id!='' then 1 else 0 end ) as fullInocInplIdCount,<!--接种部位录入数-->
+        sum(case when tcie.inoc_inpl_id is not null and tcie.inoc_inpl_id!='' then 1 else 0 end )/count(tcie.id) as inocInplIdEntryRate,<!--接种部位录入率-->
+        sum(case when tcie.inoc_county is not null and tcie.inoc_county!='' then 1 else 0 end )  as fullInocPlaceCount,<!--接种地点录入数-->
+        sum(case when tcie.inoc_county is not null and tcie.inoc_county!='' then 1 else 0 end )/count(tcie.id) as inocPlaceEntryRate,<!--接种地点录入率-->
+        sum(case when tcie.inoc_nurse is not null and tcie.inoc_nurse!='' then 1 else 0 end ) as fullInocNurseCount,<!--接种医生录入数-->
+        sum(case when tcie.inoc_nurse is not null and tcie.inoc_nurse!='' then 1 else 0 end )/count(tcie.id) as inocNurseEntryRate,<!--接种医生录入率-->
+        sum(case when tcie.inoc_free = 1 and tcie.inoc_free !='' then 1 else 0 end ) as fullPayStatusCount,<!--收费状态录入数-->
+        sum(case when tcie.inoc_free = 1 and tcie.inoc_free !='' then 1 else 0 end )/count(tcie.id) as payStatusEntryRate,<!--收费状态录入率-->
+        <![CDATA[ sum(case when (TO_DAYS(tcie.inoc_date) - TO_DAYS(tcie.create_time)) <= 7 AND tcie.create_time is not null and tcie.inoc_date is not null then 1 else 0 end ) as fullTimelyCount,]]><!--及时录入录入数-->
+        <![CDATA[ sum(case when (TO_DAYS(tcie.inoc_date) - TO_DAYS(tcie.create_time)) <= 7 AND tcie.create_time is not null and tcie.inoc_date is not null then 1 else 0 end )/count(tcie.id) as TimelyEntryRate ]]> <!--及时录入录入率-->
+        from t_child_inoculate tcie
+        LEFT JOIN t_vac_info tvio
+        ON tvio.bio_code = tcie.inoc_bact_code
+        LEFT JOIN t_child_info tcio
+        ON tcio.chil_code = tcie.chil_code
+        WHERE tcie.inoc_county = left(#{org_id},6) AND tcie.inoc_nationcode=RIGHT(#{org_id},4) AND tcie.delete_status = 0
+        <trim prefix="AND" prefixOverrides="AND">
+            <if test="bios != null">
+                AND tcie.inoc_bact_code IN
+                <foreach item="item" index="index" collection="bios" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="committee != null">
+                AND tcio.chil_committee IN
+                <foreach item="item" index="index" collection="committee" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="chilResidence != null">
+                AND tcio.chil_residence IN
+                <foreach item="item" index="index" collection="chilResidence" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="childInfoStatus != null">
+                AND tcio.chil_here IN
+                <foreach item="item" index="index" collection="childInfoStatus" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="chil_account != null">
+                AND tcio.chil_account IN
+                <foreach item="item" index="index" collection="chil_account" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="inocDateStart != null and inocDateStart != ''">
+                <![CDATA[ AND TO_DAYS(tcie.inoc_date) >= TO_DAYS(#{inocDateStart}) ]]>
+            </if>
+            <if test="inocDateEnd != null and inocDateEnd != ''">
+                <![CDATA[ AND TO_DAYS(tcie.inoc_date) <= TO_DAYS(#{inocDateEnd}) ]]>
+            </if>
+            <if test="birthDayStart != null and birthDayStart != ''">
+                <![CDATA[ AND TO_DAYS(tcio.chil_birthday) >= TO_DAYS(#{birthDayStart}) ]]>
+            </if>
+            <if test="birthDayEnd != null and birthDayEnd != ''">
+                <![CDATA[ AND TO_DAYS(tcio.chil_birthday) <= TO_DAYS(#{birthDayEnd}) ]]>
+            </if>
+            <if test="child_code != null and child_code != ''">
+                AND tcie.chil_code =#{child_code}
+            </if>
+        </trim>
+        GROUP BY tcie.inoc_bact_code,tvio.bio_cn_sortname
+	</select>
+
+	<select id="queryAllTotal" resultType="java.lang.Integer">
+		select count(0) from t_child_inoculate
+	</select>
+
+	<!--入学证明查询-->
+	<select id="schoolAdmissionIno" resultType="java.util.HashMap">
+		select
+			vac.bio_cn_sortname,
+			vac.bio_class_id,
+			LEFT(inoc_date,10) as inoc_date ,inoc_time,inoc_free,
+			case when inc.remark is null then '' else inc.remark end as remark
+		from t_child_inoculate inc
+        left join t_vac_info vac on inc.inoc_bact_code=vac.bio_code
+        where chil_code=#{chilCode} and (inc.inoc_union_code is null or trim(inc.inoc_union_code)='') and inc.delete_status = 0 order by bio_code, inoc_time,bio_class_id
+	</select>
+	<!--获取登记记录,打印处方单用 -->
+	<select id="selectCurrentRegisterRecord" resultType="java.util.HashMap">
+      SELECT DISTINCT
+		register.batchnum AS batchnum,
+-- 		人份
+			base.conversion as conversion,
+-- 		接种部位
+		org.phone,
+		inoculate_site,
+		dict.text as ino_road,
+		vac.bio_cn_sortname as bio_name,
+		dict2.text as dosenorm,
+		precheck.temp,
+		precheck.create_time,
+		class.attention,
+		register.dose_no,
+		stock.price as price
+		FROM t_bus_register register
+		LEFT JOIN t_mgr_stock_base stock on stock.batchnum = register.batchnum and stock.fk_vaccine_code = register.fk_vaccine_code
+		LEFT JOIN t_vac_info vac ON vac.bio_code = register.fk_vaccine_code
+		left join sys_dict dict on dict.ttype='code_inoculation_route' and dict.value = vac.bio_spec_id
+		left join sys_dict dict2 on dict2.ttype='dose_code' and dict2.value = stock.dosenorm
+		left join t_child_precheck precheck on precheck.chil_code = register.fk_child_code
+		left join t_vac_class class on class.class_code = vac.bio_class_id
+		left join t_mgr_stock_base base on base.fk_vaccine_code=vac.bio_code
+		left join t_base_org_info org on org.org_id = register.fk_org_id
+        WHERE register.fk_child_code =#{chilCode} and TO_DAYS(register.create_time)=TO_DAYS(now())
+    </select>
+
+
+	<!--inoculate.id AS inoculate_id,
+    inoculate.inoc_date as inoculate_date,
+    dic.text as `text` ,/*接种部位*/
+    inoculate.inoc_batchno AS batchnum,
+    factory.factory_cn_name as `factory_name` ,/*厂家*/
+    depart.name as departname,
+    bacterinclass.class_cn_name as class_name,
+    bacterin.bio_cn_sortname as bio_name,
+    inoculate.inoc_nurse as doctor,
+    left(inoculate.inoc_validdate,10) as expiration_date,
+    inoculate.inoc_time AS agent_times-->
+	<!--打印今日登记疫苗 -->
+	<select id="queryCurrentDayWaitInocBioName" resultType="java.util.HashMap">
+        SELECT DISTINCT register.id,
+        register.batchnum AS batchnum,
+        register.create_time as inoculate_date,
+        register.dose_no as inoc_time,
+        register.inoculate_site as text,
+        left(register.`expiry_date`,10) as expiration_date,
+        factory.factory_cn_name as factory_name,
+       /* dict.text as ino_road,*/
+        vac.bio_cn_sortname as bio_name,
+        dict2.text as dosenorm,
+        precheck.temp,
+        depart.name as departname,
+        stock.price as price
+        FROM t_bus_register register
+        LEFT JOIN t_mgr_stock_base stock on stock.batchnum = register.batchnum and stock.fk_vaccine_code = register.fk_vaccine_code
+        LEFT JOIN t_vac_info vac ON vac.bio_code = register.fk_vaccine_code
+        left join t_vac_factory  factory on factory.factory_code = register.factory_code
+        left join sys_dict dict2 on dict2.ttype='dose_code' and dict2.value = stock.dosenorm
+        left join t_child_precheck precheck on precheck.chil_code = register.fk_child_code
+        LEFT JOIN sys_depart depart ON depart.id = register.fk_org_id
+        WHERE register.fk_child_code =#{chilCode} and TO_DAYS(register.create_time)=TO_DAYS(now())
+    </select>
+
+
+	<!--判断疫苗今日是否接种，不能重复接种-->
+	<select id="queryInoculateVacccodeNumByMap" resultType="java.lang.Integer">
+		select count(*) from t_child_inoculate
+		<where>
+			chil_code = #{childCode}
+			and inoc_bact_code = #{bioCode}
+			and TO_DAYS(inoc_date) = TO_DAYS(now())
+			and delete_status = 0
+		</where>
+	</select>
+	<insert id="batchInsertAccountInfo"  parameterType="io.yfjz.entity.child.TChildInoculateEntity">
+		<selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+			select uuid()
+		</selectKey>
+		insert into t_child_inoculate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="chilCode != null">`chil_code` , </if>
+			<if test="inocBactCode != null">`inoc_bact_code` , </if>
+			<if test="inocProperty != null">`inoc_property` , </if>
+			<if test="inocTime != null">`inoc_time` , </if>
+			<if test="inocDate != null">`inoc_date` , </if>
+			<if test="inocDepaCode != null">`inoc_depa_code` , </if>
+			<if test="inocReinforce != null">`inoc_reinforce` , </if>
+			<if test="inocBatchno != null">`inoc_batchno` , </if>
+			<if test="inocDose != null">`inoc_dose` , </if>
+			<if test="inocOpinion != null">`inoc_opinion` , </if>
+			<if test="inocUnionCode != null">`inoc_union_code` , </if>
+			<if test="inocValiddate != null">`inoc_validdate` , </if>
+			<if test="inocCorpCode != null">`inoc_corp_code` , </if>
+			<if test="inocRegulatoryCode != null">`inoc_regulatory_code` , </if>
+			<if test="inocPay != null">`inoc_pay` , </if>
+			<if test="inocFree != null">`inoc_free` , </if>
+			<if test="inocDepaId != null">`inoc_depa_id` , </if>
+			<if test="inocCounty != null">`inoc_county` , </if>
+			<if test="inocNationcode != null">`inoc_nationcode` , </if>
+			<if test="inocInplId != null">`inoc_inpl_id` , </if>
+			<if test="inocNurse != null">`inoc_nurse` , </if>
+			<if test="inocVcnKind != null">`inoc_vcn_kind` , </if>
+			<if test="zxhs != null">`zxhs` , </if>
+			<if test="inocUseticket != null">`inoc_useticket` , </if>
+			<if test="inocModifyCode != null">`inoc_modify_code` , </if>
+			<if test="inocEditdate != null">`inoc_editdate` , </if>
+			<if test="leaveTime != null">`leave_time` , </if>
+			<if test="type != null">`type` , </if>
+			<if test="syncstatus != null">`syncstatus` , </if>
+			<if test="status != null">`status` , </if>
+			<if test="createUserId != null">`create_user_id` , </if>
+			<if test="createTime != null">`create_time` , </if>
+			<if test="otherDepa != null">`other_depa` , </if>
+			<if test="remark != null">`remark`, </if>
+			<if test="channel != null">`channel` </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="chilCode != null">#{chilCode} , </if>
+			<if test="inocBactCode != null">#{inocBactCode} , </if>
+			<if test="inocProperty != null">#{inocProperty} , </if>
+			<if test="inocTime != null">#{inocTime} , </if>
+			<if test="inocDate != null">#{inocDate} , </if>
+			<if test="inocDepaCode != null">#{inocDepaCode} , </if>
+			<if test="inocReinforce != null">#{inocReinforce} , </if>
+			<if test="inocBatchno != null">#{inocBatchno} , </if>
+			<if test="inocDose != null">#{inocDose} , </if>
+			<if test="inocOpinion != null">#{inocOpinion} , </if>
+			<if test="inocUnionCode != null">#{inocUnionCode} , </if>
+			<if test="inocValiddate != null">#{inocValiddate} , </if>
+			<if test="inocCorpCode != null">#{inocCorpCode} , </if>
+			<if test="inocRegulatoryCode != null">#{inocRegulatoryCode} , </if>
+			<if test="inocPay != null">#{inocPay} , </if>
+			<if test="inocFree != null">#{inocFree} , </if>
+			<if test="inocDepaId != null">#{inocDepaId} , </if>
+			<if test="inocCounty != null">#{inocCounty} , </if>
+			<if test="inocNationcode != null">#{inocNationcode} , </if>
+			<if test="inocInplId != null">#{inocInplId} , </if>
+			<if test="inocNurse != null">#{inocNurse} , </if>
+			<if test="inocVcnKind != null">#{inocVcnKind} , </if>
+			<if test="zxhs != null">#{zxhs} , </if>
+			<if test="inocUseticket != null">#{inocUseticket} , </if>
+			<if test="inocModifyCode != null">#{inocModifyCode} , </if>
+			<if test="inocEditdate != null">#{inocEditdate} , </if>
+			<if test="leaveTime != null">#{leaveTime} , </if>
+			<if test="type != null">#{type} , </if>
+			<if test="syncstatus != null">#{syncstatus} , </if>
+			<if test="status != null">#{status} , </if>
+			<if test="createUserId != null">#{createUserId} , </if>
+			<if test="createTime != null">#{createTime} , </if>
+			<if test="otherDepa != null">#{otherDepa} , </if>
+			<if test="remark != null">#{remark}, </if>
+			<if test="channel != null">#{channel} </if>
+		</trim>
+
+	</insert>
+
+
+
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildInoculateEntity">
+		<selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+			select uuid()
+		</selectKey>
+		insert into t_child_inoculate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="chilCode != null">`chil_code` , </if>
+			<if test="inocBactCode != null">`inoc_bact_code` , </if>
+			<if test="inocProperty != null">`inoc_property` , </if>
+			<if test="inocTime != null">`inoc_time` , </if>
+			<if test="inocDate != null">`inoc_date` , </if>
+			<if test="inocDepaCode != null">`inoc_depa_code` , </if>
+			<if test="inocReinforce != null">`inoc_reinforce` , </if>
+			<if test="inocBatchno != null">`inoc_batchno` , </if>
+			<if test="inocDose != null">`inoc_dose` , </if>
+			<if test="inocOpinion != null">`inoc_opinion` , </if>
+			<if test="inocUnionCode != null">`inoc_union_code` , </if>
+			<if test="inocValiddate != null">`inoc_validdate` , </if>
+			<if test="inocCorpCode != null">`inoc_corp_code` , </if>
+			<if test="inocRegulatoryCode != null">`inoc_regulatory_code` , </if>
+			<if test="inocPay != null">`inoc_pay` , </if>
+			<if test="inocFree != null">`inoc_free` , </if>
+			<if test="inocDepaId != null">`inoc_depa_id` , </if>
+			<if test="inocCounty != null">`inoc_county` , </if>
+			<if test="inocNationcode != null">`inoc_nationcode` , </if>
+			<if test="inocInplId != null">`inoc_inpl_id` , </if>
+			<if test="inocNurse != null">`inoc_nurse` , </if>
+			<if test="inocVcnKind != null">`inoc_vcn_kind` , </if>
+			<if test="zxhs != null">`zxhs` , </if>
+			<if test="inocUseticket != null">`inoc_useticket` , </if>
+			<if test="inocModifyCode != null">`inoc_modify_code` , </if>
+			<if test="inocEditdate != null">`inoc_editdate` , </if>
+			<if test="leaveTime != null">`leave_time` , </if>
+			<if test="type != null">`type` , </if>
+			<if test="syncstatus != null">`syncstatus` , </if>
+			<if test="status != null">`status` , </if>
+			<if test="createUserId != null">`create_user_id` , </if>
+			<if test="createTime != null">`create_time` , </if>
+			<if test="otherDepa != null">`other_depa` , </if>
+			<if test="remark != null">`remark`, </if>
+			<if test="channel != null">`channel` </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="chilCode != null">#{chilCode} , </if>
+			<if test="inocBactCode != null">#{inocBactCode} , </if>
+			<if test="inocProperty != null">#{inocProperty} , </if>
+			<if test="inocTime != null">#{inocTime} , </if>
+			<if test="inocDate != null">#{inocDate} , </if>
+			<if test="inocDepaCode != null">#{inocDepaCode} , </if>
+			<if test="inocReinforce != null">#{inocReinforce} , </if>
+			<if test="inocBatchno != null">#{inocBatchno} , </if>
+			<if test="inocDose != null">#{inocDose} , </if>
+			<if test="inocOpinion != null">#{inocOpinion} , </if>
+			<if test="inocUnionCode != null">#{inocUnionCode} , </if>
+			<if test="inocValiddate != null">#{inocValiddate} , </if>
+			<if test="inocCorpCode != null">#{inocCorpCode} , </if>
+			<if test="inocRegulatoryCode != null">#{inocRegulatoryCode} , </if>
+			<if test="inocPay != null">#{inocPay} , </if>
+			<if test="inocFree != null">#{inocFree} , </if>
+			<if test="inocDepaId != null">#{inocDepaId} , </if>
+			<if test="inocCounty != null">#{inocCounty} , </if>
+			<if test="inocNationcode != null">#{inocNationcode} , </if>
+			<if test="inocInplId != null">#{inocInplId} , </if>
+			<if test="inocNurse != null">#{inocNurse} , </if>
+			<if test="inocVcnKind != null">#{inocVcnKind} , </if>
+			<if test="zxhs != null">#{zxhs} , </if>
+			<if test="inocUseticket != null">#{inocUseticket} , </if>
+			<if test="inocModifyCode != null">#{inocModifyCode} , </if>
+			<if test="inocEditdate != null">#{inocEditdate} , </if>
+			<if test="leaveTime != null">#{leaveTime} , </if>
+			<if test="type != null">#{type} , </if>
+			<if test="syncstatus != null">#{syncstatus} , </if>
+			<if test="status != null">#{status} , </if>
+			<if test="createUserId != null">#{createUserId} , </if>
+			<if test="createTime != null">#{createTime} , </if>
+			<if test="otherDepa != null">#{otherDepa} , </if>
+			<if test="remark != null">#{remark}, </if>
+			<if test="channel != null">#{channel} </if>
+		</trim>
+	</insert>
+	<!--saveAsBackUp-->
+	<insert id="saveAsBackUp"  parameterType="io.yfjz.entity.child.TChildInoculateEntity">
+		insert into t_child_inoculate_update_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="chilCode != null">`chil_code` , </if>
+			<if test="inocBactCode != null">`inoc_bact_code` , </if>
+			<if test="inocProperty != null">`inoc_property` , </if>
+			<if test="inocTime != null">`inoc_time` , </if>
+			<if test="inocDate != null">`inoc_date` , </if>
+			<if test="inocDepaCode != null">`inoc_depa_code` , </if>
+			<if test="inocReinforce != null">`inoc_reinforce` , </if>
+			<if test="inocBatchno != null">`inoc_batchno` , </if>
+			<if test="inocDose != null">`inoc_dose` , </if>
+			<if test="inocOpinion != null">`inoc_opinion` , </if>
+			<if test="inocUnionCode != null">`inoc_union_code` , </if>
+			<if test="inocValiddate != null">`inoc_validdate` , </if>
+			<if test="inocCorpCode != null">`inoc_corp_code` , </if>
+			<if test="inocRegulatoryCode != null">`inoc_regulatory_code` , </if>
+			<if test="inocPay != null">`inoc_pay` , </if>
+			<if test="inocFree != null">`inoc_free` , </if>
+			<if test="inocDepaId != null">`inoc_depa_id` , </if>
+			<if test="inocCounty != null">`inoc_county` , </if>
+			<if test="inocNationcode != null">`inoc_nationcode` , </if>
+			<if test="inocInplId != null">`inoc_inpl_id` , </if>
+			<if test="inocNurse != null">`inoc_nurse` , </if>
+			<if test="inocVcnKind != null">`inoc_vcn_kind` , </if>
+			<if test="zxhs != null">`zxhs` , </if>
+			<if test="inocUseticket != null">`inoc_useticket` , </if>
+			<if test="inocModifyCode != null">`inoc_modify_code` , </if>
+			<if test="inocEditdate != null">`inoc_editdate` , </if>
+			<if test="leaveTime != null">`leave_time` , </if>
+			<if test="type != null">`type` , </if>
+			<if test="syncstatus != null">`syncstatus` , </if>
+			<if test="status != null">`status` , </if>
+			<if test="createUserId != null">`create_user_id` , </if>
+			`create_time`,
+			<if test="remark != null">`remark`, </if>
+			<if test="channel != null">`channel` </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="chilCode != null">#{chilCode} , </if>
+			<if test="inocBactCode != null">#{inocBactCode} , </if>
+			<if test="inocProperty != null">#{inocProperty} , </if>
+			<if test="inocTime != null">#{inocTime} , </if>
+			<if test="inocDate != null">#{inocDate} , </if>
+			<if test="inocDepaCode != null">#{inocDepaCode} , </if>
+			<if test="inocReinforce != null">#{inocReinforce} , </if>
+			<if test="inocBatchno != null">#{inocBatchno} , </if>
+			<if test="inocDose != null">#{inocDose} , </if>
+			<if test="inocOpinion != null">#{inocOpinion} , </if>
+			<if test="inocUnionCode != null">#{inocUnionCode} , </if>
+			<if test="inocValiddate != null">#{inocValiddate} , </if>
+			<if test="inocCorpCode != null">#{inocCorpCode} , </if>
+			<if test="inocRegulatoryCode != null">#{inocRegulatoryCode} , </if>
+			<if test="inocPay != null">#{inocPay} , </if>
+			<if test="inocFree != null">#{inocFree} , </if>
+			<if test="inocDepaId != null">#{inocDepaId} , </if>
+			<if test="inocCounty != null">#{inocCounty} , </if>
+			<if test="inocNationcode != null">#{inocNationcode} , </if>
+			<if test="inocInplId != null">#{inocInplId} , </if>
+			<if test="inocNurse != null">#{inocNurse} , </if>
+			<if test="inocVcnKind != null">#{inocVcnKind} , </if>
+			<if test="zxhs != null">#{zxhs} , </if>
+			<if test="inocUseticket != null">#{inocUseticket} , </if>
+			<if test="inocModifyCode != null">#{inocModifyCode} , </if>
+			<if test="inocEditdate != null">#{inocEditdate} , </if>
+			<if test="leaveTime != null">#{leaveTime} , </if>
+			<if test="type != null">#{type} , </if>
+			<if test="syncstatus != null">#{syncstatus} , </if>
+			<if test="status != null">#{status} , </if>
+			<if test="createUserId != null">#{createUserId} , </if>
+			now(),
+			<if test="remark != null">#{remark} ,</if>
+			<if test="channel != null">#{channel} </if>
+		</trim>
+
+	</insert>
+	<update id="update" parameterType="io.yfjz.entity.child.TChildInoculateEntity">
+		update t_child_inoculate
+		<set>
+			<if test="chilCode != null">`chil_code` = #{chilCode}, </if>
+			<if test="inocBactCode != null">`inoc_bact_code` = #{inocBactCode}, </if>
+			<if test="inocProperty != null">`inoc_property` = #{inocProperty}, </if>
+			<if test="inocTime != null">`inoc_time` = #{inocTime}, </if>
+			<if test="inocDate != null">`inoc_date` = #{inocDate}, </if>
+			<if test="inocDepaCode != null">`inoc_depa_code` = #{inocDepaCode}, </if>
+			<if test="inocReinforce != null">`inoc_reinforce` = #{inocReinforce}, </if>
+			<if test="inocBatchno != null">`inoc_batchno` = #{inocBatchno}, </if>
+			<if test="inocDose != null">`inoc_dose` = #{inocDose}, </if>
+			<if test="inocOpinion != null">`inoc_opinion` = #{inocOpinion}, </if>
+			<if test="inocUnionCode != null">`inoc_union_code` = #{inocUnionCode}, </if>
+			<if test="inocValiddate != null">`inoc_validdate` = #{inocValiddate}, </if>
+			<if test="inocCorpCode != null">`inoc_corp_code` = #{inocCorpCode}, </if>
+			<if test="inocRegulatoryCode != null">`inoc_regulatory_code` = #{inocRegulatoryCode}, </if>
+			<if test="inocPay != null">`inoc_pay` = #{inocPay}, </if>
+			<if test="inocFree != null">`inoc_free` = #{inocFree}, </if>
+			<if test="inocDepaId != null">`inoc_depa_id` = #{inocDepaId}, </if>
+			<if test="inocCounty != null">`inoc_county` = #{inocCounty}, </if>
+			<if test="inocNationcode != null">`inoc_nationcode` = #{inocNationcode}, </if>
+			<if test="inocInplId != null">`inoc_inpl_id` = #{inocInplId}, </if>
+			<if test="inocNurse != null">`inoc_nurse` = #{inocNurse}, </if>
+			<if test="inocVcnKind != null">`inoc_vcn_kind` = #{inocVcnKind}, </if>
+			<if test="zxhs != null">`zxhs` = #{zxhs}, </if>
+			<if test="inocUseticket != null">`inoc_useticket` = #{inocUseticket}, </if>
+			<if test="inocModifyCode != null">`inoc_modify_code` = #{inocModifyCode}, </if>
+			<if test="inocEditdate != null">`inoc_editdate` = #{inocEditdate}, </if>
+			<if test="leaveTime != null">`leave_time` = #{leaveTime}, </if>
+			`type` = 0,/*修改后type变为0*/
+			`syncstatus` = 0,
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="otherDepa != null">`other_depa` = #{otherDepa}, </if>
+			<if test="remark != null">`remark` = #{remark},</if>
+			<if test="channel != null">`channel` = #{channel}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<update id="observeupdate" parameterType="io.yfjz.entity.child.TChildInoculateEntity">
+       UPDATE t_child_inoculate
+SET leave_time = #{leaveTime}
+WHERE
+	id IN (
+	select a.id from (
+	SELECT
+		id
+	FROM
+		t_child_inoculate ino
+	WHERE
+		ino.chil_code = #{chilCode}
+	AND to_days( ino.inoc_date ) = to_days( now( ) ) )a
+	)
+
+    </update>
+
+	<delete id="delete">
+		delete from t_child_inoculate where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from t_child_inoculate where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<!--常规疫苗-->
+	<select id="outsideinoculatebio" resultType="io.yfjz.entity.basesetting.TVacInfoEntity">
+		select *  from t_vac_info where bio_code in(0101,0201,0202,0203,
+0302,0303,0306,0311,0401,0402,0501,0901,1001,1101,1201,1301,
+1401,1601,1701,1703,1801,1802,1901,1902,2101,2102,2103,2104,
+2201,2301,2401,2501,2502,2801,3001,4501,5001,5301,5401,3801,0601)
+
+	</select>
+	<!--疫苗大类 获取小类的具体疫苗-->
+	<select id="getBioClassIdType" resultType="io.yfjz.entity.basesetting.TVacInfoEntity">
+		select * from t_vac_info info where bio_class_id=#{bioClassId}
+	</select>
+
+</mapper>

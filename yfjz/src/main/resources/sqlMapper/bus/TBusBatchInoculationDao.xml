@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.bus.TBusBatchInoculationDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.bus.TBusBatchInoculationEntity">
+		select * from t_bus_batch_inoculation where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.bus.TBusBatchInoculationEntity">
+		select * from t_bus_batch_inoculation
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_bus_batch_inoculation
+		<include refid="baseWhere"/>
+
+	</select>
+    <select id="queryListByCondition" resultType="io.yfjz.entity.rule.ChildData"
+            parameterType="io.yfjz.utils.Query">
+        select
+         uuid()  as id,
+        `childcode` AS chilCode,
+        `committee` as committee,
+        `cname` AS chilName,
+        `sex` AS chilSex,
+        `birthTime` AS chilBirthday,
+        `motherName` AS matherName ,
+        `fatherName` AS fatherName,
+        `child_info_status` as chilHere,
+        `telepone` AS chilTel ,
+        `mobile` AS chilMobile ,
+        `contactAddress` AS address,
+        `bio_name` AS planName ,
+        `planId` AS planId,
+        `agentTimes` AS times,
+        `inoculate_date` AS inoDate,
+        `orgId` AS orgId,
+        select_condition AS selectCondition,
+        select_times AS selectTimes,
+        (select text from sys_dict  where ttype='child_info_status' AND value=child_info_status) as here,
+        (select remark from t_child_info where chil_code=childcode) as remark
+        from t_bus_batch_inoculation
+        <include refid="baseWhere"/>
+        ORDER BY  committee,chilCode
+    </select>
+    <select id="queryAllTimes" resultType="map">
+          select  DISTINCT select_times AS times from t_bus_batch_inoculation ORDER  BY select_times DESC
+    </select>
+    <select id="getAllVaccine" resultType="string">
+        select name from t_rule_dic
+    </select>
+    <select id="queryChildInfoStatus" resultType="string">
+        select text from sys_dict  where ttype='child_info_status'  ORDER BY sort_order
+    </select>
+    <select id="queryVaccineClass" resultType="string">
+        select bio_sort_id from t_rule_dic where name=#{planName}
+    </select>
+    <select id="queryCodeTimes" resultType="map">
+        SELECT
+             inoc.inoc_time as times,
+             inoc.inoc_date,
+             info.bio_class_id
+        FROM
+            t_child_inoculate inoc
+          join t_vac_info info on inoc.inoc_bact_code=info.bio_code
+        WHERE
+           info.bio_class_id=#{classId} AND
+            chil_code = #{chilCode}
+            ORDER BY
+            inoc_time desc
+    </select>
+    <select id="queryInoculateVacccodeNumByMap" resultType="int">
+        <!--判断疫苗今日是否接种，不能重复接种-->
+
+            select count(*) from t_child_inoculate
+            <where>
+                chil_code = #{chilCode}
+                and inoc_bact_code = #{vaccineCode}
+                and TO_DAYS(inoc_date) = TO_DAYS(#{inoDate})
+                and delete_status = 0
+            </where>
+    </select>
+    <select id="queryInoculateNumByMap" resultType="int">
+        select count(*) from t_child_inoculate
+        <where>
+            chil_code = #{chilCode}
+            and inoc_inpl_id = #{inoculateSiteCode}
+            and TO_DAYS(inoc_date) = TO_DAYS(#{inoDate})
+            and delete_status = 0
+        </where>
+    </select>
+    <sql id="baseWhere">
+        <where>
+            <if test="selectTimes!=null">
+                AND  select_times=#{selectTimes}
+            </if>
+            <if test="chilBirthdayStart != null">
+                AND TO_DAYS(birthTime) <![CDATA[ >= ]]> TO_DAYS( #{chilBirthdayStart})
+            </if>
+            <if test="chilBirthdayEnd != null">
+                AND TO_DAYS(birthTime) <![CDATA[ <= ]]> TO_DAYS( #{chilBirthdayEnd})
+            </if>
+            <if test="chilCommittees != null">
+                AND committee IN
+                <foreach collection="chilCommittees" item="committee" index="index" open="(" close=")" separator=",">
+                    #{committee}
+                </foreach>
+            </if>
+            <if test="infostatus != null">
+                AND child_info_status IN
+                <foreach collection="infostatus" item="infostatu" index="index" open="(" close=")" separator=",">
+                    #{infostatu}
+                </foreach>
+            </if>
+            <if test="biotypes != null">
+                AND bio_name IN
+                <foreach collection="biotypes" item="biotypes" index="index" open="(" close=")" separator=",">
+                    #{biotypes}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <insert id="save" parameterType="io.yfjz.entity.bus.TBusBatchInoculationEntity">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select uuid()
+        </selectKey>
+        insert into t_bus_batch_inoculation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+`id`,
+<if test="childcode != null and childcode  != ''">`childcode` , </if>
+<if test="committee != null and committee  != ''">`committee` , </if>
+<if test="cname != null and cname  != ''">`cname` , </if>
+<if test="sex != null and sex  != ''">`sex` , </if>
+<if test="birthtime != null and birthtime  != ''">`birthTime` , </if>
+<if test="mothername != null and mothername  != ''">`motherName` , </if>
+<if test="fathername != null and fathername  != ''">`fatherName` , </if>
+<if test="childInfoStatus != null and childInfoStatus  != ''">`child_info_status` , </if>
+<if test="telepone != null and telepone  != ''">`telepone` , </if>
+<if test="mobile != null and mobile  != ''">`mobile` , </if>
+<if test="contactaddress != null and contactaddress  != ''">`contactAddress` , </if>
+<if test="bioName != null and bioName  != ''">`bio_name` , </if>
+<if test="agenttimes != null and agenttimes  != ''">`agentTimes` , </if>
+<if test="inoculateDate != null and inoculateDate  != ''">`inoculate_date` , </if>
+<if test="orgid != null and orgid  != ''">`orgId` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#{id},
+<if test="childcode != null and childcode  != ''">#{childcode} , </if>
+<if test="committee != null and committee  != ''">#{committee} , </if>
+<if test="cname != null and cname  != ''">#{cname} , </if>
+<if test="sex != null and sex  != ''">#{sex} , </if>
+<if test="birthtime != null and birthtime  != ''">#{birthtime} , </if>
+<if test="mothername != null and mothername  != ''">#{mothername} , </if>
+<if test="fathername != null and fathername  != ''">#{fathername} , </if>
+<if test="childInfoStatus != null and childInfoStatus  != ''">#{childInfoStatus} , </if>
+<if test="telepone != null and telepone  != ''">#{telepone} , </if>
+<if test="mobile != null and mobile  != ''">#{mobile} , </if>
+<if test="contactaddress != null and contactaddress  != ''">#{contactaddress} , </if>
+<if test="bioName != null and bioName  != ''">#{bioName} , </if>
+<if test="agenttimes != null and agenttimes  != ''">#{agenttimes} , </if>
+<if test="inoculateDate != null and inoculateDate  != ''">#{inoculateDate} , </if>
+<if test="orgid != null and orgid  != ''">#{orgid} </if>
+	</trim>
+    </insert>
+    <insert id="saveBatchResult">
+        insert into t_bus_batch_inoculation
+        (
+            `id`,
+            `childcode`,
+            `committee` ,
+            `cname` ,
+            `sex` ,
+            `birthTime` ,
+            `motherName` ,
+            `fatherName` ,
+            `child_info_status` ,
+            `telepone` ,
+            `mobile` ,
+            `contactAddress` ,
+            `bio_name` ,
+            `planId` ,
+            `agentTimes` ,
+            `inoculate_date` ,
+            `orgId`,
+           select_condition,
+            select_times
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},
+            #{item.chilCode},
+            #{item.committee},
+            #{item.chilName},
+            #{item.chilSex},
+            #{item.chilBirthday},
+            #{item.matherName},
+            #{item.fatherName},
+            #{item.chilHere},
+            #{item.chilTel},
+            #{item.chilMobile},
+            #{item.address},
+            #{item.planName},
+            #{item.planId},
+            #{item.times},
+            #{item.inoDate},
+            #{item.orgId},
+            #{item.selectCondition},
+            #{item.selectTimes}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.bus.TBusBatchInoculationEntity">
+		update t_bus_batch_inoculation 
+		<set>
+	<if test="childcode != null and childcode  != ''">`childcode` = #{childcode}, </if>
+	<if test="committee != null and committee  != ''">`committee` = #{committee}, </if>
+	<if test="cname != null and cname  != ''">`cname` = #{cname}, </if>
+	<if test="sex != null and sex  != ''">`sex` = #{sex}, </if>
+	<if test="birthtime != null and birthtime  != ''">`birthTime` = #{birthtime}, </if>
+	<if test="mothername != null and mothername  != ''">`motherName` = #{mothername}, </if>
+	<if test="fathername != null and fathername  != ''">`fatherName` = #{fathername}, </if>
+	<if test="childInfoStatus != null and childInfoStatus  != ''">`child_info_status` = #{childInfoStatus}, </if>
+	<if test="telepone != null and telepone  != ''">`telepone` = #{telepone}, </if>
+	<if test="mobile != null and mobile  != ''">`mobile` = #{mobile}, </if>
+	<if test="contactaddress != null and contactaddress  != ''">`contactAddress` = #{contactaddress}, </if>
+	<if test="bioName != null and bioName  != ''">`bio_name` = #{bioName}, </if>
+	<if test="agenttimes != null and agenttimes  != ''">`agentTimes` = #{agenttimes}, </if>
+	<if test="inoculateDate != null and inoculateDate  != ''">`inoculate_date` = #{inoculateDate}, </if>
+	<if test="orgid != null and orgid  != ''">`orgId` = #{orgid}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_bus_batch_inoculation where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_bus_batch_inoculation where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+    <delete id="deleteTimes">
+       delete from t_bus_batch_inoculation where select_times = #{selectTimes}
+    </delete>
+    <delete id="deleteHistoryRecord">
+        delete from t_bus_batch_inoculation where childcode=#{childCode} and planId=#{planId}
+        and agentTimes=#{agentTimes}
+    </delete>
+
+</mapper>

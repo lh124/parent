@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.ChildInoculateDao">
+
+    <sql id="sql_where_view_data">
+        WHERE tcie.inoc_bact_code = #{inoc_bact_code} AND tcie.inoc_county = left(#{org_id},6) AND tcie.inoc_nationcode=RIGHT(#{org_id},4) AND tcie.delete_status = 0
+        AND NOT EXISTS (
+            select
+              tce.id
+            from t_child_inoculate tce
+            LEFT JOIN t_vac_info tvio
+            ON tvio.bio_code = tce.inoc_bact_code
+            LEFT JOIN t_child_info tcio
+            ON tcio.chil_code = tce.chil_code
+            WHERE tce.inoc_bact_code=#{inoc_bact_code} AND tce.inoc_county = left(#{org_id},6) AND tce.inoc_nationcode=RIGHT(#{org_id},4) AND tce.delete_status = 0
+            AND tce.inoc_bact_code is not null and tce.inoc_bact_code!=''
+            and tce.inoc_date is not null
+            and tce.inoc_batchno is not null and tce.inoc_batchno!=''
+            and tce.inoc_corp_code is not null and inoc_corp_code!=''
+            and tvio.bio_spec_id is not null and tvio.bio_spec_id!=''
+            and tce.inoc_inpl_id is not null and tce.inoc_inpl_id!=''
+            and tce.inoc_county is not null and tce.inoc_county!=''
+            and tce.inoc_nurse is not null and tce.inoc_nurse!=''
+            and tce.inoc_free is not null and tce.inoc_free!=''
+            <![CDATA[ and (TO_DAYS(tce.inoc_date) - TO_DAYS(tce.create_time)) <= 7 ]]>
+            and tce.inoc_date is not null
+            and tce.create_time is not null
+            AND tcie.id = tce.id
+        )
+        <trim prefix="AND" prefixOverrides="AND">
+            <if test="committee != null">
+                AND tcio.chil_committee IN
+                <foreach item="item" index="index" collection="committee" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="chilResidence != null">
+                AND tcio.chil_residence IN
+                <foreach item="item" index="index" collection="chilResidence" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="childInfoStatus != null">
+                AND tcio.chil_here IN
+                <foreach item="item" index="index" collection="childInfoStatus" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="chil_account != null">
+                AND tcio.chil_account IN
+                <foreach item="item" index="index" collection="chil_account" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="inocDateStart != null and inocDateStart != ''">
+                <![CDATA[ AND TO_DAYS(tcie.inoc_date) >= TO_DAYS(#{inocDateStart}) ]]>
+            </if>
+            <if test="inocDateEnd != null and inocDateEnd != ''">
+                <![CDATA[ AND TO_DAYS(tcie.inoc_date) <= TO_DAYS(#{inocDateEnd}) ]]>
+            </if>
+            <if test="birthDayStart != null and birthDayStart != ''">
+                <![CDATA[ AND TO_DAYS(tcio.chil_birthday) >= TO_DAYS(#{birthDayStart}) ]]>
+            </if>
+            <if test="birthDayEnd != null and birthDayEnd != ''">
+                <![CDATA[ AND TO_DAYS(tcio.chil_birthday) <= TO_DAYS(#{birthDayEnd}) ]]>
+            </if>
+            <if test="birthDayEnd != null and birthDayEnd != ''">
+                <![CDATA[ AND TO_DAYS(tcio.chil_birthday) <= TO_DAYS(#{birthDayEnd}) ]]>
+            </if>
+            <if test="child_code != null and child_code != ''">
+                AND tcie.chil_code =#{child_code}
+            </if>
+        </trim>
+    </sql>
+
+    <!-- 根据疫苗编码查询儿童的接种情况-数据列表 -->
+    <select id="viewInocChildInfoData" resultType="Map" parameterType="HashMap">
+            SELECT
+                tcie.id,
+                tcie.chil_code chilCode,
+                tcio.chil_name chilName,
+                tcio.chil_sex chilSex,
+                DATE_FORMAT(tcio.chil_birthday,'%Y-%m-%d %H:%i:%S') chilBirthday,
+                tvio.bio_cn_sortname bioCnSortname,
+                tcie.inoc_time inocTime,
+                DATE_FORMAT(tcie.inoc_date,'%Y-%m-%d %H:%i:%S') inocDate,
+                tcie.inoc_corp_code inocCorpCode,
+                (case when tcie.inoc_free = 1 then '免费' when tcie.inoc_free = 0 then '收费' else '' end) inocPay,
+                tcie.inoc_nurse inocNurse,
+                tcie.inoc_inpl_id inocInplId,
+                tcie.inoc_nationcode inocDepaCode,
+                tcie.inoc_batchno inocBatchno,
+                tcie.create_time
+            FROM t_child_inoculate tcie
+            LEFT JOIN t_vac_info tvio
+            ON tvio.bio_code = tcie.inoc_bact_code
+            LEFT JOIN t_child_info tcio
+            ON tcio.chil_code = tcie.chil_code
+            <include refid="sql_where_view_data"/>
+            <choose>
+                <when test="order != null and sidx != null">
+                    ORDER BY ${sidx} ${order}
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            <if test="offset != null and limit != null">
+                limit #{offset}, #{limit}
+            </if>
+    </select>
+
+    <!-- 根据疫苗编码查询儿童的接种情况-总条数 -->
+    <select id="viewInocChildInfoTotal" resultType="Integer" parameterType="HashMap">
+        SELECT count(tcie.id) total
+        FROM t_child_inoculate tcie
+        LEFT JOIN t_vac_info tvio
+        ON tvio.bio_code = tcie.inoc_bact_code
+        LEFT JOIN t_child_info tcio
+        ON tcio.chil_code = tcie.chil_code
+        <include refid="sql_where_view_data"/>
+    </select>
+
+    <!-- 查询儿童接种记录里所有疫苗列表 -->
+    <select id="listChildInoculateData" resultType="HashMap" parameterType="HashMap">
+        select
+            tcie.inoc_bact_code AS bioCode,tvio.bio_cn_sortname bioCnSortname
+        from t_child_inoculate tcie
+        LEFT JOIN t_vac_info tvio
+        ON tvio.bio_code = tcie.inoc_bact_code
+        WHERE tcie.inoc_county = left(#{org_id},6) AND tcie.inoc_nationcode=RIGHT(#{org_id},4) AND tcie.delete_status = 0
+        GROUP BY tcie.inoc_bact_code,tvio.bio_cn_sortname
+    </select>
+</mapper>

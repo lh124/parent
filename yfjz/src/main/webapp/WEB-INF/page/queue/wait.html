@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>侯种区域</title>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="row-items">
+                <p class="items-top">儿保等候队列</p>
+                <div class="item-content">
+                    <div class="clearfix mt30">
+                        <span class="name green fl ml30">张三</span>
+                        <span class="order green">A0001</span>
+                        <span class="pos fr mr30">一号工作台</span>
+                    </div>
+                    <p class="num-wrap">当前等待人数: <span class="waitNum">155</span></p>
+                </div>
+            </div>
+            <div class="row-items">
+                <p class="items-top">儿保等候队列</p>
+                <div class="item-content">
+                    <div class="clearfix mt30">
+                        <span class="name green fl ml30">张三</span>
+                        <span class="order green">A0001</span>
+                        <span class="pos fr mr30">一号工作台</span>
+                    </div>
+                    <p class="num-wrap">当前等待人数: <span class="waitNum">155</span></p>
+                </div>
+            </div>
+            <div class="row-items">
+                <p class="items-top">儿保等候队列</p>
+                <div class="item-content">
+                    <div class="clearfix mt30">
+                        <span class="name green fl ml30">张三</span>
+                        <span class="order green">A0001</span>
+                        <span class="pos fr mr30">一号工作台</span>
+                    </div>
+                    <p class="num-wrap">当前等待人数: <span class="waitNum">155</span></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+<script type="text/javascript" src="${rc.contextPath}/statics/libs/jquery.min.js"></script>
+<script>
+    $(function () {
+        var wHeight = $(window).height();
+        var top = $('.items-top').innerHeight();
+        $(".item-content").css({
+            height: wHeight - top + 'px'
+        });
+
+        var limit = 3;
+        if(limit == 3) {
+            $(".row-items").css({
+                width: (100 / 3).toFixed(4) + '%'
+            });
+        }else {
+            $(".row-items").css({
+                width: (100 / 4) + '%'
+            });
+        }
+    });
+</script>
+</body>
+</html>

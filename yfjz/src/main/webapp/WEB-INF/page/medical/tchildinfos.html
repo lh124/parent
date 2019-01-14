@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+	<meta charset="utf-8">
+	<title>儿保</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/register.css" media="all" />
+
+	#parse("sys/header.html")
+	<!--选择城市控件-->
+	<link href="${rc.contextPath}/statics/plugins/city/css/city-picker.css" rel="stylesheet">
+	<link href="${rc.contextPath}/statics/plugins/city/css/main.css" rel="stylesheet">
+	<script src="${rc.contextPath}/statics/plugins/city/js/city-picker.data.js"></script>
+	<script src="${rc.contextPath}/statics/plugins/city/js/city-picker.js"></script>
+	<script src="${rc.contextPath}/statics/plugins/city/js/main.js"></script>
+	<script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('realName')";
+	</script>
+	<style>
+		[v-cloak] {
+			display: none;
+		}
+
+		#cb_inoculateTable{
+			width: 0px;
+		}
+	</style>
+</head>
+
+
+<body  class="childrenBody">
+#parse("bus/dialog.html")
+<!--判断导航栏显示-->
+<input type="hidden" id="eb01" value="healthcare">
+<div id="rrapp" v-cloak>
+	<div v-show="showList" class="layui-col-space10">
+		<div class="row-box font0" id="navigationMonitoring"></div>
+
+		<section class="layui-col-md10 layui-col-sm9">
+			<div class="grid-btn">
+				<!--<div class="form-inline">-->
+				<!--<div class="input-group">-->
+				<!--<span class="input-group-addon">姓名</span>-->
+				<!--<input style="width: 120px" type="text" class="form-control" v-model="q.chilName"  @keyup.enter="query" placeholder="儿童姓名">-->
+				<!--</div>-->
+				<!--<div class="input-group " >-->
+				<!--<span class="input-group-addon">编号</span>-->
+				<!--<input style="width: 170px" type="text" class="form-control" v-model="q.chilCode"  @keyup.enter="query" placeholder="儿童编号">-->
+				<!--</div>-->
+				<!--<div class="input-group" >-->
+				<!--<span class="input-group-addon">出生证号</span>-->
+				<!--<input style="width: 170px" type="text" class="form-control" v-model="q.chilBirthno"  @keyup.enter="query" placeholder="出生证号">-->
+				<!--</div>-->
+				<!--<div class="input-group" >-->
+				<!--<span class="input-group-addon">父母姓名</span>-->
+				<!--<input style="width: 120px" type="text" class="form-control" v-model="q.chilMother"  @keyup.enter="query" placeholder="父母姓名">-->
+				<!--</div>-->
+				<!--<div class="input-group form-inline"  >-->
+				<!--<span class="input-group-addon">出生日期</span>-->
+				<!--<input style="width: 100px" type="text" class="form-control" id="searchDate" data-date-format="yyyy-mm-dd"  @keyup.enter="query" placeholder="出生日期"  >-->
+				<!--</div>-->
+				<!--<a class="btn btn-info" @click="query"><i class="fa fa-search"></i>&nbsp; 查询</a>-->
+				<!--</div>-->
+				<form class="form-inline" role="form">
+					<!--<div class="form-inline">-->
+					<!--<div class="input-group">-->
+					<!--<span class="input-group-addon">姓名</span>-->
+					<!--<input style="width: 120px" type="text" class="form-control" v-model="q.chilName"  @keyup.enter="query" placeholder="儿童姓名">-->
+					<!--</div>-->
+					<!--<div class="input-group " >-->
+					<!--<span class="input-group-addon">编号</span>-->
+					<!--<input style="width: 170px" type="text" class="form-control" v-model="q.chilCode"  @keyup.enter="query" placeholder="儿童编号">-->
+					<!--</div>-->
+					<!--<div class="input-group" >-->
+					<!--<span class="input-group-addon">出生证号</span>-->
+					<!--<input style="width: 170px" type="text" class="form-control" v-model="q.chilBirthno"  @keyup.enter="query" placeholder="出生证号">-->
+					<!--</div>-->
+					<!--<div class="input-group" >-->
+					<!--<span class="input-group-addon">父母姓名</span>-->
+					<!--<input style="width: 120px" type="text" class="form-control" v-model="q.chilMother"  @keyup.enter="query" placeholder="父母姓名">-->
+					<!--</div>-->
+					<!--<div class="input-group form-inline"  >-->
+					<!--<span class="input-group-addon">出生日期</span>-->
+					<!--<input style="width: 100px" type="text" class="form-control" id="searchDate" data-date-format="yyyy-mm-dd"  @keyup.enter="query" placeholder="出生日期"  >-->
+					<!--</div>-->
+					<!--<a class="btn btn-info" @click="query"><i class="fa fa-search"></i>&nbsp; 查询</a>-->
+					<!--</div>-->
+
+					<div class="form-group mb10">
+						儿童编码:<input type="text" class="form-control" v-model.trim="q.chilCode" @keyup.enter="downloadChild" style="width: 180px" placeholder="">
+					</div>
+					<div class="form-group mb10">
+						&nbsp;儿童姓名:	<input type="text" class="form-control" v-model.trim="q.chilName" @keyup.enter="query" style="width: 100px" placeholder="">
+
+					</div>
+
+					<!--<div class="form-group">-->
+					<!--&nbsp;居委会/行政村:-->
+					<!--<select v-model="q.chilCommittee" class="form-control" @keyup.enter="query" id="chilCommittees" name="chilCommittees" >-->
+
+					<!--</select>-->
+					<!--</div>-->
+
+					<!--<div class="form-group">-->
+					<!--&nbsp;个案状态:-->
+					<!--<select v-model="q.chilHere" class="form-control" @keyup.enter="query"  id="infostatus" name="infostatus" >-->
+					<!--&lt;!&ndash;<option v-for="item in items" v-bind:value="item.value">111</option>&ndash;&gt;-->
+					<!--<option v-for="item in infostatus" v-bind:value="item.value">{{item.text}}</option>-->
+					<!--</select>-->
+
+					<!--</div>-->
+
+					<div class="form-group">
+						&nbsp;出生日期:<input type="text" class="form-control" v-model.trim="q.chilBirthdayStart" id="chilBirthdayStart" @keyup.enter="query" style="width: 100px" placeholder="">
+					</div>
+					<div class="form-group">
+						—<input type="text" class="form-control" v-model.trim="q.chilBirthdayEnd" id="chilBirthdayEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+					</div>
+					<a class="btn btn-default" @click="query">查询</a>
+					<a class="btn btn-info" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				</form>
+			</div>
+			<div>
+
+
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#inoculation" data-toggle="tab">历次儿保记录</a></li>
+				<!--<li><a href="#abnormal" data-toggle="tab">异常反应</a></li>-->
+				<!--<li><a href="#taboo" data-toggle="tab">接种禁忌</a></li>-->
+				<!--<li><a href="#allergy" data-toggle="tab">过敏史</a></li>-->
+				<!--<li><a href="#infection" data-toggle="tab">传染病史</a></li>-->
+				<!--<li><a href="#move" id="moveTitle" data-toggle="tab">变更记录</a></li>-->
+				<!--<li><a href="#serviceRecord" data-toggle="tab">服务记录</a></li>-->
+
+			</ul>
+			<div class="tab-content" style="margin-top: 5px">
+
+				<!--接种记录-->
+				<div class="tab-pane fade in active" id="inoculation">
+					<div id="inoculation_tabs" v-cloak>
+						<iframe name="tchildhealthcare" style="width:100%; height:250px" frameborder="0"  id="tchildhealthcare_iframe" src="../medical/tchildhealthcare.html"></iframe>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<queuer host="$shiro.getBaseInfo('queuer.host')"
+				type="$shiro.getBaseInfo('queuer.healthType')"
+				tower="$shiro.getBaseInfo('chiProId')"
+				user="$shiro.getBaseInfo('userId')">
+			<!--user="$shiro.getBaseInfo('userName')">-->
+
+		</queuer>
+
+	</div>
+
+	<div v-show="!showList"  class="panel panel-default" id="childModel" >
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="chilForm">
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group">
+					&nbsp;建档单位:	<input type="text" class="form-control" v-model="tChildInfo.chilCreatesite" name="chilCreatesite" readonly style="width: 200px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;建档人:	<input type="text" class="form-control" v-model="tChildInfo.createUserName" readonly name="createUserName" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;建档日期:
+					<input type="text" class="form-control" v-model="tChildInfo.chilCreatedate" readonly  id='chilCreatedate' name="chilCreatedate" style="width: 170px; height: 35px;" />
+				</div>
+			</div>
+
+
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;儿童姓名:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model="tChildInfo.chilName" name="chilName"  style="width: 100px;margin-left: 18px" placeholder="">
+				</div>
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;性别:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>
+					<select v-model="tChildInfo.chilSex"  style="margin-left: 18px" class="form-control" name="chilSex" >
+						<option value="1">男</option>
+						<option value="2">女</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;出生日期:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>
+					<input type="text" class="form-control" v-model="tChildInfo.chilBirthday"  name="chilBirthday"  id='chilBirthday'  data-date-format="yyyy-mm-dd hh:ii:ss"  style="width: 170px; margin-left: 18px;height: 35px;"  />
+				</div>
+			</div>
+
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;在册情况:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>
+					<select v-model="tChildInfo.chilHere" style="margin-left: 18px" class="form-control"  id="chilHere" name="chilHere" >
+						<option v-for="item in infostatus" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+				</div>
+				<div class="form-group" id="chilBirthhospitalnameIdParent">
+					<span style="position: relative;margin-right: 9px;">&nbsp;出生医院:<span  style="color:red;margin-left: 2px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>
+
+					<select  class="col-lg-12 form-control selectpicker"  name="chilBirthhospitalname"  id="chilBirthhospitalname" v-model="tChildInfo.chilBirthhospital"  data-live-search="true" >
+						<option value=""></option>
+					</select>
+				</div>
+				<div class="form-group" id="chilCommitteeIdParent">
+					<span style="position: relative;">&nbsp;行政村/居委会:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>
+					<select v-model="tChildInfo.chilCommittee" style="margin-left: 18px" class="selectpicker" title="请选择行政村/居委会" data-live-search="true" id="chilCommittee" name="chilCommittee" >
+
+					</select>
+				</div>
+			</div>
+
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;母亲姓名:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model="tChildInfo.chilMother" name="chilMother" style="width: 100px;margin-left: 18px" placeholder="">
+				</div>
+
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;家庭电话:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" id="chilTel" v-model="tChildInfo.chilTel" name="chilTel" style="width: 150px;margin-left: 18px" placeholder="">
+				</div>
+			</div>
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;居住属性:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>
+					<select v-model="tChildInfo.chilResidence" style="margin-left: 18px" class="form-control"  id="chilResidence" name="chilResidence" >
+						<option v-for="item in hukou" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+
+				</div>
+				<div class="form-group">
+					<span style="position: relative;">&nbsp;户籍属性:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>
+					<select v-model="tChildInfo.chilAccount" style="margin-left: 18px" class="form-control"  id="chilAccount" name="chilAccount" >
+						<option v-for="item in account" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					&nbsp;出生体重(kg):	<input type="text" class="form-control" v-model="tChildInfo.chilBirthweight" name="chilBirthweight" style="width: 100px;" placeholder="">
+				</div>
+			</div>
+			<div class="form-inline" style="width: 1500px;padding-bottom: 20px">
+				<div class="form-group">
+					民族:
+					<select v-model="tChildInfo.chilNatiId" class="form-control"  id="chilNatiId" name="chilNatiId" >
+						<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+				</div>
+				<div class="form-group">
+					&nbsp;学校:
+					<select v-model="tChildInfo.chilSchool" class="form-control"  id="chilSchool" name="chilSchool" >
+
+					</select>
+					<!--
+                                    <input type="text" class="form-control" v-model="tChildInfo.chilSchool" name="chilSchool" style="width: 100px" placeholder="">
+                    -->
+
+				</div>
+				<div class="form-group">
+					&nbsp;手机:	<input type="text" class="form-control" v-model="tChildInfo.chilMobile" name="chilMobile" style="width: 150px" placeholder="">
+
+				</div>
+
+
+			</div>
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group">
+					&nbsp;父亲姓名:	<input type="text" class="form-control" v-model="tChildInfo.chilFather" name="chilFather" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;父亲身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilFatherno" name="chilFatherno" style="width: 200px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;母亲身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilMotherno" name="chilMotherno" style="width: 200px" placeholder="">
+				</div>
+			</div>
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group">
+					&nbsp;接种证号:	<input type="text" class="form-control" v-model="tChildInfo.chilCardno" name="chilCardno" style="width: 150px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilNo" name="chilNo"  style="width: 200px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;出生证号:	<input type="text" class="form-control" v-model="tChildInfo.chilBirthno" name="chilBirthno" style="width: 150px" placeholder="">
+				</div>
+			</div>
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group " style="width: 1700px;">
+					<div  style ="position:relative">
+						户籍地址:
+						<div class="form-group " style="margin-left: 10px;">
+							<input readonly type ="text" id="hbaddress" data-toggle ="city-picker"   style="  min-width: 360px;">
+						</div>
+						<div class="form-group " >
+							<input type="text" class="form-control"   placeholder="详细地址" id="hbDetailed"  style="width: 300px"/>
+						</div>
+					</div>
+					<!--<select class="selectpicker" onchange="datacityall($('#Province option:selected').val())" name="Province" id="Province" style="width: 120px">-->
+					<!--</select>-->
+
+					<!--(省)-->
+					<!--<select class="selectpicker" onchange="datavallageall($('#City option:selected').val())" name="City" id="City" style="width: 200px" >-->
+					<!--</select>-->
+
+					<!--(市)-->
+					<!--<select class="selectpicker" onchange="datatownall($('#Village option:selected').val())" name="Village" id="Village" style="width: 200px" >-->
+					<!--</select>-->
+
+					<!--(县/区)-->
+					<!--<select class="selectpicker" name="Twon" id="Twon"  style="width: 200px">-->
+					<!--</select>-->
+					<!--(乡镇/街道)-->
+					<!--<input type="text" class="form-control"   placeholder="详细地址" id="detailed"  style="width: 300px"/>-->
+					<input type="hidden" class="form-control" v-model="tChildInfo.chilHabiaddress"  placeholder="" id="chilHabiaddress"  />
+
+				</div>
+			</div>
+			<div class="form-inline" style="width: 1000px;padding-bottom: 20px">
+				<div class="form-group " style="width: 1700px;">
+					<div  style ="position:relative">
+						现居地址:
+						<div class="form-group " style="margin-left: 10px;">
+							<input readonly type ="text" id="nowaddress" data-toggle ="city-picker"    style="  min-width: 360px;">
+						</div>
+						<div class="form-group " >
+							<input type="text" class="form-control"   placeholder="详细地址" id="nowDetailed"  style="width: 300px"/>
+						</div>
+					</div>
+					<!--<select class="selectpicker" onchange="datacityall2($('#Province_home option:selected').val())" name="Province_home" id="Province_home" style="width: 120px" >-->
+					<!--</select>-->
+
+					<!--(省)-->
+					<!--<select class="selectpicker" onchange="datavallageall2($('#City_home option:selected').val())" name="City_home" id="City_home" style="width: 200px" >-->
+					<!--</select>-->
+					<!--(市)-->
+					<!--<select class="selectpicker" onchange="datatownall2($('#Village_home option:selected').val())" name="Village_home" id="Village_home" style="width: 200px" >-->
+					<!--</select>-->
+					<!--(县/区)-->
+					<!--<select class="selectpicker"  name="Twon_home" id="Twon_home"  style="width: 200px">-->
+					<!--</select>-->
+					<!--(乡镇/街道)-->
+					<!--<input type="text" class="form-control"   placeholder="详细地址" id="detailed_home"  style="width: 300px"/>-->
+					<input type="hidden" class="form-control" v-model="tChildInfo.chilAddress"  placeholder="" id="chilAddress"  />
+
+				</div>
+			</div>
+			<div class="form-inline" style="width: 1000px; padding-bottom: 20px">
+				<div class="form-group">
+					&nbsp;备注:	<input type="text" class="form-control" v-model="tChildInfo.remark" name="remark" style="width: 800px" placeholder="">
+
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" id="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+	<!--<div v-show="!showList"  class="panel panel-default" id="childModel" >-->
+	<!--<div class="panel-heading">{{title}}</div>-->
+	<!--<form class="form-horizontal" id="chilForm">-->
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;建档单位:	<input type="text" class="form-control" v-model="tChildInfo.chilCreatesite" name="chilCreatesite" readonly style="width: 200px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;建档人:	<input type="text" class="form-control" v-model="tChildInfo.createUserName" readonly name="createUserName" style="width: 100px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;建档日期:-->
+	<!--<input type="text" class="form-control" v-model="tChildInfo.chilCreatedate" readonly  id='chilCreatedate' name="chilCreatedate" style="width: 170px; height: 35px;" />-->
+	<!--</div>-->
+	<!--</div>-->
+
+
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;儿童姓名:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model.trim="tChildInfo.chilName" name="chilName"  style="width: 100px;margin-left: 18px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;性别:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>-->
+	<!--<select v-model="tChildInfo.chilSex" class="form-control" name="chilSex"  style="margin-left: 18px">-->
+	<!--<option value="1">男</option>-->
+	<!--<option value="2">女</option>-->
+	<!--</select>-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;出生日期:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>-->
+	<!--<input type="text" class="form-control"  name="chilBirthday" v-model.trim="tChildInfo.chilBirthday"   id='chilBirthday'  data-date-format="yyyy-mm-dd hh:ii:ss"  style="width: 170px; height: 35px;margin-left: 18px"  />-->
+	<!--</div>-->
+	<!--</div>-->
+
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;出生体重(kg):<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model.trim="tChildInfo.chilBirthweight" name="chilBirthweight" style="width: 100px;margin-left: 18px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;母亲姓名:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model.trim="tChildInfo.chilMother" name="chilMother" style="width: 100px;margin-left: 18px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group" id="chilBirthhospitalnameIdParent">-->
+	<!--<span style="position: relative;margin-right: 9px;">&nbsp;出生医院:<span  style="color:red;margin-left: 2px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>-->
+
+	<!--<select  class="col-lg-12 form-control selectpicker"  name="chilBirthhospitalname"  id="chilBirthhospitalname" v-model="tChildInfo.chilBirthhospital"  data-live-search="true" >-->
+	<!--<option value=""></option>-->
+	<!--</select>-->
+
+	<!--</div>-->
+
+	<!--</div>-->
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;居住属性:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>-->
+	<!--<select v-model="tChildInfo.chilResidence" style="margin-left: 18px" class="form-control"  id="chilResidence" name="chilResidence" >-->
+	<!--<option v-for="item in hukou" v-bind:value="item.value">{{item.text}}</option>-->
+	<!--</select>-->
+
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;户籍属性:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>-->
+	<!--<select v-model="tChildInfo.chilAccount" class="form-control"  id="chilAccount" name="chilAccount" style="margin-left: 18px">-->
+	<!--<option v-for="item in account" v-bind:value="item.value">{{item.text}}</option>-->
+	<!--</select>-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;个案状态:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>-->
+	<!--<select v-model="tChildInfo.chilHere" class="form-control" style="margin-left: 18px"  id="chilHere" name="chilHere" >-->
+	<!--<option v-for="item in infostatus" v-bind:value="item.value">{{item.text}}</option>-->
+	<!--</select>-->
+	<!--</div>-->
+
+	<!--</div>-->
+
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+
+
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;行政村/居委会:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>-->
+	<!--<select v-model="tChildInfo.chilCommittee" class="form-control" style="margin-left: 18px"  id="chilCommittee" name="chilCommittee" >-->
+
+	<!--</select>-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--<span style="position: relative;">&nbsp;家庭电话:<span  style="color:red;padding-left: 5px;font-size: 20px;    position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model.trim="tChildInfo.chilTel" name="chilTel" style="width: 150px;margin-left: 18px" placeholder="">-->
+	<!--</div>-->
+
+
+	<!--</div>-->
+
+	<!--<div class="form-inline" style="width: 1500px;padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--民族:-->
+	<!--<select v-model="tChildInfo.chilNatiId" class="form-control"  id="chilNatiId" name="chilNatiId" >-->
+	<!--<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>-->
+	<!--</select>-->
+	<!--</div>-->
+
+	<!--<div class="form-group">-->
+	<!--&nbsp;学校:-->
+	<!--<select v-model="tChildInfo.chilSchool" class="form-control"  id="chilSchool" name="chilSchool" >-->
+	<!--</select>-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;手机:	<input type="text" class="form-control" v-model.trim="tChildInfo.chilMobile" name="chilMobile" style="width: 150px" placeholder="">-->
+	<!--</div>-->
+	<!--</div>-->
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;父亲姓名:	<input type="text" class="form-control" v-model.trim="tChildInfo.chilFather" name="chilFather" style="width: 100px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;父亲身份证号:	<input type="text" class="form-control" v-model.trim="tChildInfo.chilFatherno" name="chilFatherno" style="width: 200px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;母亲身份证号:	<input type="text" class="form-control" v-model.trim="tChildInfo.chilMotherno" name="chilMotherno" style="width: 200px" placeholder="">-->
+	<!--</div>-->
+	<!--</div>-->
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group " style="width: 1700px;">-->
+	<!--户籍地址:-->
+
+	<!--<select class="form-control" @change="CityBind" name="Province" id="Province" style="width: 120px">-->
+	<!--</select>-->
+
+	<!--(省)-->
+	<!--<select class="form-control" @change="VillageBind" name="City" id="City" style="width: 200px" >-->
+	<!--</select>-->
+
+	<!--(市)-->
+	<!--<select class="form-control" @change="Twon" name="Village" id="Village" style="width: 200px" >-->
+	<!--</select>-->
+
+	<!--(县/区)-->
+	<!--<select class="form-control" name="Twon" id="Twon"  style="width: 200px">-->
+	<!--</select>-->
+	<!--(乡镇/街道)-->
+	<!--<input type="text" class="form-control"   placeholder="详细地址" id="detailed"  style="width: 300px"/>-->
+	<!--<input type="hidden" class="form-control" v-model="tChildInfo.chilHabiaddress"  placeholder="" id="chilHabiaddress"  />-->
+
+	<!--</div>-->
+	<!--</div>-->
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;接种证号:	<input type="text" class="form-control" v-model.trim="tChildInfo.chilCardno" name="chilCardno" style="width: 150px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;身份证号:	<input type="text" class="form-control" v-model.trim="tChildInfo.chilNo" name="chilNo"  style="width: 200px" placeholder="">-->
+	<!--</div>-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;出生证号:	<input type="text" class="form-control" v-model.trim="tChildInfo.chilBirthno" name="chilBirthno" style="width: 150px" placeholder="">-->
+	<!--</div>-->
+	<!--</div>-->
+	<!--<div class="form-inline" style="width: 1000px;padding-bottom: 20px">-->
+	<!--<div class="form-group " style="width: 1700px;">-->
+	<!--家庭住址:-->
+
+	<!--<select class="form-control" @change="City_homeBind" name="Province_home" id="Province_home" style="width: 120px" >-->
+	<!--</select>-->
+
+	<!--(省)-->
+	<!--<select class="form-control" @change="Village_homeBind" name="City_home" id="City_home" style="width: 200px" >-->
+	<!--</select>-->
+	<!--(市)-->
+	<!--<select class="form-control" @change="Twon_home" name="Village_home" id="Village_home" style="width: 200px" >-->
+	<!--</select>-->
+	<!--(县/区)-->
+	<!--<select class="form-control" name="Twon_home" id="Twon_home"  style="width: 200px">-->
+	<!--</select>-->
+	<!--(乡镇/街道)-->
+	<!--<input type="text" class="form-control"   placeholder="详细地址" id="detailed_home"  style="width: 300px"/>-->
+	<!--<input type="hidden" class="form-control" v-model="tChildInfo.chilAddress"  placeholder="" id="chilAddress"  />-->
+
+	<!--</div>-->
+	<!--</div>-->
+	<!--<div class="form-inline" style="width: 1000px; padding-bottom: 20px">-->
+	<!--<div class="form-group">-->
+	<!--&nbsp;备注:	<input type="text" class="form-control" v-model.trim="tChildInfo.remark" name="remark" style="width: 800px" placeholder="">-->
+
+	<!--</div>-->
+	<!--</div>-->
+
+	<!--<div class="form-group">-->
+	<!--<div class="col-sm-2 control-label"></div>-->
+	<!--<input type="button" class="btn btn-primary" @click="saveOrUpdate" id="saveOrUpdate" value="确定"/>-->
+	<!--&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>-->
+	<!--</div>-->
+	<!--</form>-->
+	<!--</div>-->
+
+</div>
+
+
+<script src="${rc.contextPath}/statics/js/medical/tchildinfos.js?_${date.systemTime}"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/monitordialog.js"></script>
+
+<script src="${rc.contextPath}/statics/js/child/childvalidator.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/libs/sockjs.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/stomp.min.js"></script>
+<script src="${rc.contextPath}/statics/js/queue/queue.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/plugins/layui/layui.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/allprovince.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<head>
+    <title>国家免疫规划疫苗计划表</title>
+    #parse("sys/header.html")
+
+<style>
+
+    #name11{
+        padding-top: 60px;
+    }
+    #name17{
+        padding-top: 46px;
+    }
+    #name110{
+        padding-top: 56px;
+    }
+    #name119{
+        padding-top: 20px;
+    }
+    #name121{
+        padding-top: 20px;
+    }
+    #name123 {
+        padding-top: 20px;
+    }
+    #jqgh_vacScheduleVillag_name1{
+        width:455.25px
+    }
+    #vacScheduleVillag_name1{
+        width:0px
+    }
+
+
+
+
+</style>
+</head>
+<body>
+<div class="tab-pane fade in active" id="ret">
+    <div class="grid-btn" id="content">
+        <form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForm">
+            <div class="form-group">
+                <label >开始时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="startDate" placeholder="开始时间">
+            </div>
+            <div class="form-group">
+                <label >结束时间:</label>
+                <input type="text" class="form-control" style="width: 150px"    id="endDate" placeholder="结束时间" data-date-format="yyyy-mm-dd">
+            </div>
+            <a class="btn btn-warning"  onclick="queryWork()"><i class="fa fa-search" ></i>&nbsp;查询</a>
+            <a class="btn btn-primary"  onclick="workExcel()"><i class="fa fa-arrow-down" ></i>&nbsp;导出</a>
+            <a class="btn btn-primary" onclick="printWork()"><i class="fa fa-print" ></i>&nbsp;打印</a>
+        </form>
+    </div>
+    <div>
+
+        <table id="vacScheduleVillag"></table>
+        <!--<table  class="table table-bordered" style="border-bottom: none;" width="796" border="1" cellspacing="0" cellpadding="0">-->
+        <!--<thead>-->
+
+
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<th colspan="2" rowspan="2" align="center">疫苗与剂次（人份）</th>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<th width="132" align="center">上月累计入库</th>-->
+        <!--<th width="132" align="center">本月延苗数</th>-->
+        <!--<th width="132" align="center">本年累计入库</th>-->
+        <!--<th width="132" align="center">本月底库存</th>-->
+        <!--<th width="132" align="center">下月领取计划</th>-->
+        <!--<th width="132" align="center">耗损数</th>-->
+        <!--<th width="134" align="center">耗损原因</th>-->
+        <!--</tr>-->
+        <!--</thead>-->
+        <!--<tbody>-->
+
+
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td width="70" rowspan="4" align="center" vertical-align="middle" style="padding-top: 60px" >乙肝疫苗HepB</td>-->
+        <!--<td width="182" align="center">1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">首剂及时</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">2</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">3</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">卡介苗BCG</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="1">脊灰灭活</td>-->
+        <!--<td align="center">1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr>-->
+        <!--<td width="70" rowspan="3" align="center" style="padding-top: 35px;">二价脊灰（人份）</td>-->
+        <!--<td align="center" >2</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">3</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">4</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td width="70" rowspan="4" align="center" style="padding-top: 56px;">百白破疫苗DPT</td>-->
+        <!--<td align="center" >1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">2</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">3</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">4</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">白破疫苗DT(人份)</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">麻疹疫苗M</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">麻风疫苗MR</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">麻腮风疫苗MMR1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">麻腮疫苗MM</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td width="70" rowspan="2" align="center" style="padding-top: 20px;">A群流脑疫苗MenA(人份)</td>-->
+        <!--<td align="center" >1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">2</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td width="70" rowspan="2" align="center" style="padding-top: 20px;">A+C群流脑疫苗MenAC</td>-->
+        <!--<td align="center" >1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">2</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td width="70" rowspan="2" align="center" style="padding-top: 20px;">乙肝减毒灭活JE-1</td>-->
+        <!--<td align="center" >1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td align="center">2</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">甲肝减毒活疫苗HepA-1</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">AD注射器____ml</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">AD注射器____ml</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">一次性注射器_0.5___ml</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--<tr style="border-bottom: 1px; border-bottom-color: #000;">-->
+        <!--<td colspan="2">一次性注射器_0.25___ml</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+        <!--<td>&nbsp;</td>-->
+
+        <!--</tr>-->
+        <!--</tbody>-->
+        <!--</table>-->
+        <!--<p>&nbsp;</p>-->
+    </div>
+    <p>填写说明：  </p>
+    <p>乡级防保组织每月5日前汇总总上报县级疾病预防控制机构；百白破疫苗实种人数包括全细胞和无细胞百白破疫苗实种人数；疫苗单位为剂次，注射器单位为支。</p>
+</div>
+
+</div>
+<script src="${rc.contextPath}/statics/js/report/vac_schedule_villag.js?_${date.systemTime}"></script>
+</body>
+</html>

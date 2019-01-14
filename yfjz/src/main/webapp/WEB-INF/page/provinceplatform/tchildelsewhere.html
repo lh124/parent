@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>异地儿童接种信息</title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<form class="form-inline" role="form">
+				<a class="btn btn-primary" @click="downloadChild"><i class="fa fa-download"></i>&nbsp;下载</a>
+
+				<div class="form-group">
+					&nbsp;异动日期:<input type="text" class="form-control" v-model.trim="q.changeDateStart" id="changeDateStart" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model.trim="q.changeDateEnd" id="changeDateEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<a class="btn btn-primary" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+			</form>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">儿童编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildElsewhere.migrChildcode" placeholder="儿童编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">异动日期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildElsewhere.migrDate" placeholder="异动日期"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">异地接种单位编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildElsewhere.migrDepaCode" placeholder="异地接种单位编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">本地服务器时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildElsewhere.migrServerdate" placeholder="本地服务器时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">1异地迁入  2临时接种</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildElsewhere.migrVaccState" placeholder="1异地迁入  2临时接种"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/provinceplatform/tchildelsewhere.js?_${date.systemTime}"></script>
+</body>
+</html>

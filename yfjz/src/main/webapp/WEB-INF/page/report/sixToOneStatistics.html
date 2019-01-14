@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<head>
+<title>国家免规疫苗常规接种情况表(6-1)</title>
+#parse("sys/header.html")
+    <style>
+        .myBody{
+            /*padding: 15px 20px 0px 15px;*/
+            margin: 10px;
+        }
+        .table>thead>tr>td, .table>thead>tr>th{
+            text-align:center;
+            font-weight:bold;
+        }
+        .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+            padding: 1px;
+            line-height: 1.42857143;
+            vertical-align: top;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body class="myBody">
+<div id="rrapp" v-cloak>
+        <div class="grid-btn" id="content">
+            <form class="form-inline" style="margin-top: 10px;margin-bottom: 10px" id="searchForm">
+                <div class="form-group">
+                    <label>开始时间:</label>
+                    <input type="text" class="form-control" style="width: 150px" id="yearDate">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;&nbsp;结束时间:</label>
+                    <input type="text" class="form-control" style="width: 150px" id="monthDate">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;&nbsp;居住属性:&nbsp;</label>
+                   <select class="form-control" id="residence">
+                       <option value="local" >常住</option>
+                       <option value="move">流动</option>
+                       <option value="total">合计</option>
+                   </select>
+                </div>
+                &nbsp;
+                <a class="btn btn-warning" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a class="btn btn-warning" @click="reset"><i class="fa fa-search"></i>&nbsp;重置</a>
+                <a class="btn btn-primary" @click="excel"><i class="fa fa-arrow-down"></i>&nbsp;导出</a>
+                <a class="btn btn-primary" @click="print"><i class="fa fa-print"></i>&nbsp;打印</a>
+            </form>
+        </div>
+        <div style="width:auto; overflow:auto; ">
+            <table class="table table-bordered" width="auto" >
+                <thead>
+                <tr >
+                    <td rowspan="3" align="center">序号</td>
+                    <td rowspan="3" align="center" style="width: 100px">报告单位</td>
+                    <td colspan="34" align="center">本月(次)应种剂次数</td>
+                    <td colspan="35" align="center">本月(次)实种剂次数</td>
+                </tr>
+                <tr>
+                    <!--本月应种-->
+                    <th colspan="3"> HepB</th>
+                    <th rowspan="2">  BCG</th>
+                    <th colspan="4"> PV</th>
+                    <th colspan="4">DTP</th>
+                    <th rowspan="2"> DT</th>
+                    <th colspan="2"> MR</th>
+                    <th colspan="2">MMR</th>
+                    <th colspan="2"> MM</th>
+                    <th colspan="2">MV</th>
+                    <th colspan="2">MenA</th>
+                    <th colspan="2"> MenAC</th>
+                    <th colspan="2">JE-L</th>
+                    <th colspan="4">JE-I</th>
+                    <th rowspan="2">HepA-L</th>
+                    <th colspan="2">HepA-I</th>
+                    <!--本月实种-->
+                    <th colspan="4"> HepB</th>
+                    <th rowspan="2">  BCG</th>
+                    <th colspan="4"> PV</th>
+                    <th colspan="4">DTP</th>
+                    <th rowspan="2"> DT</th>
+                    <th colspan="2"> MR</th>
+                    <th colspan="2">MMR</th>
+                    <th colspan="2"> MM</th>
+                    <th colspan="2">MV</th>
+                    <th colspan="2">MenA</th>
+                    <th colspan="2"> MenAC</th>
+                    <th colspan="2">JE-L</th>
+                    <th colspan="4">JE-I</th>
+                    <th rowspan="2">HepA-L</th>
+                    <th colspan="2">HepA-I</th>
+
+                </tr>
+                <tr>
+                    <!--本月应种-->
+                    <th >1</th>
+                    <th >2</th>
+                    <th >3</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <!--本月实种-->
+                    <th>1</th>
+                    <th>及时</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>1</th>
+                    <th>2</th>
+                </tr>
+                </thead>
+                <tbody >
+                    <tr v-for="(item,index) in listData">
+                        <!--本月应种-->
+                        <td>{{index+1}}</td>
+                        <td>{{item.committee}}</td>
+                        <td>{{item.HepB1s}}</td>
+                        <td>{{item.HepB2s}}</td>
+                        <td>{{item.HepB3s}}</td>
+                        <td>{{item.BCG1s}}</td>
+                        <td>{{item.IPV1s}}</td>
+                        <td>{{item.OPV1s}}</td>
+                        <td>{{item.OPV2s}}</td>
+                        <td>{{item.OPV3s}}</td>
+                        <td>{{item.DTaP1s}}</td>
+                        <td>{{item.DTaP2s}}</td>
+                        <td>{{item.DTaP3s}}</td>
+                        <td>{{item.DTaP4s}}</td>
+                        <td>{{item.DT1s}}</td>
+                        <td>{{item.MR1s}}</td>
+                        <td>0</td>
+                        <td>{{item.MMR1s}}</td>
+                        <td>0</td>
+                        <!--MM-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--MV-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--MenA-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--MenAC-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--JE-L-->
+                        <td>{{item['JE-L1s']}}</td>
+                        <td>{{item['JE-L2s']}}</td>
+                        <!-- JE-I-->
+                        <td>{{item['JE-I1s']}}</td>
+                        <td>{{item['JE-I2s']}}</td>
+                        <td>{{item['JE-I3s']}}</td>
+                        <td>{{item['JE-I4s']}}</td>
+                        <!--HepA-L-->
+                        <td>{{item['HepA-L1s']}}</td>
+                        <!--HepA-I-->
+                        <td>{{item['HepA-I1s']}}</td>
+                        <td>{{item['HepA-I2s']}}</td>
+                        <!--本月实种-->
+                        <td>{{item.HepB1r}}</td>
+                        <td>{{item.HepB1T}}</td>
+                        <td>{{item.HepB2r}}</td>
+                        <td>{{item.HepB3r}}</td>
+                        <td>{{item.BCG1r}}</td>
+                        <td>{{item.IPV1r}}</td>
+                        <td>{{item.OPV1r}}</td>
+                        <td>{{item.OPV2r}}</td>
+                        <td>{{item.OPV3r}}</td>
+                        <td>{{item.DTaP1r}}</td>
+                        <td>{{item.DTaP2r}}</td>
+                        <td>{{item.DTaP3r}}</td>
+                        <td>{{item.DTaP4r}}</td>
+                        <td>{{item.DT1r}}</td>
+                        <td>{{item.MR1r}}</td>
+                        <td>0</td>
+                        <td>{{item.MMR1r}}</td>
+                        <td>0</td>
+                        <!--MM-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--MV-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--MenA-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--MenAC-->
+                        <td>0</td>
+                        <td>0</td>
+                        <!--JE-L-->
+                        <td>{{item['JE-L1r']}}</td>
+                        <td>{{item['JE-L2r']}}</td>
+                        <!-- JE-I-->
+                        <td>{{item['JE-I1r']}}</td>
+                        <td>{{item['JE-I2r']}}</td>
+                        <td>{{item['JE-I3r']}}</td>
+                        <td>{{item['JE-I4r']}}</td>
+                        <!--HepA-L-->
+                        <td>{{item['HepA-L1r']}}</td>
+                        <!--HepA-I-->
+                        <td>{{item['HepA-I1r']}}</td>
+                        <td>{{item['HepA-I2r']}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="${rc.contextPath}/statics/js/report/sixToOneStatistics.js?_${date.systemTime}"></script>
+</body>
+</html>

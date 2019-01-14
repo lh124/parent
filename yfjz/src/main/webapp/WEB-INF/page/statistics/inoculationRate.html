@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>接种率统计</title>
+#parse("sys/header.html")
+	<script type="application/javascript">
+        var orgId="$shiro.getBaseInfo('orgId')";
+	</script>
+</head>
+<body style="padding: 5px">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div id="unprintdiv" class="grid-btn">
+			<form id="unInoNoteForm" class="form-inline" role="form">
+
+				<div class="form-group">
+					出生日期:<input type="text" class="form-control" id="chilBirthdayStart" name="chilBirthdayStart" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" id="chilBirthdayEnd" name="chilBirthdayEnd" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+
+				<div class="form-group" id="chilCommitteeIdParent">
+					&nbsp;居委会/行政村:
+					<select  class="selectpicker" id="chilCommittees" name="chilCommittees" title=""  multiple data-live-search="true"></select>
+				</div>
+
+				<div class="form-group">
+					&nbsp;居住属性:
+					<select class="form-control"  id="chilResidence" name="chilResidence" ></select>
+				</div>
+
+				<div class="form-group">
+					&nbsp;户籍属性:
+					<select  class="form-control"  id="chilAccount" name="chilAccount" ></select>
+				</div>
+
+				<div class="form-group">
+					接种日期:<input type="text" class="form-control" id="inoculateStart" name="inoculateStart" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" id="inoculateEnd" name="inoculateEnd" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+				<br><br>
+
+				<div class="form-group">
+					在册情况:
+					<select  class="selectpicker" id="infostatus" name="infostatus" title=""  multiple data-live-search="true"></select>
+				</div>
+
+				<div class="form-group" id="biotypesId">
+					&nbsp;疫苗类别:
+					<select  class="selectpicker" id="biotypes" name="biotypes" title=""  multiple data-live-search="true"></select>
+				</div>
+				<div class="form-group">
+					随机数抽取:<input type="text" class="form-control" id="limit" name="random" @keyup.enter="query" style="width: 110px" >
+				</div>
+				&nbsp;
+				<a class="btn btn-primary" @click="query">查询</a>
+				<a class="btn btn-default" @click="print">打印</a>
+				<a class="btn btn-default" @click="excel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+			</form>
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+
+</div>
+<!--查看儿童弹框-->
+<div id="childInfoView" style="display:none;padding: 5px;">
+    <div class="grid-btn">
+        <!--<a class="btn btn-default" ><i class="fa fa-print" aria-hidden="true"></i>&nbsp;打印</a>-->
+        <!--<a class="btn btn-default" ><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>-->
+    </div>
+	<table id="childInfoGrid"></table>
+	<div id="childInfoGridPager"></div>
+</div>
+<script src="${rc.contextPath}/statics/js/statistics/inoculationRate.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/statistics/inoChildInfo.js?_${date.systemTime}"></script>
+</body>
+</html>

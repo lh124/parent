@@ -1,0 +1,29 @@
+.layui-tab {
+}
+.layui-tab-title {
+	text-align: right;
+	border: none;
+}
+.layui-tab-content {
+	margin-top: 20px;
+	padding: 10px 0;
+}
+.company-info {
+	margin-top: 30px;
+	color: #333;
+}
+
+.company-info li > i {
+	padding: 0 2px;
+}
+.c-36AF82 {
+	padding-left: 10px;
+	color: #36AF82;
+}
+.z2 {
+	z-index: 2;
+}
+.layui-btn {
+	height: 40px;
+	line-height: 40px;
+}

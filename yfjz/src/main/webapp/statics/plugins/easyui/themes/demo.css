@@ -1,0 +1,107 @@
+body {
+    font-family:verdana,helvetica,arial,sans-serif;
+    padding:20px;
+    font-size:12px;
+    margin:0;
+}
+h2 {
+    font-size:18px;
+    font-weight:bold;
+    margin:0;
+    margin-bottom:15px;
+}
+/*======table 样式美化  @贝国刚  [[======*/
+/* .table{border-right:1px solid #000;border-bottom:1px solid #000} 
+.table td{border-left:1px solid #000;border-top:1px solid #000}
+ */
+.table {
+	table-layout: fixed;
+	empty-cells: show;
+	border-collapse: collapse;
+	margin: 0 auto;
+	border: 1px solid #cad9ea;
+	color: #000;
+}
+
+.table td {
+	height: 30px;
+}
+.table th {
+	background-repeat: repeat-x;
+	height: 30px;
+	font-size:18px;
+}
+.table td,.table th {
+	border: 1px solid #cad9ea;
+	padding: 0 1em 0;
+}
+.table tr.alter{
+	background-color: #f5fafe;
+}
+/*================================*/
+.demo-info{
+	padding:0 0 12px 0;
+}
+.demo-tip{
+	display:none;
+}
+.label-top{
+    display: block;
+    height: 22px;
+    line-height: 22px;
+    vertical-align: middle;
+}
+.easyui-linkbuttonbottompanel{
+	width:100%;
+	text-align:right;
+	padding:5px;
+	position:fixed;
+	right:0px;bottom:0px;
+	background-color:#fff;
+	margin-right:15px;
+}
+.searchcls{
+	text-align:right;
+	position:relative;
+	height:30px;
+	right:40px;
+}
+/*全局保存按钮&关闭按钮css*/
+.save-btn,.exit-btn{
+	width:90px;
+	color:#fff;
+}
+.save-btn {
+	background: #169BD5;
+	background: -webkit-linear-gradient(top,#3F78C7,#6493CA);
+	background: -o-linear-gradient(top,#3F78C7,#6493CA);
+	background: -moz-linear-gradient(top,#3F78C7,#6493CA);
+	background: linear-gradient(top,#3F78C7,#6493CA);
+}
+.save-btn:active {
+	background: #169BD5;
+	background: -webkit-linear-gradient(bottom,#169BD5,#82D1EC);
+	background: -o-linear-gradient(bottom,#169BD5,#82D1EC);
+	background: -moz-linear-gradient(bottom,#169BD5,#82D1EC);
+	background: linear-gradient(bottom,#169BD5,#82D1EC);
+}
+.exit-btn {
+	background: #EA5434;
+	background: -webkit-linear-gradient(top,#EA5434,#F08A75);
+	background: -o-linear-gradient(top,#EA5434,#F08A75);
+	background: -moz-linear-gradient(top,#EA5434,#F08A75);
+	background: linear-gradient(top,#EA5434,#F08A75);
+}
+.exit-btn:active {
+	background: #EA5434;
+	background: -webkit-linear-gradient(bottom,#EA5434,#F08A75);
+	background: -o-linear-gradient(bottom,#EA5434,#F08A75);
+	background: -moz-linear-gradient(bottom,#EA5434,#F08A75);
+	background: linear-gradient(bottom,#EA5434,#F08A75);
+}
+
+fieldset{border:none;border:1px solid #95B8E7;}
+fieldset legend{font-weight: bold;}
+
+#s1show p{border:1px solid #ccc;line-height:20px;padding:0 5px;}
+#s1show a{padding:0 5px;float:right;color:red;}

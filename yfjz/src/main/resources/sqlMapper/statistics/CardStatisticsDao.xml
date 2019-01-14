@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.CardStatisticsDao">
+    <!--
+    根据建卡时间、个案状态、区域划分，获取建卡统计信息
+    1、根据区域信息查询所有区域
+    2、根据建卡等条件查询儿童信息
+    3、区域信息左连接儿童信息
+    4、建卡时间不为空的儿童数为儿童建卡数
+     -->
+    <select id="getRateChildByCondition"   parameterType="java.util.HashMap"    resultType="io.yfjz.entity.statistics.CreateCardRate">
+        select comm.name as committeeName,
+        comm.code as committeeId,
+        count(child.chil_code) as childCount,
+        count(child.create_card_time) as createCardCount
+        from (select * from t_base_committee
+        where delete_status = 0
+        <if test="chilCommittees != null">
+            and  code     in
+            <foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        ) comm
+        left join
+        (select * from t_child_info
+        where delete_status = 0
+        <!-- 个案状态 -->
+        <if test="infostatus != null">
+            AND  chil_here IN
+            <foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="createDateStart != null and createDateEnd != null">
+            <![CDATA[ AND (TO_DAYS(create_card_time) <=  TO_DAYS(#{createDateEnd})   AND   TO_DAYS(create_card_time) >=  TO_DAYS(#{createDateStart}) )   ]]>
+        </if>
+        <if test="birthDayStart != null and birthDayEnd != null">
+            <![CDATA[ AND (TO_DAYS(chil_birthday) <=  TO_DAYS(#{birthDayEnd})   AND   TO_DAYS(chil_birthday) >=  TO_DAYS(#{birthDayStart}) )   ]]>
+        </if>
+        <if test="orgId != null and orgId != null">
+           and chil_curdepartment = #{orgId}
+        </if>
+        ) child
+        on comm.code =  child.chil_committee
+        GROUP BY comm.code
+    </select>
+
+    <!-- 根据行政村和儿童信息查询建卡及时数 -->
+    <select id="getCreateCradTimelyNumber"   parameterType="java.util.HashMap"    resultType="java.lang.String">
+        SELECT COUNT(*) FROM t_child_info  WHERE (TO_DAYS(t_child_info.create_card_time) - TO_DAYS(t_child_info.chil_birthday)<![CDATA[ <=]]>90)
+        and delete_status = 0
+        and chil_committee = #{committeeId}
+        <!-- 个案状态 -->
+        <if test="infostatus != null">
+            AND  chil_here IN
+            <foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="createDateStart != null and createDateEnd != null">
+            AND TO_DAYS(create_card_time) <![CDATA[ <= ]]> TO_DAYS(#{createDateEnd})
+            AND TO_DAYS(create_card_time) <![CDATA[ >= ]]>  TO_DAYS(#{createDateStart})
+        </if>
+        <if test="orgId != null and orgId != null">
+            and chil_curdepartment=#{orgId}
+        </if>
+    </select>
+</mapper>

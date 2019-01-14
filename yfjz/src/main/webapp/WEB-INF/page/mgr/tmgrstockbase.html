@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite" xmlns:v-tolerious="http://java.sun.com/jsf/core">
+<head>
+    <title>库存产品基础信息表</title>
+    #parse("sys/header.html")
+    <style>
+        .myBody {
+            padding: 15px 20px;
+        }
+    </style>
+</head>
+<body class="myBody">
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <form class="form-inline" style="margin-top: 10px;margin-bottom: 10px" id="searchForm">
+            <div class="form-group">
+                <label>名称:</label>
+                <input type="text" class="form-control" style="width: 150px" id="searchProductName" placeholder="物品名称">
+            </div>
+            <div class="form-group">
+                <label>生产厂家:</label>
+                <input type="text" class="form-control" style="width: 150px" id="searchFactoryName" placeholder="生产厂家">
+            </div>
+            <div class="form-group">
+                <label>批号:</label>
+                <input type="text" class="form-control" style="width: 150px" id="searchBatch" placeholder="批号">
+            </div>
+            <div class="form-group">
+                <label>类型:</label>
+                <!--<input type="text" class="form-control" style="width: 150px"  placeholder="类型">-->
+                <select id="searchType" class="form-control" style="width: 150px">
+                    <option value=""></option>
+                    <option value="0">疫苗</option>
+                    <option value="1">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>失效期:</label>
+                <input type="text" class="form-control" style="width: 150px" id="searchDate" placeholder="失效期"
+                       data-date-format="yyyy-mm-dd">
+            </div>
+            <a class="btn btn-warning" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+            <a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+        </form>
+        <div class="grid-btn">
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+            <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+            <a class="btn btn-primary" @click="stop" id="stop"><i class="fa fa-pencil-square-o"></i>&nbsp;启用/禁用</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <ul id="myTab" class="nav nav-tabs">
+            <li class="active" tag="vaccine">
+                <a href="#product" data-toggle="tab">
+                    {{title}}疫苗
+                </a>
+            </li>
+            <li tag="other"><a href="#other" data-toggle="tab">{{title}}其他</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div class="tab-pane fade in active" id="product">
+                <form class="form-horizontal" id="productForm" style="width: 80%" autocomplete="off">
+                    <table style="width: 100%" id="tablePosition">
+                        <tr>
+                            <td style="width: 50%">
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">疫苗名称<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="hidden" id="fkVaccineCode" v-model="tMgrStockBase.fkVaccineCode">
+                                        <input type="text" class="form-control" id="fkVaccineName" name="productName"
+                                               v-model="tMgrStockBase.productName" placeholder="请选择疫苗"
+                                               data-toggle="modal" data-target="#myModal"/>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="width: 50%">
+                                <div class="form-group" id="drug" style="display: block">
+                                    <div class="col-sm-2 control-label">剂型<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <!-- <input type="text" class="form-control" v-model="tMgrStockBase.drug" placeholder="剂型"/>-->
+                                        <select class="col-lg-12 form-control" name="drug" v-model="tMgrStockBase.drug"
+                                                data-live-search="true">
+                                            <option v-for="item in drug" v-bind:value="item.value">{{item.text}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">生产厂家<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10" id="factoryCtrl">
+                                        <input tag="factoryName" type="hidden" class="form-control"
+                                               v-model="tMgrStockBase.factoryName" name="factoryName"
+                                               placeholder="生产厂家"/>
+                                        <select class="col-lg-12 form-control selectpicker" name="factoryId"
+                                                id="factory" v-model="tMgrStockBase.factoryId" data-live-search="true">
+                                        </select>
+
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">单价<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="number" class="form-control" name="price"
+                                               v-model="tMgrStockBase.price" @input="changePrice(this)"
+                                               placeholder="单价"/>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                                <div class="form-group" id="inoculationSite" style="display: block">
+                                    <div class="col-sm-2 control-label">接种部位<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <!-- <input type="text" class="form-control" v-model="tMgrStockBase.inoculationSite" placeholder="接种部位"/>-->
+                                        <select class="col-lg-12 form-control" v-model="tMgrStockBase.inoculationSite"
+                                                name="inoculationSite" data-live-search="true">
+                                            <option v-for="item in siteList" v-bind:value="item.value">{{item.text}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">失效期<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control datetimepicker" name="expiryDate"
+                                               data-date-format="yyyy-mm-dd" v-model="tMgrStockBase.expiryDate"
+                                               placeholder="到期时间" autocomplete="off"/>
+                                    </div>
+                                </div>
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">计量单位<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <select class="col-lg-12 form-control" v-model="tMgrStockBase.dosenorm"
+                                                name="dosenorm" data-live-search="true">
+                                            <option v-for="item in dosenorm" v-bind:value="item.value">{{item.text}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">批号<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="batchnum"
+                                               v-model="tMgrStockBase.batchnum" placeholder="批号" autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                                <div class="form-group" id="conversion" style="display: block">
+                                    <div class="col-sm-2 control-label">人份转换<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="conversion"
+                                               v-model="tMgrStockBase.conversion" placeholder="人份转换：1只疫苗可以接种几个儿童"/>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group" id="lotRelease" style="display: block">
+                                    <div class="col-sm-2 control-label">批签发<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="lotRelease"
+                                               v-model="tMgrStockBase.lotRelease" placeholder="批签发"/>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group" id="doseminUnitCode" style="display: block">
+                                    <div class="col-sm-2 control-label">疫苗单位<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <!--<input type="text" class="form-control" v-model="tMgrStockBase.doseminUnitCode" placeholder="计量单位"/>-->
+                                        <select class="col-lg-12 form-control" v-model="tMgrStockBase.doseminUnitCode"
+                                                name="doseminUnitCode" data-live-search="true">
+                                            <option v-for="item in doseminUnitCode" v-bind:value="item.value">
+                                                {{item.text}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td>
+
+                                <div class="form-group" id="licenseNumber" style="display: block">
+                                    <div class="col-sm-2 control-label">批准文号<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="licenseNumber"
+                                               v-model="tMgrStockBase.licenseNumber" placeholder="批准文号"/>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td>
+                                <div class="form-group" id="channel" style="display: block">
+                                    <div class="col-sm-2 control-label">接种途径<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                                    <div class="col-sm-10">
+                                        <select class="col-lg-12 form-control" v-model="tMgrStockBase.channel"
+                                                name="channel" >
+                                            <option v-for="item in channelList" v-bind:value="item.value">{{item.text}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <div class="col-sm-2 control-label">备注</div>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" v-model="tMgrStockBase.remark"
+                                               placeholder="备注"/>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <input type="button" class="btn btn-primary" id="sureBtn" @click="saveOrUpdate" value="确定"/>
+                        &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="other">
+                <form class="form-horizontal" id="otherForm" autocomplete="off">
+                    <!--<div class="form-group">
+                        <div class="col-sm-2 control-label">产品类型</div>
+                        <div class="col-sm-10">
+                            <select class="col-lg-12 form-control" id="type" name="type" v-model="tMgrStockBase.type" onchange="changeInput()" >
+                                <option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+                            </select>
+                        </div>
+                    </div>-->
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">产品名称<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                        <div class="col-sm-10">
+
+                            <input type="text" class="form-control" name="productName"
+                                   v-model="tMgrStockBase.productName" placeholder="请输入产品名称"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">批号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="batchnum" v-model="tMgrStockBase.batchnum"
+                                   placeholder="批号" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">生产厂家<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                        <div class="col-sm-10">
+                            <input tag="factoryName" type="text" class="form-control"
+                                   v-model="tMgrStockBase.factoryName" name="factoryName" placeholder="生产厂家"/>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">失效期<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control datetimepicker" name="expiryDate"
+                                   data-date-format="yyyy-mm-dd" v-model="tMgrStockBase.expiryDate" placeholder="到期时间"
+                                   autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: block">
+                        <div class="col-sm-2 control-label">单位</div>
+                        <div class="col-sm-10">
+                            <!--<input type="text" class="form-control" v-model="tMgrStockBase.doseminUnitCode" placeholder="计量单位"/>-->
+                            <select class="col-lg-12 form-control" v-model="tMgrStockBase.doseminUnitCode"
+                                    name="doseminUnitCode" data-live-search="true">
+                                <option v-for="item in doseminUnitCode" v-bind:value="item.value">{{item.text}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">计量单位</div>
+                        <div class="col-sm-10">
+                            <select class="col-lg-12 form-control" v-model="tMgrStockBase.dosenorm" name="dosenorm"
+                                    data-live-search="true">
+                                <option v-for="item in dosenorm" v-bind:value="item.value">{{item.text}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">单价<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="price" v-model="tMgrStockBase.price"
+                                   @input="changePrice(this)" placeholder="单价"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label">备注</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="tMgrStockBase.remark" placeholder="备注"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                        &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--选择疫苗弹出框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 650px;">
+            <div class="modal-header">
+                疫苗信息
+            </div>
+            <div class="modal-body" style="width: 600px;">
+                <input type="text" class="form-control" id="searchName" placeholder="请输入关键字查询" style="width: 200px"
+                       oninput="searchName()"/>
+                <table id="vaccine"></table>
+                <div id="vaccinePager"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script>
+    $(function () {
+        //日期插件
+
+        $('.datetimepicker').datetimepicker(
+            {
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayBtn: true,
+                startView: 'month',
+                minView: 'month',
+                language: 'zh-CN'
+            }
+        ).on("changeDate", function (e) {
+
+            var date = formatDateTime(e.date);
+            //var time=$(".datetimepicker").val();
+            vm.tMgrStockBase.expiryDate = date;
+        }).on('hide', function (e) {
+            $('#productForm').data('bootstrapValidator')
+                .updateStatus('expiryDate', 'NOT_VALIDATED', null)
+                .validateField('expiryDate');
+            $('#otherForm').data('bootstrapValidator')
+                .updateStatus('expiryDate', 'NOT_VALIDATED', null)
+                .validateField('expiryDate');
+        });
+        ;
+
+        $('#searchDate').datetimepicker(
+            {
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayBtn: true,
+                startView: 'month',
+                minView: 'month',
+                language: 'zh-CN'
+            }
+        );
+    })
+
+    /**
+     * 根据选择的产品类型控制输入框的显示
+     */
+    function changeInput() {
+        var val = $("#type option:selected").val()
+        if (val == 1) {
+            $("#inoculationSite").css("display", "none");
+            //$("#doseminUnitCode").css("display","none");
+            $("#conversion").css("display", "none");
+            $("#drug").css("display", "none");
+            $("#lotRelease").css("display", "none");
+            $("#licenseNumber").css("display", "none");
+            $("#factoryCtrl input[tag='factoryName']").attr("type", "text");
+            $("#factoryCtrl span[tag='factoryId']").css("display", "none");
+            $("#dosenormInput").attr("type", "text");
+            $("#factory").attr("disabled", "true");
+            //$("select[name='dosenorm']").attr("disabled","true");
+            $("#dosenormSelect").css("display", "none");
+            //隐藏模态框
+            $("#fkVaccineName").attr("data-target", "");
+        } else {
+            //打开模态框
+            $("#fkVaccineName").attr("data-target", "#myModal");
+            $("#inoculationSite").css("display", "block");
+            $("#doseminUnitCode").css("display", "block");
+            $("#conversion").css("display", "block");
+            $("#drug").css("display", "block");
+            $("#lotRelease").css("display", "block");
+            $("#licenseNumber").css("display", "block");
+            $("#factoryCtrl input[tag='factoryName']").attr("type", "hidden");
+            $("#factoryCtrl span[tag='factoryId']").css("display", "block");
+            $("#dosenormInput").attr("type", "hidden");
+            $("#dosenormSelect").css("display", "block");
+        }
+    }
+</script>
+<script src="${rc.contextPath}/statics/js/mgr/tmgrstockbase.js?_${date.systemTime}"></script>
+</body>
+</html>

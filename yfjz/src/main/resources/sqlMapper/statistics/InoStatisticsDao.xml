@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.InoStatisticsDao">
+<!--查询规划疫苗名称剂次-->
+	<select id="getInoculateNumberList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+		plan.state AS state,
+		COUNT(plan.id) AS number
+		FROM
+		t_rule_plan plan
+		WHERE
+		plan.first_time <![CDATA[ <= ]]>NOW()
+		AND ((plan.first_time <![CDATA[ >= ]]> SUBDATE(NOW(), INTERVAL 12 MONTH) AND plan.state = 0) OR plan.state <![CDATA[<> ]]> 0 )<!-- 12个月内或已经接种了的 -->
+		AND plan.class_id = #{classId}
+		AND plan.injection_times = #{agentTimes}
+		<if test="childCodes != null">
+			AND plan.child_id IN
+			<foreach collection="childCodes" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		GROUP BY
+		plan.state
+
+	</select>
+	<!--接种率统计所有符合条件的接种-->
+	<select id="queryInoculateClassByList" resultType="io.yfjz.entity.statistics.InoculateRate" parameterType="java.util.HashMap">
+		SELECT
+		dict.name as planName,
+		consult.injection_times as agentTimes,
+		consult.class_id as planId
+		FROM
+		t_rule_plan_consult consult
+		LEFT JOIN t_rule_dic dict ON consult.class_id = dict.id
+		where 1=1
+		<if test="biotypes != null">
+			and  consult.class_id in
+			<foreach collection="biotypes" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<!--<if test="limit != null">
+			ORDER BY  ROUND(((select count(*) from t_child_info)-#{limit})*RAND()) limit #{limit}
+		</if>-->
+
+	</select>
+	<!--应种未种或超期接种儿童信息-->
+	<select id="queryRateChildInfo" parameterType="java.util.HashMap" resultType="io.yfjz.entity.rule.ChildData">
+		SELECT
+		child.chil_code AS chilCode,
+		child.chil_name AS chilName,
+		( CASE  child.chil_sex WHEN '1' THEN '男' ELSE '女' END) AS chilSex,
+		child.chil_birthday AS chilBirthday,
+		(SELECT `name` FROM t_base_committee WHERE `code` = child.chil_committee limit 1) AS committee,
+		child.chil_father AS fatherName,
+		child.chil_mother AS matherName,
+		child.chil_tel AS chilTel,
+		child.chil_mobile AS chilMobile,
+		child.chil_address AS address
+		FROM
+		t_rule_plan plan
+		INNER JOIN t_child_info child ON plan.child_id = child.chil_code
+		WHERE
+		plan.first_time <![CDATA[ <= ]]>NOW()
+		AND plan.class_id = #{classId}
+		AND plan.injection_times = #{agentTimes}
+		<!-- 查询超期 未种-->
+		<if test="selectType == 'out'">
+			AND plan.state = 4
+		</if>
+		<!-- 查询应种未种 -->
+		<if test="selectType == 'should'">
+			AND plan.first_time <![CDATA[ >= ]]> SUBDATE(NOW(), INTERVAL 12 MONTH)  <!-- 12个月内或已经接种了的 -->
+			AND plan.state = 0
+		</if>
+
+		<if test="childCodes != null">
+			AND plan.child_id IN
+			<foreach collection="childCodes" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<!--应种未种或超期接种儿童数-->
+	<select id="queryRateChildInfoCount" parameterType="java.util.HashMap" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM
+		t_rule_plan plan
+		WHERE
+		plan.first_time <![CDATA[ <= ]]>NOW()
+		AND plan.class_id = #{classId}
+		AND plan.injection_times = #{agentTimes}
+		<!-- 查询超期 未种-->
+		<if test="selectType == 'out'">
+			AND plan.state = 4
+		</if>
+		<!-- 查询应种未种 -->
+		<if test="selectType == 'should'">
+			AND plan.first_time <![CDATA[ >= ]]> SUBDATE(NOW(), INTERVAL 12 MONTH)  <!-- 12个月内或已经接种了的 -->
+			AND plan.state = 0
+		</if>
+		<if test="childCodes != null">
+			AND plan.child_id IN
+			<foreach collection="childCodes" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+</mapper>

@@ -1,0 +1,276 @@
+html,body {
+    margin: 0;
+    padding: 0;
+}
+html,body,.container,#monitor {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background: #000;
+    overflow: hidden;
+}
+.container1 {
+    display: -webkit-flex;
+    display: flex;
+    min-height: 100vh;/*1vh表示浏览器高度的1%，100vh为浏览器高度，感觉这个挺好的*/
+    /* min-height: 100%;另一种写法 */
+    flex-direction: column;
+}
+.flex-items {
+    flex: 1;
+    overflow-y: scroll;
+}
+.select {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    /*邓加*/
+    background-color: #0d284e;
+}
+
+.tower-name{
+    font-size: 10vw;
+    line-height: 10vw;
+    color: red;
+    font-weight: bold;
+    letter-spacing: 40px;
+
+}
+.calling{
+    color: yellow;
+    font-size: 7vw;
+    font-weight: bold;
+
+}
+.container {
+    position: static;
+}
+.left-content,.right-content {
+    height: 100%;
+    overflow: hidden;
+}
+.left-content {
+    width: 33.333333%;
+    box-sizing: border-box;
+    border-right: 5px solid red;
+}
+.right-content {
+    width: 66.666666%;
+}
+dt {
+    margin: 20px 0;
+    font-size: 50px;
+    color: #e2d42e;
+    text-align: center;
+}
+dd {
+    color: #e2d42e;
+    font-size: 40px;
+    text-align: center;
+}
+.row {
+    display:-webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient:horizontal;
+    -webkit-box-direction:normal;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+    text-align: center;
+}
+.row-items {
+    box-sizing: border-box;
+    vertical-align: top;
+    -webkit-box-flex:1;
+    box-flex:1;
+    -webkit-flex:1;
+    flex:1;
+    height: 100%;
+    font-size: 30px;
+    color: red;
+}
+.items-top {
+    font-size: 30px;
+}
+.green {
+    color: #22cd44;
+}
+
+.white {
+    color: #ffffff;
+}
+
+.items-top {
+    margin: 15px 0;
+}
+.item-content {
+    position: relative;
+    box-sizing: border-box;
+}
+.num-wrap {
+    margin: 0 0 10px 0;
+    width: 100%;
+    text-align: center;
+}
+
+
+.content {
+    position: absolute;
+    width: 70%;
+    left: 50%;
+    top: 50%;
+    margin-left: -35%;
+    margin-top: -300px;
+    text-align: center;
+    color: red;
+}
+.pos {
+    margin:0  0 50px 0 ;
+    color: red;
+
+}
+.now-msg {
+    margin-bottom: 30px;
+    font-size: 60px;
+    color: #33b457;
+}
+dt {
+    font-size: 50px;
+    color: #e2d42e;
+    text-align: left;
+}
+dl .now-msg {
+    color: #e2d42e;
+    font-size: 40px;
+}
+.waitNum {
+    width: 100%;
+    text-align: center;
+    color: #33b457;
+    font-size: 5vw;
+    line-height: 5vw;
+}
+
+.num {
+    padding: 0px 50px;
+    font-weight: bold;
+}
+
+
+.observe-list{
+    display:inline;
+    float: left;
+
+}
+.observe-list span{
+    font-size: 10vm;
+    font-weight: bold;
+}
+.observe-video{
+    display:inline;
+    float: right;
+}
+.observe-row{
+    width: 100%;
+    display: inline-flex;
+}
+.observe-row div{
+    display: inline-flex;
+    text-align: left;
+    font-size: 2vw;
+    font-weight: bold;
+}
+#observe{
+    margin: 0;
+    padding: 0;
+}
+.vaccine{
+    font-size:4vw;
+    font-weight:normal;
+    color:whitesmoke;
+}
+.dis-flex {
+    display:-webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient:vertical;
+    -webkit-box-direction:normal;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+.flex-1 {
+    -webkit-box-flex:1;
+    box-flex:1;
+    -webkit-flex:1;
+    flex:1;
+    height: 100%;
+    border: 1px solid red;
+    border-right: none;
+    overflow: hidden;
+}
+.box-flex {
+    display:-webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    /*-webkit-box-orient:vertical;
+    -webkit-box-direction:normal;
+    -webkit-flex-direction: column;*/
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+.content-items {
+    -webkit-box-flex:1;
+    box-flex:1;
+    -webkit-flex:1;
+    flex:1;
+    height: 100%;
+    overflow: hidden;
+}
+.font0 {
+    font-size: 0;
+}
+.order {
+    width: 75px;
+}
+.name {
+    width: 90px;
+    height: 35px;
+    overflow: hidden;
+}
+.edge1 {
+    margin-left: 69px;
+}
+.flex-overfox {
+    overflow:scroll;
+    overflow-y:hidden;
+}
+.notice{
+    position: fixed;
+    bottom: 2%;
+    background: #000000;
+    opacity: 0.9;
+    overflow: hidden;
+}
+
+.marquee {
+    min-width:1920px;
+    text-align: left;
+    font-size: 4em;
+    color:red;
+    white-space: nowrap;
+    -webkit-animation: moving 60s;
+    -o-animation: moving 60s;
+    animation: moving 60s infinite linear;
+}
+
+@keyframes moving
+{
+    from { transform: translateX(1920px); }
+    to { transform: translateX(-100%); }
+}

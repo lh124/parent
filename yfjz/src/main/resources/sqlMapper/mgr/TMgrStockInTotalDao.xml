@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrStockInTotalDao">
+	<resultMap id="BaseResultMap" type="io.yfjz.entity.mgr.TMgrStockInTotalEntity">
+		<id column="id" property="id" />
+		<result column="in_type" property="inType" />
+		<result column="fk_in_stock_user" property="fkInStockUser" />
+		<result column="status" property="status" />
+		<result column="storage_time" property="storageTime" />
+		<result column="createTime" property="createTime" />
+		<result column="remark" property="remark" />
+		<result column="stock_in_code" property="stockInCode" />
+		<association property="store"  column="store_id" javaType="io.yfjz.entity.mgr.TMgrStoreEntity" select="io.yfjz.dao.mgr.TMgrStoreDao.queryObject"></association>
+	</resultMap>
+	<select id="queryObject"  resultMap="BaseResultMap">
+		select * from t_mgr_stock_in_total where id = #{value}
+	</select>
+
+	<select id="queryList" resultMap="BaseResultMap">
+		select * from
+		t_mgr_stock_in_total total
+		join t_mgr_store store on total.store_id=store.id
+		<include refid="basewhere"/>
+		order by total.create_time desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<select id="queryListMap" resultType="hashmap">
+		SELECT
+		total.id,
+		total.stock_in_code as inCode,
+		total.storage_time as createTime,
+		total.remark,
+		us.real_name as username,
+		store.name as storeName
+		FROM
+		t_mgr_stock_in_total total
+		JOIN t_mgr_store store ON total.store_id = store.id
+		join sys_user us on total.fk_in_stock_user=us.user_id
+		<include refid="basewhere"/>
+		order by total.create_time DESC
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+ 	<select id="queryTotal" resultType="int">
+		SELECT
+		count(*)
+		FROM
+		t_mgr_stock_in_total total
+		join t_mgr_store store on total.store_id=store.id
+		<include refid="basewhere"/>
+	</select>
+    <select id="queryOrderId" resultType="string">
+		select stock_in_code as code from t_mgr_stock_in_total  where in_type=0  AND  TO_DAYS(create_time)=TO_DAYS(NOW())  ORDER BY stock_in_code DESC  LIMIT 0,1
+	</select>
+    <sql id="basewhere">
+		<where>
+			<if test="searchOrder!=null and searchOrder!=''">
+				and stock_in_code like concat('%',#{searchOrder},'%')
+			</if>
+			<if test="searchUser!=null and searchUser!=''">
+				and fk_in_stock_user  like concat('%',#{searchUser},'%')
+			</if>
+			<if test="startDate!=null">
+				AND storage_time 	&gt;=#{startDate}
+			</if>
+			<if test="endDate!=null">
+				AND storage_time 	&lt;#{endDate}
+			</if>
+			<if test="type!=null">
+				AND in_type=#{type}
+			</if>
+		</where>
+	</sql>
+
+	<insert id="save" parameterType="io.yfjz.entity.mgr.TMgrStockInTotalEntity">
+		insert into t_mgr_stock_in_total
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="inType != null">`in_type` ,</if>
+			<if test="fkInStockUser != null and fkInStockUser  != ''">`fk_in_stock_user` ,</if>
+			<if test="storageTime != null">`storage_time` ,</if>
+			<if test="remark != null and remark  != ''">`remark` ,</if>
+			<if test="status != null">`status` ,</if>
+			<if test="fkCreateUserId != null and fkCreateUserId  != ''">`fk_create_user_id` ,</if>
+			<if test="createTime != null">`create_time` ,</if>
+			<if test="orgId != null and orgId  != ''">`org_id` ,</if>
+			<if test="stockInCode != null and stockInCode  != ''">`stock_in_code` ,</if>
+			<if test="store != null">`store_id`</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{id},
+			<if test="inType != null">#{inType} ,</if>
+			<if test="fkInStockUser != null and fkInStockUser  != ''">#{fkInStockUser} ,</if>
+			<if test="storageTime != null">#{storageTime},</if>
+			<if test="remark != null and remark  != ''">#{remark} ,</if>
+			<if test="status != null">#{status} ,</if>
+			<if test="fkCreateUserId != null and fkCreateUserId  != ''">#{fkCreateUserId} ,</if>
+			<if test="createTime != null">#{createTime} ,</if>
+			<if test="orgId != null and orgId  != ''">#{orgId} ,</if>
+			<if test="stockInCode != null and stockInCode  != ''">#{stockInCode} ,</if>
+			<if test="store != null ">#{store.id}</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrStockInTotalEntity">
+		update t_mgr_stock_in_total
+		<set>
+			<if test="inType != null">`in_type` = #{inType} ,</if>
+			<if test="fkInStockUser != null and fkInStockUser  != ''">`fk_in_stock_user` = #{fkInStockUser},</if>
+			<if test="remark != null and remark  != ''">`remark` = #{remark},</if>
+			<if test="status != null">`status` = #{status} ,</if>
+			<if test="fkCreateUserId != null and fkCreateUserId  != ''">`fk_create_user_id` = #{fkCreateUserId},</if>
+			<if test="createTime != null">`create_time` = #{createTime} ,</if>
+			<if test="orgId != null and orgId  != ''">`org_id` = #{orgId},</if>
+			<if test="stockInCode != null and stockInCode  != ''">`stock_in_code` = #{stockInCode},</if>
+			<if test="store != null ">`store_id` = #{store.id}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mgr_stock_in_total where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_stock_in_total where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

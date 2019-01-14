@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+    <title>接种录入</title>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/register.css" media="all" />
+    <link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+    #parse("sys/header.html")
+    <style>
+        .borderWrap {
+            height: 258px;
+            overflow: hidden;
+            border: 1px solid #e6e6e6;
+        }
+        .space-between .span1{
+            display: inline-block;
+            vertical-align: middle;
+            width: 70px;
+            height: 25px;
+            line-height: 25px;
+            text-align:justify;
+            overflow: hidden;
+        }
+        .tdClass{
+            padding-top:5px;
+            padding-bottom: 5px;
+            width: 50%;
+        }
+    </style>
+    <script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        console.log(orgId);
+        $(function () {
+            //加载省内接种单位
+            $.ajax({
+                type: "post",
+                url: "../tbaseposition/gethospital",
+                dataType: 'json',
+                async: false,
+                contentType: 'application/json;charset=UTF-8',
+                success: function (data) {
+                    var result=data.data;
+                    $.each(result, function (i, n) {
+
+                        $("#inocDepart").append(" <option value=\"" + n.id + "\">" + n.name + "</option>");
+                    })
+                    $("#inocDepart").selectpicker('refresh');
+                }
+            });
+            $("#inocDepart").selectpicker('val',orgId);
+        })
+
+    </script>
+</head>
+<body>
+<div id="rrapp" v-cloak style="height: 600px">
+        <div class="layui-row layui-col-space10">
+            <div class="layui-col-md6"><!--左布局-->
+                <!-- <div class="tmpl-body" >-->
+                <p class="pl30 pr30 pt10 pb10 bg-f2f2f2" style="font-weight: bold">历史接种记录</p>
+                <!-- <div  class="re-wid" style="margin-bottom: 10px;">-->
+                <div style="width: 100%;height: auto">
+                    <!--<table id="historyRecord"></table>-->
+                    <iframe name="inoculation" style="width:100%;height:640px" frameborder="0"  id="inoculation_iframe" src="../child/tchildinoculate.html"></iframe>
+                </div>
+                <!--</div>-->
+
+                <!--</div>-->
+            </div>
+            <!--右布局-->
+            <div class="layui-col-md6">
+                <div style="width: 100%">
+                    <div class="borderWrap">
+                        <div class="section-title">
+                            <span style="font-weight: bold;">儿童信息</span>
+
+                    </div>
+                    <div class="layui-row pl15 pr15  mb5 mt1" >
+                        <div class="layui-col-md6 space-between"><span class="span1">儿童姓名<i
+                                class="disib"></i></span><span class=" textset"> :
+<input   id="inoname"   v-model="childInfo.chilName" onchange="updatainoculateInput()" type="text" style="border-width: 0;font-size:18px;font-weight:bold;"/>
+                            <!--{{childInfo.chilName}}-->
+                            </span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">儿童编号<i
+                                class="disib"></i></span>
+                            <span class="textset" id="inochilCode">:{{childInfo.chilCode}}</span></div>
+                    </div>
+                    <div class="layui-row pl15 pr15 mb5 mt5">
+                        <div class="layui-col-md6 space-between"><span class="span1">出生日期<i
+                                class="disib"></i></span>
+                            <span class="textset">:
+                                <input   id="inobirthday" onchange="updatainoculateInput()"   v-model="childInfo.chilBirthday" type="text" style="border-width: 0;font-size:18px;font-weight:bold;"/>
+                                <!--{{childInfo.chilBirthday}}-->
+                            </span>
+                        </div>
+                        <div class="layui-col-md6  space-between layui-row"><span class="span1" >年龄<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.age}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 mb5 mt5">
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">性别<i
+                                class="disib"></i></span>
+                            <span class="textset">:
+                                <input  v-model="childInfo.chilSex" id="inosexId" style="border-width: 0;width: 40px;position: relative" >
+										<select  id="inosex" ondblclick="updatainoInputchilSex()"  style="position: absolute; float: left;margin-left: -41px;margin-top: 0px" >
+
+										</select>
+                                <!--{{childInfo.chilSex}}-->
+                            </span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">行政村:<i
+                                class="disib"></i></span>
+                            <span class="textset">
+                                    <!--{{childInfo.chilCommittee}}-->
+                                <input  v-model="childInfo.chilCommittee" id="committeeIds" style="border-width: 0;width: 120px;position: relative;">
+                            <select  id="updatachilcommittees"  ondblclick="updatecommitteeinput()" name="updatachilcommittees" style="position: absolute; float: left;margin-left: -120px;">
+                            </select>
+                                </span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 ">
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">母亲姓名<i
+                                class="disib"></i></span>
+                            <span class="textset">:
+                                  <input   id="inochilMother" onchange="updatainoculateInput()"   v-model="childInfo.chilMother" type="text" style="border-width: 0;font-size:18px;font-weight:bold;"/>
+                                <!--{{childInfo.chilMother}}-->
+                            </span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">联系电话<i
+                                class="disib"></i></span>
+                            <span class="textset">:
+                                <input   id="inochilMobile" onchange="updatainoculateInput()"   v-model="childInfo.chilMobile" type="text" style="border-width: 0;font-size:18px;font-weight:bold;"/>
+                                <!--{{childInfo.chilMobile}}-->
+                            </span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 mb5 mt5">
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">居住属性<i
+                                class="disib"></i></span>
+                            <span class="textset">:
+                                 <input  v-model="childInfo.chilAccount"  id="inochilAccountId" style="border-width: 0;width: 70px;position: relative" >
+										<select  id="inochilAccount"   ondblclick="updatainoInputchilAccount()"  style="position: absolute; float: left;margin-left: -72px;margin-top: 0px" >
+
+										</select>
+                                <!--{{childInfo.chilAccount}}-->
+                            </span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">在册情况<i
+                                class="disib"></i></span>
+                            <span class="textset">:
+                                  <input  v-model="childInfo.chilHere"  id="inochilHereId" style="border-width: 0;width: 70px;position: relative" >
+                                <input id="hereId1" v-model="childInfo.chilHere" hidden="hidden">
+                                <!--ondblclick="updatainoInputchilHere()"-->
+										<select  id="inochilHere"     style="position: absolute; float: left;margin-left: -72px;margin-top: 0px" >
+
+										</select>
+                                <!--{{childInfo.chilHere}}-->
+                            </span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 mb5 mt5" style="color: red;">
+                        <div class="layui-col-md12 space-between"><span class="span1" style="color: red;">备注<i
+                                class="disib"></i></span>
+                            <span class=" textset">：
+                                 <input   id="inoremark" onchange="updatainoculateInput()"   v-model="childInfo.remark" type="text" style="border-width: 0;font-size:18px;font-weight:bold;width: 569px;"/>
+                                <!--{{childInfo.remark}}-->
+                            </span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 mb5 mt5">
+                        <div class="layui-col-md12 space-between"><span class="span1">居住地址<i
+                                class="disib"></i></span>
+                            <span class=" textset">：{{childInfo.chilAddress}}</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="margin: 0px">
+
+                    <form  id="inocInfo">
+
+                        <table style="width: 100%;margin-top: 20px" id="subFrom" >
+                            <tr >
+                                <td class="tdClass"  >
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">接种类型<span style="color: red; padding-left: 5px; font-size: 20px; position: absolute; margin-top: 2px;">*</span></div>
+                                        <div class="col-sm-10" id="inocType">
+                                            <label class="checkbox-inline">
+                                                <input type="radio" name="inocType" value="remove" >扣减库存
+                                            </label>
+                                            <label class="checkbox-inline">
+                                                <input type="radio"  name="inocType" value="normal" >不扣库存
+                                            </label>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tdClass">
+                                    <div class="form-group">
+                                    <div class="col-sm-2 control-label">接种时间<span style="color: red; padding-left: 5px; font-size: 20px; position: absolute; margin-top: 2px;">*</span></div>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="inoDate"  id="inoDate"  >
+                                    </div>
+                                    </div>
+                                </td>
+                                <td class="tdClass">
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">接种疫苗<span style="color: red; padding-left: 5px; font-size: 20px; position: absolute; margin-top: 2px;">*</span></div>
+                                        <div class="col-sm-10">
+                                            <select  class=" form-control selectpicker" name="bioName"  onchange="getBatchnum()"   id="bioName"  data-live-search="true"  >
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tdClass">
+                                    <div class="form-group" id="removeBatchnum">
+                                        <div class="col-sm-2 control-label">疫苗批号</div>
+                                        <div class="col-sm-10" id="findInput">
+                                            <select  class="form-control selectpicker" name="batchnum"  onchange="changeVac()" id="batchnumList" data-live-search="true">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="tdClass">
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">接种部位</div>
+                                        <div class="col-sm-10">
+                                            <select  class="form-control selectpicker" name="inoculateSiteCode"    id="inoculateSiteCode"    >
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tdClass">
+
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">接种途径</div>
+                                        <div class="col-sm-10">
+                                            <select  class="form-control selectpicker" name="channel"    id="channel"    >
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="tdClass tbHide">
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">失效期</div>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" name="expiryDate" id="expiryDate">
+                                            </input>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="tbHide">
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">生产厂家</div>
+                                        <div class="col-sm-10">
+                                            <select class="form-control selectpicker" name="factory" id="factory"
+                                                    data-live-search="true">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="tbHide">
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">接种单位</div>
+                                        <div class="col-sm-10">
+                                            <div id="departInput" style="display: none" > <input type="text" class="form-control" name="inocDepart" > </div>
+                                            <div id="departSelect">
+                                                <select class="form-control selectpicker" name="orgId" id="inocDepart"
+                                                        data-live-search="true">
+                                                </select>
+                                            </div>
+                                            <span><input type="checkbox" id="other" @click="changeStatus">省外接种点</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="form-group">
+                                        <div class="col-sm-2 control-label">电子监管码</div>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="inocRegulatoryCode" id="inocRegulatoryCode" />
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+
+
+
+                        <div id="noSub" style="display: none">
+                            <!--<div class="form-group">
+                                <div class="col-sm-2 control-label">疫苗批号</div>
+                                <div class="col-sm-10">
+                                    <input class="form-control" name="batchnum" id="batchnum">
+                                    </input>
+                                </div>
+                            </div>-->
+
+
+
+                        </div>
+
+                        <!--<div class="form-group">
+                            <div class="col-sm-2 control-label">关联接种台</div>
+                            <div class="col-sm-10">
+                                <select class="col-lg-12 form-control" name="posId" v-model="tMgrStore.posId">
+                                    <option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+                                </select>
+                                &lt;!&ndash;<input type="text" class="form-control" v-model="tMgrStore.posId" placeholder="选择接种台"/>&ndash;&gt;
+                            </div>
+                        </div>-->
+                        <div class="form-group" style="margin-top: 20px;margin-left: 25%">
+                            <div class="col-sm-2 control-label"></div>
+                            <input type="button" class="btn btn-primary" @click="saveInoc" id="enterSave" value="确定"/>
+                            &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="close"  value="关闭"/>
+                        </div>
+                    </form>
+                </div>
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="myModal_here2" class="tmpl layui-row none" style="overflow-y: auto">
+    <div class="tmpl-body"  >
+        <textarea  id="updataReason2" style="line-height: 1.5;height: 95px;width: 289px;"  rows="3" cols="25"></textarea>
+    </div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/inoculateInput.js?_${date.systemTime}"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/mouseoverinocdata.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/updatachild.js"></script>
+</body>
+</html>

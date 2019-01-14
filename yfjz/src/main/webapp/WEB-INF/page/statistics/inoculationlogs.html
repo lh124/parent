@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>接种日志统计</title>
+#parse("sys/header.html")
+	<script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('userName')";
+	</script>
+
+    <style>
+        .div-margin{
+            height: 300px;
+        }
+        .div-title{
+            height: 20px;
+            padding-left: 20px;
+        }
+        .div-vacc-count{
+            height: 300px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .div-child-first{
+            width: 50%;
+            height: 300px;
+            float: left;
+        }
+        .div-child-second{
+            width: 50%;
+            height: 300px;
+            float: left;
+        }
+		.div-child-first,.div-child-second{
+			max-height: 300px;
+			overflow: scroll;
+			overflow-x: hidden;
+		}
+		.div-child-second-table{
+			margin-top: 5px;
+			margin-left: 50px;
+		}
+        .div-table-all{
+            height: 350px;
+            width: 100%;
+            margin-top: 5px;
+			padding: 0 20px;
+			overflow: scroll;
+        }
+		.div-table-all table {
+			table-layout:fixed;
+			word-wrap: break-word;
+			word-break: break-all;
+		}
+		.div-table-all table td {
+			text-align: center;
+		}
+
+		#inoc_property_table tr > td:nth-child(1),.inoc_dose_table tr > td:nth-child(1) {
+			padding: 4px 5px;
+			width: 150px;
+		}
+		#inoc_property_table tr > td:nth-child(2),#inoc_property_table tr > td:nth-child(3),#inoc_property_table tr > td:nth-child(4),#inoc_property_table tr > td:nth-child(5),#inoc_property_table tr > td:nth-child(6),
+		#inoc_dose_table tr > td:nth-child(2),#inoc_dose_table tr > td:nth-child(3),#inoc_dose_table tr > td:nth-child(4),#inoc_dose_table tr > td:nth-child(5),#inoc_dose_table tr > td:nth-child(6),#inoc_dose_table tr > td:nth-child(7),#inoc_dose_table tr > td:nth-child(8),#inoc_dose_table tr > td:nth-child(9),#inoc_dose_table tr > td:nth-child(10)
+		{
+			padding: 2px 5px;
+			width: 70px;
+			text-align: center;
+		}
+
+		#committees_all_inoc_table tr > td:nth-child(1),#committees_all_inoc_table tr > td:nth-child(3),#committees_all_inoc_table tr > td:nth-child(4)
+		,#committees_all_inoc_table tr > td:nth-child(5),#committees_all_inoc_table tr > td:nth-child(6),#committees_all_inoc_table tr > td:nth-child(7),
+		#committees_all_inoc_table tr > td:nth-child(8),#committees_all_inoc_table tr > td:nth-child(9),#committees_all_inoc_table tr > td:nth-child(10),
+		#committees_all_inoc_table tr > td:nth-child(12),#committees_all_inoc_table tr > td:nth-child(13),#committees_all_inoc_table tr > td:nth-child(15){
+			padding: 2px 5px;
+			width: 150px;
+		}
+		#committees_all_inoc_table tr > td:nth-child(2),#committees_all_inoc_table tr > td:nth-child(11),#committees_all_inoc_table tr > td:nth-child(14){
+			width: 100px;
+			padding: 2px 5px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body style="padding: 5px">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div id="unprintdiv" class="grid-btn">
+			<form id="inoculatelogsForm" class="form-inline" role="form">
+				<div class="form-group">
+					&nbsp;&nbsp;&nbsp;&nbsp;出生日期:<input type="text" class="form-control" id="chilBirthdayStart" name="chilBirthdayStart"  style="width: 110px"/>
+					至&nbsp;&nbsp;<input type="text" class="form-control" id="chilBirthdayEnd" name="chilBirthdayEnd" style="width: 110px"/>
+				</div>
+				<div class="form-group">
+					&nbsp;&nbsp;&nbsp;&nbsp;接种日期:<input type="text" class="form-control" id="inoculateStart" name="inoculateStart" style="width: 110px" />
+					至&nbsp;&nbsp;<input type="text" class="form-control" id="inoculateEnd" name="inoculateEnd" style="width: 110px"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;居委会/行政村:
+					<select  class="selectpicker" id="chilCommittees" name="chilCommittees" title=""  multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;居住属性:
+					<select class="selectpicker"  id="chilResidence" name="chilResidence" title="" multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;接种医生:
+					<select class="selectpicker"  id="inocDoctor" name="inocDoctor" title="" multiple data-live-search="true"></select>
+				</div>
+				<div class="form-group" style="margin-top: 10px;">
+					&nbsp;&nbsp;&nbsp;&nbsp;在册情况:
+					<select  class="selectpicker" id="infostatus" name="infostatus" title=""   multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;疫苗类别:
+					<select  class="selectpicker" id="biotypes" name="biotypes" title=""  multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;疫苗批号:
+					<select  class="selectpicker" id="inocbatchno" name="inocbatchno" title=""  multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;疫苗接种剂次:
+					<select  class="selectpicker" id="bioNos" name="bioNos" title=""  multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;入学|入托机构:
+					<select  class="selectpicker" id="school" name="school" title=""  multiple data-live-search="true" ></select>
+				</div>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<a class="btn btn-primary" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-primary" @click="print"><i class="fa fa-print"></i>&nbsp;打印</a>
+				<a class="btn btn-primary" @click="excel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+			</form>
+		</div>
+		<!--基本信息-->
+		<div class="div-title">
+            <label>日志日期：</label><label id="inoculate_range_label"></label>
+            <label>卫生院名称：</label><label>{{orgName}}</label>
+            <label>接种儿童数：</label><label id="inoculate_child_count_label"></label>
+        </div>
+
+		<!--疫苗使用统计-->
+		<div class="div-vacc-count">
+			<div class="div-child-first">
+                <!--按照疫苗接种属性统计-->
+				<div class="div-child-second-table" id="inoc_property_table"></div>
+            </div>
+			<!--按照疫苗剂次统计-->
+			<div class="div-child-second">
+				<div class="div-child-second-table" id="inoc_dose_table"></div>
+            </div>
+		</div>
+
+        <!--某个村具体的接种日志详情列表  根据行政村、居委会分开统计，使用js循环拼接-->
+		<div class="div-table-all" id="committees_all_inoc_table">
+        </div>
+
+    </div>
+
+</div>
+<script src="${rc.contextPath}/statics/js/statistics/inoculationlogs.js?_${date.systemTime}"></script>
+</body>
+</html>

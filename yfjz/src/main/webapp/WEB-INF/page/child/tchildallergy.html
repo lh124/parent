@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童過敏信息表</title>
+	#parse("sys/header.html")
+	<link href="${rc.contextPath}/statics/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+	<script src="${rc.contextPath}/statics/libs/moment-with-locales.js"></script>
+	<script src="${rc.contextPath}/statics/libs/bootstrap-datetimepicker.min.js"></script>
+	<script src="${rc.contextPath}/statics/libs/bootstrap-datetimepicker.zh-CN.js"></script>
+</head>
+<body>
+<input type="hidden" id="chilCode" value="${request.getParameter('chilCode')}">
+<div id="rrapp_allergy" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+
+
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+
+		</div>
+	    <table id="allergyGrid"></table>
+	    <div id="allergyGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="allergy">
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童编码</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildAllergy.chilCode" readonly placeholder=""/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童姓名</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="chilName" readonly placeholder=""/>
+				</div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">过敏信息<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.describes" id="describes" name="describes" placeholder=""/>
+			    </div>
+			</div>
+									<!--<div class="form-group">
+			   	<div class="col-sm-2 control-label">登记人</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.registrant" placeholder="登记人"/>
+			    </div>
+			</div>-->
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">检测日期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.checkDate" id="checkDate" placeholder=""/>
+			    </div>
+			</div>
+								<!--	<div class="form-group">
+			   	<div class="col-sm-2 control-label">type,0本地,1平台</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.type" placeholder="type,0本地,1平台"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">同步状态,0未同步;1同步</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.syncstatus" placeholder="同步状态,0未同步;1同步"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">状态,0正常,-1删除</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.status" placeholder="状态,0正常,-1删除"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.createUserId" placeholder="创建人id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.createUserName" placeholder="创建人名字"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>-->
+									<!--<div class="form-group">
+			   	<div class="col-sm-2 control-label">备注</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAllergy.remark" placeholder="备注"/>
+			    </div>
+			</div>-->
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/tchildallergy.js?_${date.systemTime}"></script>
+</body>
+</html>

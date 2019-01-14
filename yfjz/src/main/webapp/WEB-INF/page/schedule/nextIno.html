@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>下次预约</title>
+	#parse("sys/header.html")
+</head>
+<body>
+<div style="margin-left: 20px">
+	<div data-options="region:'center',title:'预约单'" style="height:130px">
+		<div style="text-align: center;font-size: 24px" ><label id="currentdepartname" ></label>预防接种预约单</div>
+		<hr/>
+		<br/>
+		<br/>
+		<div style="margin-left: 60px">姓名：<label id="cname" style="margin-right: 180px"></label>下次接种时间：<label id="oprDate" ></label></div>
+		<br/>
+		<table id="result"  style="  width:400px; height: 100px;margin-left: 60px;border-color: #0d0e11" border="0" >
+		</table>
+
+	</div>
+	<!--<a id="btn" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-print'"></a>-->
+	<div style="margin-top: 230px"><button onclick="prints()" id="btn1">打印</button></div>
+	<script type="text/javascript">
+		$(function () {
+			var child = "$!request.getParameter('childId')";
+			if((child)==null || child==''){
+				layer.msg("请选择儿童");
+				return;
+			}
+            layer.msg('正在计算中，请耐心等待...', {icon: 16,shade: [0.5, '#f5f5f5'],scrollbar: false, time:1000000}) ;
+			$.ajax({
+				type:'post',
+				url: '../recommend/nextIno?childId='+child,
+				dataType:'json',
+				success: function (data) {
+				    layer.msg("计算完成");
+				    if (data.code==0){
+                        var html = "";
+                        $.each(data.plans,function(i,item){
+                            html +="<tr>";
+                            html +="<td>疫苗名称:</td>"+"<td>"+item.classId+"</td>";
+                            html +="<td>剂&nbsp&nbsp次:</td>"+"<td>"+item.injectionTimes+"</td>";
+                            html +="</tr>";
+                            html+="<br/>";
+                        });
+                        $('#cname').text(data.childName);
+                        $('#oprDate').text(data.nextdate);
+                        $('#result').html(html);
+                    }else {
+                        $('#result').after(data.msg);
+					}
+
+				}
+			});
+			$("#btn1").on('click',function(){
+				$("#btn1").hide();
+				print();
+			});
+		});
+	</script>
+</div>
+
+</body>
+</html>
+
+
+

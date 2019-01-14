@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="io.yfjz.dao.inocpointmgr.ProcessSetDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.basesetting.ProcessSetEntity">
+		select * from t_base_process where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.basesetting.ProcessSetEntity">
+		select * from t_base_process
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from t_base_process 
+	</select>
+	<select id="queryProcessFirst" resultType="int">
+		select  tower_nature_id from t_base_process where sequence=1
+	</select>
+	<select id="queryAllList" resultType="map">
+		select  tower_nature_id as towerId,sequence from t_base_process where sequence>0 ORDER BY sequence
+	</select>
+	<select id="queryAll" resultType="io.yfjz.entity.basesetting.ProcessSetEntity">
+		select tower_name ,tower_nature_id,sequence from t_base_process
+		where org_id=#{orgId}
+		ORDER BY sequence
+	</select>
+	<select id="sumtower" resultType="io.yfjz.entity.basesetting.ProcessSetEntity">
+  select *  from t_base_process where org_id=#{orgId} and sequence>0 ORDER BY sequence
+	</select>
+	<insert id="save" parameterType="io.yfjz.entity.basesetting.ProcessSetEntity">
+		insert into t_base_process
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="towerName != null and towerName  != ''">`tower_name` ,</if>
+			<if test="towerNatureId != null and towerNatureId  != ''">`tower_nature_id` ,</if>
+			<if test="sequence != null and sequence  != ''">`sequence` ,</if>
+			<if test="status != null">`status` ,</if>
+			<if test="createTime != null">`create_time` ,</if>
+			<if test="orgId != null and orgId  != ''">`org_id` </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="towerName != null and towerName  != ''">#{towerName} ,</if>
+			<if test="towerNatureId != null and towerNatureId  != ''">#{towerNatureId} ,</if>
+			<if test="sequence != null and sequence  != ''">#{sequence} ,</if>
+			<if test="status != null">#{status} ,</if>
+			<if test="createTime != null">#{createTime} ,</if>
+			<if test="orgId != null and orgId  != ''">#{orgId} </if>
+		</trim>
+	</insert>
+
+
+	<delete id="delete">
+		delete from t_base_process where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from t_base_process where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	<delete id="deleteByOrgId">
+		delete from t_base_process where org_id =#{orgId}
+	</delete>
+
+</mapper>

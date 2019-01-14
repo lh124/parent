@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>每位儿童应接种计划保存，根据国家免疫规划表</title>
+#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			#if($shiro.hasPermission("truleplan:save"))
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			#end
+			#if($shiro.hasPermission("truleplan:update"))
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			#end
+			#if($shiro.hasPermission("truleplan:delete"))
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+			#end
+		</div>
+	    <table id="jqGrid"></table>
+	    <div id="jqGridPager"></div>
+    </div>
+
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童编码</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.childId" placeholder="儿童编码"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">疫苗类别标识，类别ID</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.classId" placeholder="疫苗类别标识，类别ID"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种剂次</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.injectionTimes" placeholder="接种剂次"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种时间，为null时表示没有接种</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.inoculateTime" placeholder="接种时间，为null时表示没有接种"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">最早接种时间，儿童需达到这时间才可接种该疫苗</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.firstTime" placeholder="最早接种时间，儿童需达到这时间才可接种该疫苗"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">及时时间，达到最早时间，小于等于该时间为及时</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.timelyTime" placeholder="及时时间，达到最早时间，小于等于该时间为及时"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">合格时间</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.qualifiledTime" placeholder="合格时间"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">最后可接种时间</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.lastTime" placeholder="最后可接种时间"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种状态：0、未接种，1、间短，2、及时，3、合格，4、超期</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.state" placeholder="接种状态：0、未接种，1、间短，2、及时，3、合格，4、超期"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种或替代针剂，接种信息ID</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tRulePlan.inoculateId" placeholder="接种或替代针剂，接种信息ID"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/rule/truleplan.js?_${date.systemTime}"></script>
+</body>
+</html>

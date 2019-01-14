@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    #parse("sys/header.html")
+    <style >
+        .check {
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div style="margin-left: 20px">
+    <div data-options="region:'center',title:'预防接种处方单'" style="height:130px">
+        <div style="margin-top: 1px"><button id="btn1" >打印</button>
+        </div>
+        <div style="margin-left: 50px">编号：<span class="preCheckNoticeNo"></span>
+        </div>
+        <div style="text-align: center;font-size: 22px;margin-top: 1px;" ><label id="currentdepartname" ></label><br/>儿童预防接种预检告知书
+        </div><br/>
+        <!--<div style="text-align: center;font-size: 10px"><label id="oprDate"  ></label></div>-->
+
+        <div style="margin-left: 50px;font-size: 12px"><label id="cname" style="margin-right: 0px"></label>（<label id="monthOld"></label>）儿童之家长（或监护人）：<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;儿童是祖国的未来，家庭的希望，为了保障儿童的身体健康，我们要及时为孩子进行规范、有效的预防接种。
+            但接种疫苗只针对健康儿童，如果你的孩子本次接种有下列几种情况之一都不予接种，等到身体康复后再来接种。<br/><br/>
+            <div style="margin-left: 30px">
+                1、（是&nbsp; 否✔）发热。<label>（检测体温：<input id="temperature" style="width: 40px;border: 0px"/>℃<!--<label id=" temperature" ></label>-->）</label><br/><br/>
+                2、（是&nbsp; 否✔）患有急性疾病、严重慢性疾病、慢性疾病的急性发作期。<br/><br/>
+                3、（是&nbsp; 否✔）免疫缺陷、免疫功能低下或正在接受免疫抑制治疗。<br/><br/>
+                4、（是&nbsp; 否✔）患有脑病、未控制的癫痫和其他进行性神经系统疾病。<br/><br/>
+                5、（是&nbsp; 否✔）患湿疹或其他皮肤病。<br/><br/>
+                6、（是&nbsp; 否✔）对所接种疫苗任何成分、包括辅料以及抗生素过敏。<br/><br/>
+                7、（有&nbsp; 否✔）家族惊厥史，患慢性疾病者，癫痫病史，过敏体质者。<br/><br/>
+                8、（有&nbsp; 否✔）其他疾病。<br/><br/>
+                本次接种的疫苗为：<label id="vacc"></label>
+
+                <hr style="margin-left: 100px;margin-top:1px;height:1px;border:none;border-top:1px solid #001f3f;"/>
+                如无以上几项禁忌原因，由儿童监护人签字同意后方可登记接种本次疫苗。<br/>
+            </div><br/>
+            <div><span >预检医生：</span> <input id="preCheckNorse" style="border: 0px;margin-right: 260px;width: 70px"/>  <label>同意接种本次疫苗</label>
+            </div><br/>
+            <div><span >预检时间：</span><span id="preCheckDate" style="margin-right: 140px;width: 120px" ></span>   儿童家长（或监护人）签字：
+            </div><br/>
+
+            <div style="text-align: center">【<span class="childName"></span>,
+                &nbsp;<span class="sex"></span>,
+                &nbsp;出生日期：
+                <span class="birthday"></span>,
+                &nbsp;父亲：
+                <span class="father"></span>,
+                &nbsp;母亲：
+                <span class="mother"></span>
+                】<br/>
+                家庭住址：
+                <span class="address"></span>
+
+            </div>
+
+            <hr style="margin-left: 60px;height:0.5px;border:none;border-top:1px solid #0066CC;"/>
+            <hr style="margin-left: 60px;margin-top: 1px; height:0.5px;border:none;border-top:1px solid #0066CC;"/>
+            <div style="margin-left: 20px;font-size: 12px;margin-top: 20px">
+                <div>编号：<span class="preCheckNoticeNo"></span></div>
+                <div style="text-align: center;font-size: 20px;">
+                    <label style="font-size: 24px">温馨提示
+                    </label><br/>
+                儿童家长（或监护人）：疫苗接种完成后请留观30分钟！
+                </div><br/>
+                <div style="line-height: 24px;text-indent: 25px">
+                    儿童接种疫苗后可能会出现发热、接种部位红肿、全身不适、疲倦、食欲不振、乏力等症状。轻微的症状家长应注意观察，一般不需处理，1-2天内会自行缓解，
+                    期间儿童需适当休息，多喝开水，注意保暖，防止继发其他疾病。<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如反应严重者、高热不退或伴有其他并发症者，家长应密切观察病情，咨询疫苗接种单位医生，必要时送医院观察治疗。
+                </div>
+            </div>
+            <div  style="float: right;margin-right: 80px;font-size: 18px;margin-top: 20px;text-align: center">
+                <span id="orgName" style="font-size: 20px"></span><br/>
+                咨询电话：<span id="tel" ></span>
+            </div>
+            <div id="oprDate" style="font-size: 12px;margin-left: 50px;margin-top: 70px"></div>
+    </div>
+
+    <script type="text/javascript">
+        var updatainput="";
+        $(function () {
+
+            var childId = "$!request.getParameter('childId')";
+            var childName = "$!request.getParameter('childName')";
+            var chilCode = "$!request.getParameter('chilCode')";
+            var fatherName = "$!request.getParameter('fatherName')";
+            var matherName = "$!request.getParameter('matherName')";
+            var birthtime = "$!request.getParameter('birthtime')";
+            var sex = "$!request.getParameter('sex')";
+            var address = "$!request.getParameter('address')";
+            var orgName="$shiro.getBaseInfo('orgName')";
+            var norse="$shiro.getBaseInfo('realName')";
+            $("#cname").text(childName);
+            $("#sex").text(sex);
+            $("#birthTime").text(birthtime.substring(0,10));
+            $("#address").text(address);
+            $("#currentdepartname").text(orgName);
+            $("#orgName").text(orgName);
+            $(".childName").text(childName);
+            $(".father").text(fatherName);
+            $(".mother").text(matherName);
+            $(".birthday").text(birthtime.substring(0,10));
+            $(".sex").text(sex);
+            $(".address").text(address);
+            $("#preCheckNorse").val(norse);
+            //$('#cname').html(childName);
+            $.ajax({
+                type : 'post',
+                url :  '../tchildinoculate/prescription?chilCode='
+                + childId,
+                success : function(result) {
+                    $("#vacc").html("");
+                    var year = new Date().getFullYear();
+                    var month = new Date().getMonth()+1;
+                    var day = new Date().getDate();
+                    var hour = new Date().getHours();
+                    var miunte = new Date().getMinutes();
+                    $('#oprDate').text("打印时间："+year+"-"+month+"-"+day+" "+ hour+":"+miunte);
+                    $('#preCheckDate').text(year+"-"+month+"-"+day+" "+ hour+":"+miunte);
+
+                    $("#monthOld").text(getAge(birthtime));
+
+                    var html = "";
+                    var totalPrice = 0;
+
+                    $.each(result.page.list,function(i,item){
+                        updatainput=result.page.list;
+                        var dose_no = '0';
+                        if(item.dose_no==1){
+                            dose_no = '①';
+                        }
+                        if(item.dose_no=='2'){
+                            dose_no = '②';
+                        }
+                        if(item.dose_no=='3'){
+                            dose_no = '③';
+                        }
+                        if(item.dose_no=='4'){
+                            dose_no = '④';
+                        }
+                        if(item.dose_no=='5'){
+                            dose_no = '⑤';
+                        }
+                        $("#vacc").append(dose_no+item.bio_name+"&nbsp;&nbsp;&nbsp;"+"  ");
+                        $('#temperature').val(item.temp);
+                        $('#tel').text(item.phone);
+
+                    });
+
+                }
+            });
+            $.ajax({
+                type : 'post',
+                url :  '../tchildprecheck/list?page=1&limit=1000000',
+                success : function(data) {
+                    var total = data.page.totalCount;
+                    var year = new Date().getFullYear();
+                    var month = new Date().getMonth()+1;
+                    var day = new Date().getDate();
+                    $(".preCheckNoticeNo").text(year+""+month+day+total);
+                }
+            });
+
+            $("#btn1").on('click',function(){
+                var temperature = $("#temperature").val();
+                var norse = $("#preCheckNorse").val();
+                $.ajax({
+                    type : 'post',
+                    url :  '../tchildprecheck/saveCheckNotice?temp='+temperature+"&createUserName="+norse+"&chilCode="+childId,
+                    contentType: 'application/json;charset=UTF-8',
+                    success : function(r) {
+                        if (r.code === 0) {
+
+                        } else {
+                            alert(r.msg);
+                        }
+                    }
+                });
+                $("#btn1").hide();
+                //$("#noinoculateID").hide();
+                print();
+            });
+
+        });
+
+        function getAge(birthTime) {
+            var age = getDateTimeDiff(new Date(birthTime));
+            var age_str = age.year > 0 ? age.year + "年" : "";
+            age_str += age.month > 0 ? age.month + "月" : "";
+            if(!isNaN(parseInt(age_str))){
+                age_str += age.day + "日";
+                //$("#monthOld").val(age_str);
+                return age_str;
+            }else{
+                age_str += age.day > 0 ? age.day + "日" : "";
+                var time1 = new Date(birthTime).Format("yyyy-MM-dd");
+                var time2 = new Date().Format("yyyy-MM-dd");
+                if(time1 == time2){
+                    return "0年0月0日";
+                }else{
+                    return age_str;
+                }
+            }
+        }
+
+
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        };
+        // 计算出生时间
+        function getDateTimeDiff(startTime) {
+            var now = new Date();
+            var result = {};
+            result.year = now.getFullYear() - startTime.getFullYear();
+            //result.month = now.getMonth() - startTime.getMonth();
+            if (now.getMonth() >= startTime.getMonth()) {
+                result.month = now.getMonth() - startTime.getMonth();
+            } else {
+                result.year--;
+                result.month = 12 - startTime.getMonth() + now.getMonth();
+            }
+            if (now.getDate() >= startTime.getDate()) {//如果大于出生那天
+                result.day = now.getDate() - startTime.getDate();
+            } else {
+                if (result.month > 0) {
+                    result.month--;
+                } else {
+                    result.year--;
+                    result.month = 12 - (startTime.getMonth() - now.getMonth()) - 1;
+                }
+                result.day = getMonthLastDay(startTime.getFullYear(), startTime
+                        .getMonth() + 1)
+                    - startTime.getDate() + now.getDate();
+            }
+            return result;
+        }
+
+
+        //获取某月份的最后一天
+        function getMonthLastDay(year, month) {
+            return new Date(new Date(year, month + 1, 1).getTime() - 3600000 * 24).getDate();
+        }
+
+    </script>
+</div>
+
+</body>
+</html>
+
+
+

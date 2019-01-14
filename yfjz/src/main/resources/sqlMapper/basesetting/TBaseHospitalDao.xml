@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.yfjz.dao.basesetting.TBaseHospitalDao">
+
+    <select id="queryListPage" parameterType="String" resultType="io.yfjz.entity.basesetting.TBaseHospitalEntity" >
+        select * from t_base_hospital
+        <where>
+            <if test="hospitalName != null and hospitalName.trim() != ''">
+                hospital_name like concat('%', #{hospitalName}, '%')
+            </if>
+            and delete_status = 0
+        </where>
+    </select>
+
+    <select id="queryObject" resultType="io.yfjz.entity.basesetting.TBaseHospitalEntity">
+		select * from t_base_hospital where hospital_code = #{value}
+	</select>
+
+    <select id="queryList" resultType="io.yfjz.entity.basesetting.TBaseHospitalEntity">
+        select
+        `hospital_code` ,
+        `hospital_name` ,
+        `pinyin_initials` ,
+        `org_area_code` ,
+        `status` ,
+        `create_time` ,
+        `delete_status`,
+        `update_time`
+        from t_base_hospital where delete_status = 0
+
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from t_base_hospital where delete_status = 0
+	</select>
+
+
+
+    <insert id="save" parameterType="io.yfjz.entity.basesetting.TBaseHospitalEntity" useGeneratedKeys="true" keyProperty="jobId">
+        insert into t_base_hospital
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hospitalCode != null">
+                `hospital_code`,
+            </if>
+            <if test="hospitalName != null">
+                `hospital_name`,
+            </if>
+            <if test="orgAreaCode != null">
+                `org_area_code`,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="createTime != null">
+                `create_time`,
+            </if>
+            <if test="deleteStatus != null">
+                `delete_status`,
+            </if>
+            <if test="updateTime != null">
+                `update_time`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hospitalCode != null">
+                #{hospitalCode},
+            </if>
+            <if test="hospitalName != null">
+                #{hospitalName},
+            </if>
+            <if test="orgAreaCode != null">
+                #{orgAreaCode},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.basesetting.TBaseHospitalEntity">
+        update t_base_hospital
+        <set>
+            <!--<if test="hospitalCode != null">hospital_code = #{hospitalCode}, </if>-->
+            <if test="hospitalName != null">hospital_name = #{hospitalName}, </if>
+            <if test="orgAreaCode != null">org_area_code = #{orgAreaCode}, </if>
+            <if test="status != null">status = #{status}, </if>
+            <if test="createTime != null">create_time = #{createTime}, </if>
+            <if test="deleteStatus != null">delete_status = #{deleteStatus}, </if>
+            <if test="updateTime != null">update_time = #{updateTime}, </if>
+        </set>
+        where hospital_code = #{hospitalCode}
+    </update>
+
+    <update id="delete">
+        update t_base_hospital
+        <set>
+            <if test="deleteStatus != null">delete_status = '1', </if>
+            <!--<if test="updateTime != null">update_time = #{updateTime}, </if>-->
+        </set>
+        where hospital_code = #{hospitalCode}
+    </update>
+
+    <update id="deleteBatch">
+        update t_base_hospital set delete_status = '1'
+        where hospital_code in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>扫码取号</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="${rc.contextPath}/statics/images/favicon.ico">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/scan.css" media="all">
+    <script src="${rc.contextPath}/statics/libs/vue.min.js"></script>
+    <script src="${rc.contextPath}/statics/libs/jquery.min.js"></script>
+</head>
+<body>
+    <div id="getNumber">
+        <div class="scan-tips"></div>
+        <div class="content">
+            <h2>请扫码取号</h2>
+            <button id="button" @click="getNumber('0')">取号</button><br/><br/>
+            <h3 id="warning" style="color: red"></h3>
+        </div>
+    </div>
+</body>
+<script>
+    var precode = null;
+    var getNumberVm = new Vue({
+        el:'#getNumber',
+        methods:{
+            getNumber:function(childCode){
+                //点击后禁用
+                $("#button").attr({"disabled":"disabled"});
+                $.get("createNo?childCode="+childCode, function(result){
+                    setTimeout("setTime()","1000");
+                    if(result.code == 0){
+                        extools.print(result.noText,'',result.id,result.waiting,result.currentTime);
+                        extools.tts("您的号码是\""+result.noText+"\",请到大厅等候!");
+                        $("#warning").html("");
+                    }else{
+                        $("#warning").html(result.msg);
+                        if(result.msg == "已暂停取号"){
+                            $("#warning").css({"font-size": "30px","font-weight": "bold"});
+                        }
+                        //alert(result.msg);
+                    }
+                });
+            }
+        }
+    });
+    var scan_code_callback = function(code){
+        if(precode!=null && precode == code){
+
+        }else{
+            getNumberVm.getNumber(code);
+        }
+        precode = code;
+    }
+    function setTime() {
+        $("#button").removeAttr("disabled");
+    }
+</script>
+</html>

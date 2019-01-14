@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report6" language="groovy" pageWidth="700" pageHeight="900" columnWidth="660" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b15d6ef3-0894-4bc3-b806-7f591c5cec5c">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="81"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="imageURL" class="java.lang.String"/>
+	<field name="cname" class="java.lang.String"/>
+	<field name="sexcode" class="java.lang.String"/>
+	<field name="childcode" class="java.lang.String"/>
+	<field name="guardianname" class="java.lang.String"/>
+	<field name="identitycard" class="java.lang.String"/>
+	<field name="birthcard" class="java.lang.String"/>
+	<field name="birthtime" class="java.lang.String"/>
+	<field name="hos_name" class="java.lang.String"/>
+	<field name="birthweight" class="java.lang.String"/>
+	<field name="text" class="java.lang.String"/>
+	<field name="province_name" class="java.lang.String"/>
+	<field name="hukou" class="java.lang.String"/>
+	<field name="contraindication" class="java.lang.String"/>
+	<field name="allergichistory" class="java.lang.String"/>
+	<field name="unittel" class="java.lang.String"/>
+	<field name="city_name" class="java.lang.String"/>
+	<field name="county_name" class="java.lang.String"/>
+	<field name="town_name" class="java.lang.String"/>
+	<field name="province_name_h" class="java.lang.String"/>
+	<field name="city_name_h" class="java.lang.String"/>
+	<field name="county_name_h" class="java.lang.String"/>
+	<field name="town_name_h" class="java.lang.String"/>
+	<field name="dateiled" class="java.lang.String"/>
+	<field name="orgname" class="java.lang.String"/>
+	<field name="printYear" class="java.lang.String"/>
+	<field name="txm" class="java.lang.String"/>
+	<field name="printMonth" class="java.lang.String"/>
+	<field name="printDay" class="java.lang.String"/>
+	<field name="year" class="java.lang.String"/>
+	<field name="month" class="java.lang.String"/>
+	<field name="day" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="420" splitType="Stretch">
+			<textField>
+				<reportElement uuid="a77e7809-014e-454c-9b8e-3f77ffc81ad5" x="336" y="9" width="203" height="14"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{childcode}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5ff11f33-b52b-4398-a108-09ca1b335aac" x="336" y="78" width="100" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cname}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cfbdcccc-6776-4a69-b9af-607fe5824f2a" x="353" y="147" width="100" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{guardianname}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="27480b18-783c-42aa-a77a-4d917d2b4bd9" x="336" y="31" width="203" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{identitycard}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e6c879d7-2172-4e37-bfba-41f0abe4ee80" x="336" y="52" width="203" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{birthcard}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6bd2883d-f7b5-437f-8192-99a39e8659c7" x="313" y="101" width="33" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{year}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d1605083-3a1c-45ac-8ab8-92aa3459f95f" x="487" y="122" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{birthweight}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="12fbc17a-8fff-4a3b-8750-e1de5556911b" x="468" y="230" width="170" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contraindication}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="1db73615-2907-4c14-bbbf-d5288c51e7ac" x="293" y="230" width="175" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{allergichistory}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3462a354-d1dc-40fa-8190-ea3c7bc87b13" x="392" y="256" width="246" height="20"/>
+				<textElement>
+					<font pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unittel}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ac512948-099d-4592-ae86-4a0adc1d6ff3" x="337" y="123" width="100" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hos_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="696fedbf-fcb1-4722-93fc-ef9f8f097cdd" x="487" y="77" width="100" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sexcode}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="0778a725-e837-4b12-bbb3-b8f6830e7784" x="487" y="146" width="100" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{text}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="98d524ed-e0ba-4366-bb57-f1872f3735a8" x="336" y="170" width="36" height="12"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{province_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="07ed61b2-13e9-4b77-aa60-1fcb802478a8" x="378" y="170" width="36" height="12"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{city_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a7a6a5ff-24bc-4d5a-8e71-689cd4912f2d" x="417" y="170" width="36" height="12"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{county_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d5fbb7ea-56b0-4475-a9b6-e53b5f7dc09c" x="460" y="170" width="52" height="12"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{town_name}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b35249af-cc51-4742-9040-2f50b0f420a1" x="380" y="190" width="184" height="16"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dateiled}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bd744d8c-2c6e-49e8-b361-80bbd638b5c5" x="336" y="210" width="36" height="16"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{province_name_h}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="94e73fc2-5178-4e60-92b7-3ebf25a676ec" x="378" y="210" width="36" height="16"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{city_name_h}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cf1511d1-4f24-40c5-92b5-9b13367e16f0" x="416" y="210" width="35" height="16"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{county_name_h}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8b2ac149-91f1-4855-9645-fec56cdbeac7" x="459" y="210" width="53" height="16"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{town_name_h}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="393045b6-8e98-428d-8a0d-addf4f7bbeeb" x="485" y="299" width="153" height="20"/>
+				<textElement>
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{orgname}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6683276e-0f6e-4669-b1e8-a57478a60753" x="468" y="327" width="32" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{printYear}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="767f1e3a-41f7-4bb8-95ea-4e4a940c044b" x="500" y="327" width="22" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{printMonth}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9196ff7b-c3e7-4a39-885f-792899af6f4d" x="532" y="327" width="18" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{printDay}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a465a0cc-44f1-4f73-bd00-a67621d72124" x="350" y="101" width="28" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{month}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="622406d5-bc96-4604-be25-3ea64bff610a" x="380" y="101" width="29" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{day}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

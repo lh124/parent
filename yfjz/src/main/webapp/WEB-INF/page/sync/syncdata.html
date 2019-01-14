@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>原始数据导入</title>
+    #parse("sys/header.html")
+</head>
+<body>
+
+<div id="syncdatarrapp" v-cloak>
+    <div v-show="showList">
+        <div style="margin-left:20px;margin-top:20px;font-size:16px;color:red;">
+            <!--<h3>注意事项：</h3>
+            1、必须先运行导出的sql文件 例如： E:\数据\xxxx卫生院\sql.sql<br/>
+            2、必须先在Navicat导入儿童基本信息的Excel数据文件到数库表  &#45;&#45;   u_all_child_excel<br/>
+            3、必须先在Navicat导入儿童接种历史数据的Excel数据文件到数据库表  &#45;&#45;  u_all_inoculate_excel<br/>
+            4、先同步[同步儿童基本信息]，再同步[同步儿童接种历史数据]<br/>
+            5、数据同步功能，如果基础表中有数据的情况下，告诉用户不能同步，必须删除儿童信息表与儿童接种记录表的数据才能同步<br/>-->
+            <h1>注意事项：</h1>
+            <h3>1、先用Navicat传输SQL Server 里金卫信的表Child、SYSWHB、nursery、Qyhf到计免数据库；</h3>
+            <h3>2、确保传输完成后，单击下面按钮即可。</h3>
+        </div>
+
+
+        <div style="margin-top: 150px; text-align: center">
+            <span style="width: 50% ;">
+						<button type="button" class="btn btn-primary" @click="syncChildData();" iconCls="icon-expexcel">同步金卫信系统原始数据</button>
+					</span>
+            <!--<span style="width: 50%;margin-left: 80px;">
+						<button type="button" class="easyui-linkbutton" @click="syncInoculationData();" iconCls="icon-expexcel" >同步儿童接种历史数据</button>
+					</span>-->
+        </div>
+
+    </div>
+</div>
+<script src="${rc.contextPath}/statics/js/sync/syncdata.js?_${date.systemTime}"></script>
+</body>
+</html>

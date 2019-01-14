@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.bus.TBusCancelDao">
+
+    <!-- 可根据自己需要-->
+    <sql id="allColumnsAlias">
+		id as id ,fk_service_code as fkServiceCode ,pos_id as posId ,fk_operate_user_id as fkOperateUserId ,create_time as createTime ,content as content ,status as status ,chil_code as chilCode , bio_code as  bioCode
+	</sql>
+    <!-- 可根据自己需要-->
+    <sql id="allColumns">
+		id ,fk_service_code ,pos_id ,fk_operate_user_id ,create_time ,content ,status ,chil_code ,bio_code
+	</sql>
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.yfjz.entity.bus.TBusCancelEntity" id="tBusCancelMap">
+        <result property="id" column="id"/>
+        <result property="bioCode" column="bio_code"/>
+        <result property="fkServiceCode" column="fk_service_code"/>
+        <result property="posId" column="pos_id"/>
+        <result property="fkOperateUserId" column="fk_operate_user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="content" column="content"/>
+        <result property="status" column="status"/>
+        <result property="chilCode" column="chil_code"/>
+    </resultMap>
+
+    <select id="queryObject" resultType="io.yfjz.entity.bus.TBusCancelEntity">
+        select <include refid="allColumns"></include> from t_bus_cancel where id = #{value}
+    </select>
+
+    <select id="queryList" resultType="io.yfjz.entity.bus.TBusCancelEntity">
+        SELECT user.real_name AS fk_operate_user_id,
+        cancel.id,
+        info.chil_name AS chil_code,
+        content,
+        cancel.STATUS,
+        pos_id,
+        fk_service_code,
+        cancel.create_time,
+        vac.bio_cn_sortname AS bio_code
+        FROM
+        t_bus_cancel cancel
+        LEFT JOIN sys_user user ON cancel.fk_operate_user_id = user.user_id
+        LEFT JOIN t_child_info info ON cancel.chil_code = info.chil_code
+        LEFT JOIN t_vac_info vac ON cancel.bio_code = vac.bio_code
+        <where>
+            <if test="chilCode != null and chilCode.trim() != ''">
+                cancel.chil_code=#{chilCode}
+            </if>
+        </where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from t_bus_cancel
+        <where>
+
+            <if test="chilCode != null and chilCode.trim() != ''">
+                 chil_code=#{chilCode}
+            </if>
+        </where>
+	</select>
+
+    <insert id="save" parameterType="io.yfjz.entity.bus.TBusCancelEntity">
+        insert into t_bus_cancel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">`id` , </if>
+            <if test="fkServiceCode != null">`fk_service_code` , </if>
+            <if test="bioCode != null">`bio_code` , </if>
+            <if test="posId != null">`pos_id` , </if>
+            <if test="fkOperateUserId != null">`fk_operate_user_id` , </if>
+            <if test="createTime != null">`create_time` , </if>
+            <if test="content != null">`content` , </if>
+            <if test="status != null">`status` , </if>
+            <if test="chilCode != null">`chil_code` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id} , </if>
+            <if test="bioCode != null">#{bioCode} , </if>
+            <if test="fkServiceCode != null">#{fkServiceCode} , </if>
+            <if test="posId != null">#{posId} , </if>
+            <if test="fkOperateUserId != null">#{fkOperateUserId} , </if>
+            <if test="createTime != null">#{createTime} , </if>
+            <if test="content != null">#{content} , </if>
+            <if test="status != null">#{status} , </if>
+            <if test="chilCode != null">#{chilCode} </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.bus.TBusCancelEntity">
+        update t_bus_cancel
+        <set>
+            <if test="fkServiceCode != null">`fk_service_code` = #{fkServiceCode}, </if>
+            <if test="bioCode != null">`bio_code` = #{bioCode}, </if>
+            <if test="posId != null">`pos_id` = #{posId}, </if>
+            <if test="fkOperateUserId != null">`fk_operate_user_id` = #{fkOperateUserId}, </if>
+            <if test="createTime != null">`create_time` = #{createTime}, </if>
+            <if test="content != null">`content` = #{content}, </if>
+            <if test="status != null">`status` = #{status}, </if>
+            <if test="chilCode != null">`chil_code` = #{chilCode}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+		delete from t_bus_cancel where id = #{value}
+	</delete>
+
+    <delete id="deleteBatch">
+        delete from t_bus_cancel where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

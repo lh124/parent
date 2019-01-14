@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.basesetting.TBaseDaySettingDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.basesetting.TBaseDaySettingEntity">
+		select * from t_base_day_setting where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.basesetting.TBaseDaySettingEntity">
+		select * from t_base_day_setting
+		<where>
+			1=1
+			<if test="settingType != null and settingType != ''">
+				and `setting_type` = #{settingType}
+			</if>
+			<if test="vaccCode != null and vaccCode != ''">
+				and `vacc_code` = #{vaccCode}
+			</if>
+			<if test="committeeCode != null and committeeCode != ''">
+				and `committee_id` = #{committeeCode}
+			</if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from t_base_day_setting
+		<where>
+			1=1
+			<if test="settingType != null and settingType != ''">
+				and `setting_type` = #{settingType}
+			</if>
+			<if test="vaccCode != null and vaccCode != ''">
+				and `vacc_code` = #{vaccCode}
+			</if>
+			<if test="committeeCode != null and committeeCode != ''">
+				and `committee_id` = #{committeeCode}
+			</if>
+		</where>
+	</select>
+
+	<!--获取当前启用的门诊类型-->
+	<select id="getCurrentStartDays" resultType="HashMap">
+		SELECT setting_type as settingType FROM `t_base_day_setting` WHERE  org_id= #{orgId} and `status` = 0 LIMIT 1;
+	</select>
+
+	<!--根据条件查询到设置的接种日-->
+	<select id="getCurrentStartDaysByCondition" resultType="HashMap">
+		SELECT * FROM `t_base_day_setting`
+		<where>
+			org_id= #{orgId} and `status` = 0
+			<!--<if test="bioCode != null and bioCode != ''">
+				or `vacc_code` = #{bioCode}
+			</if>
+			<if test="committeeCode != null and committeeCode != ''">
+				or `committee_id` = #{committeeCode}
+			</if>-->
+		</where>
+	</select>
+
+	<!--根据条件查询到设置的接种日-->
+	<select id="getCurrentSettingDaysByCondition" resultType="HashMap">
+		SELECT * FROM `t_base_day_setting`
+		<where>
+			org_id= #{orgId} and `status` = 0
+			<!--<if test="bioCode != null and bioCode != ''">
+				or `vacc_code` = #{bioCode}
+			</if>
+			<if test="committeeCode != null and committeeCode != ''">
+				or `committee_id` = #{committeeCode}
+			</if>-->
+		</where>
+	</select>
+
+
+	<insert id="save" parameterType="io.yfjz.entity.basesetting.TBaseDaySettingEntity">
+		insert into t_base_day_setting
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="settingType != null and settingType  != ''">`setting_type` , </if>
+			<if test="orgId != null and orgId  != ''">`org_id` , </if>
+			<if test="vaccCode != null and vaccCode  != ''">`vacc_code` , </if>
+			<if test="committeeId != null and committeeId  != ''">`committee_id` , </if>
+			<if test="days != null and days  != ''">`days` , </if>
+			<if test="status != null">`status` , </if>
+			<if test="createTime != null">`create_time` </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="settingType != null and settingType  != ''">#{settingType} , </if>
+			<if test="orgId != null and orgId  != ''">#{orgId} , </if>
+			<if test="vaccCode != null and vaccCode  != ''">#{vaccCode} , </if>
+			<if test="committeeId != null and committeeId  != ''">#{committeeId} , </if>
+			<if test="days != null and days  != ''">#{days} , </if>
+			<if test="status != null">#{status} , </if>
+			<if test="createTime != null">#{createTime} </if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.basesetting.TBaseDaySettingEntity">
+		update t_base_day_setting
+		<set>
+			<if test="settingType != null and settingType  != ''">`setting_type` = #{settingType}, </if>
+			<if test="orgId != null and orgId  != ''">`org_id` = #{orgId}, </if>
+			<if test="vaccCode != null and vaccCode  != ''">`vacc_code` = #{vaccCode}, </if>
+			<if test="committeeId != null and committeeId  != ''">`committee_id` = #{committeeId} , </if>
+			<if test="days != null and days  != ''">`days` = #{days}, </if>
+			<if test="status != null">`status` = #{status} , </if>
+			<if test="createTime != null">`create_time` = #{createTime} </if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<!--根据setting_type类型，设置启用状态-->
+	<update id="updateBySettingType">
+		update t_base_day_setting
+		set `status` = 0
+		where `setting_type` = #{settingType}
+	</update>
+
+	<!--根据setting_type类型，设置禁用状态-->
+	<update id="updateByNotSettingType">
+		update t_base_day_setting
+		set `status` = -1
+		where <![CDATA[`setting_type` <> #{settingType}]]>
+	</update>
+
+	<delete id="delete">
+		delete from t_base_day_setting where id = #{value}
+	</delete>
+
+	<!--
+		此sql不能乱添加参数，如果有需要的同事，请另外写一个方法
+		只针对（ 周门诊-接种点 、月门诊-接种点  不涉及到疫苗；
+		行政村/居委会，同时又不能删除 到疫苗，行政村/居委会 为null 的数据
+	-->
+	<delete id="removeByUserType">
+		delete from t_base_day_setting where `setting_type` = #{value} and `committee_id` is null and `vacc_code` is null
+	</delete>
+
+
+	<!--优先删除当前机构下该行政村/居委会 所设置的接种日-->
+	<delete id="removeBySettingTypeAndCommitteeAndOrgId">
+		delete from t_base_day_setting where `setting_type` = #{settingType} and `committee_id` = #{committeeCode} and `org_id` = #{orgId}
+	</delete>
+
+	<!--优先删除当前机构下该疫苗 所设置的接种日-->
+	<delete id="removeBySettingTypeAndVaccAndOrgId">
+		delete from t_base_day_setting where `setting_type` = #{settingType} and `vacc_code` = #{vaccCode} and `org_id` = #{orgId}
+	</delete>
+
+
+	<delete id="deleteBatch">
+		delete from t_base_day_setting where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

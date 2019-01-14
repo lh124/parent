@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>全程接种计划</title>
+	#parse("sys/header.html")
+	<style>
+		#btn1 {
+			width: 50px;
+			height: 40px;
+			border: 1px solid #D4CD49;
+			position: fixed;
+			left: 20px;
+			top: 3px;
+		}
+		#noinoculateID {
+			height: 20px;
+			/* border: 1px solid #D4CD49; */
+			position: fixed;
+			left: 73px;
+			top: 10px;
+			padding-left: 60px;
+		}
+	</style>
+</head>
+<body>
+<div style="margin-left: 20px">
+	<div data-options="region:'center',title:'全程接种计划'" style="height:130px">
+		<div style="text-align: center;font-size: 24px">
+			<label id="currentdepartname"></label>儿童全程接种计划单
+		</div>
+		<hr />
+		<br /> <br />
+		<div style="margin-left: 60px">
+			<!-- 儿童姓名：<label id="cname" style="margin-right: 180px"></label> -->
+			<table style="  width:500px; height: 100px;margin-left: 60px;border-color: #0d0e11" border="0">
+				<tr>
+					<td>儿童姓名：</td>
+					<td id="cname" style="max-width: 150px"></td>
+					<td>出生日期：</td>
+					<td id="birthtime"></td>
+				</tr>
+				<tr>
+					<td>父亲姓名：</td>
+					<td id="fatherName"></td>
+					<td>母亲姓名：</td>
+					<td id="matherName"></td>
+				</tr>
+				<tr>
+					<td>联系地址：</td>
+					<td id="address" colspan="3"></td>
+				</tr>
+				<tr>
+					<td>使用单位：</td>
+					<td id="unit"></td>
+					<td>打印日期：</td>
+					<td id="printDate"></td>
+				</tr>
+			</table>
+			<table style="  width: 500px; height: 10px;margin-left: 60px;border-color: #0d0e11;border-top:1px solid #000;border-bottom:1px dashed #000;" border="0">
+				<tr>
+					<td style="width: 200px">疫苗名称:</td>
+					<td style="width: 80px">剂&nbsp&nbsp次:</td>
+					<td>计划时间:</td>
+				</tr>
+			</table>
+			<table id="result" style="  width: 500px; height: 100px;margin-left: 60px;border-color: #0d0e11;border-bottom:1px solid #000;" border="0">
+
+			</table>
+			<br />
+			<div style="  width:500px; height: 100px;margin-left: 60px;border-color: #0d0e11">
+				备注：<textarea rows="4" cols="30"  style=" width: 516px;height: 127px;overflow:hidden;border: 0px">免费疫苗为国家免疫规划疫苗，接种费用由政府财政承担，受种者无需承担任何费用。自费疫苗由受种者自行选择并承担相关费用。如您的小孩发烧、腹泻或生病，请推迟接种。口服脊灰和轮状疫苗前后半小时不要吃奶和热水。 自费疫苗家长知情、自愿、自费选择接种。
+				</textarea>
+				电话：<input id="org_phone" style="border: 0px">
+
+			</div>
+			<br />
+		</div>
+
+	</div>
+	<!--<a id="btn" href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-print'"></a>-->
+	<button onclick="prints()" id="btn1">打印</button>
+	<label class="checkbox-inline" id="noinoculateID">
+		<input type="checkbox" name="noinoculate" class="condition" id="noinoculate"/><span id="notext">未接种</span>
+	</label>
+	<!--<input type="checkbox"  name="noinoculate" id="noinoculate"/>未接种-->
+
+	<script type="text/javascript">
+        $(function() {
+            var childId = "$!request.getParameter('childId')";
+            var childName = "$!request.getParameter('childName')";
+
+            var fatherName = "$!request.getParameter('fatherName')";
+            var matherName = "$!request.getParameter('matherName')";
+            var birthtime = "$!request.getParameter('birthtime')";
+            var sex = "$!request.getParameter('sex')";
+            var address = "$!request.getParameter('address')";
+            var unit = "$shiro.getBaseInfo('orgName')";
+
+            if ((childId) == null || childId == '') {
+                layer.msg("请选择儿童");
+                return;
+            }
+            $('#cname').html(childName);
+
+            $('#birthtime').html(birthtime + "&nbsp;&nbsp;" + sex);
+            $('#fatherName').html(fatherName);
+            $('#matherName').html(matherName);
+            //$('#sex').html(sex);
+            $('#address').html(address);
+            $('#unit').html(unit);
+            $('#printDate').html(getNowDate());
+            var baseorgInfoId="";
+            layer.msg('正在规划中，请耐心等待...', {icon: 16,shade: [0.5, '#f5f5f5'],scrollbar: false, time:1000000}) ;
+            $.ajax({
+                type : 'post',
+                url :  '../recommend/childAllPlan?childId='+ childId,
+                success : function(data) {
+                    layer.msg("规划完成");
+                    $.ajax({
+                        type:'post',
+                        url:'../tbaseorginfo/list?page=1&limit=10',
+                        success : function(data) {
+                            $("#org_phone").val(data.page.list==null?"":data.page.list[0].phone)
+                            baseorgInfoId=data.page.list[0].id;
+                        }
+                    })
+                    $("#noinoculate").on("click",function () {
+                        if ($(this).prop("checked")) {
+                            if (data.code==0) {
+                                $("#result").html("");
+                                var list = data.plans;
+                                for (var i = 0; i < list.length; i++) {
+                                    var item = list[i];
+                                    if (item.state == 0) {
+                                        var html = "";
+                                        html += "<tr>";
+                                        html += "<td  style=\"width: 200px\">" + item.classId + "</td>";
+                                        html += "<td style=\"width: 80px\">" + item.injectionTimes + "</td>";
+                                        if (item.state == 0) {
+                                            html += "<td>" + item.inoculateTime.substring(0, 10) + "</td>";
+                                        }
+                                        html += "</tr>";
+                                        html += "<br/>";
+                                        $('#result').append(html);
+                                    }
+                                }
+                            } else {
+                                $('#result').after(data.msg);
+                            }
+                        } else {
+                            if (data.code==0){
+                                $("#result").html("");
+                                var list = data.plans;
+                                for ( var i = 0; i < list.length; i++) {
+                                    var item = list[i];
+                                    var html = "";
+                                    html += "<tr>";
+                                    html += "<td  style=\"width: 200px\">" + item.classId + "</td>";
+                                    html += "<td style=\"width: 80px\">" + item.injectionTimes + "</td>";
+                                    if (item.state == 0) {
+                                        html += "<td>" + item.inoculateTime.substring(0,10) + "</td>";
+                                    } else {
+                                        html += "<td>已接种</td>";
+                                    }
+                                    html += "</tr>";
+                                    html += "<br/>";
+                                    $('#result').append(html);
+                                }
+                            }else {
+                                $('#result').after(data.msg);
+                            }
+                        }
+
+
+                    })
+                    if (data.code==0){
+                        var list = data.plans;
+                        for ( var i = 0; i < list.length; i++) {
+                            var item = list[i];
+                            var html = "";
+                            html += "<tr>";
+                            html += "<td  style=\"width: 200px\">" + item.classId + "</td>";
+                            html += "<td style=\"width: 80px\">" + item.injectionTimes + "</td>";
+                            if (item.state == 0) {
+                                html += "<td>" + item.inoculateTime.substring(0,10) + "</td>";
+                            } else {
+                                html += "<td>已接种</td>";
+                            }
+                            html += "</tr>";
+                            html += "<br/>";
+                            $('#result').append(html);
+                        }
+                    }else {
+                        $('#result').after(data.msg);
+                    }
+                }
+            });
+
+            //打印
+            $("#btn1").on('click', function() {
+                $("#btn1").hide();
+                $("#noinoculate").hide();
+                $("#notext").hide();
+                print();
+            });
+
+            $("#org_phone").on("blur",function () {
+                var str=$("#org_phone").val();
+                $.ajax({
+                    type:'post',
+                    url:'../tbaseorginfo/updatephone?id='+baseorgInfoId+"&phone="+str,
+                    success : function(data) {
+                        layer.msg("更改成功");
+                    }
+                })
+            })
+        });
+
+
+        function getNowDate() {
+            var date = new Date();
+            var sign1 = "-";
+            var sign2 = ":";
+            var year = date.getFullYear() // 年
+            var month = date.getMonth() + 1; // 月
+            var day = date.getDate(); // 日
+            var hour = date.getHours(); // 时
+            var minutes = date.getMinutes(); // 分
+            var seconds = date.getSeconds() //秒
+            var weekArr = [ '星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天' ];
+            var week = weekArr[date.getDay() - 1];
+            // 给一位数数据前面加 “0”
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (day >= 0 && day <= 9) {
+                day = "0" + day;
+            }
+            if (hour >= 0 && hour <= 9) {
+                hour = "0" + hour;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+                minutes = "0" + minutes;
+            }
+            if (seconds >= 0 && seconds <= 9) {
+                seconds = "0" + seconds;
+            }
+            /* var currentdate = year + sign1 + month + sign1 + day + " "
+                    + hour + sign2 + minutes + sign2 + seconds + " "
+                    + week; */
+            var currentdate = year + sign1 + month + sign1 + day + " "
+                + week;
+            return currentdate;
+        }
+	</script>
+</div>
+
+</body>
+</html>
+
+
+

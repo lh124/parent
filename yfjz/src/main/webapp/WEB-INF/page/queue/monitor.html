@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>monitor</title>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/monitor.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/video-js.min.css" media="all">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body >
+<div id="monitor" v-cloak>
+    <select id="monitor-select" v-model="monitorType" class="select" @change="store()">
+        <option v-for="monitor in monitorTypes" :value="monitor" >{{monitor.towerName}}</option>
+    </select>
+    <component :is="monitorType.towerType" :key="monitorType.id" :host="host" :type="topics[monitorType.towerNatureId]" :tid="monitorType.id" :tname="monitorType.towerName" :ttype="monitorType.towerNatureId"></component>
+</div>
+
+<template id="caller">
+    <div class="container1">
+        <div class="pos tower-name">{{tname}}</div>
+        <div class="clearfix calling flex-items flex-overfox">
+            <span class="order">{{currentQueue.noText}}</span><br/>
+            <span class="">{{currentQueue.childName}}</span><br/>
+            <span v-if="ttype==2" class="vaccine">{{currentQueue.vaccine}}</span>
+        </div>
+        <div class="waitNum">
+            当前等待人数: <i class="num">{{Object.keys(queueList).length}}</i>人
+        </div>
+    </div>
+</template>
+
+<template id="hall">
+   <!-- <textarea>{{queues}}</textarea>-->
+    <div class="row">
+        <div class="row-items" v-for="(queue,key) in queues">
+            <div class="dis-flex">
+                <p class="items-top">{{queueTypes[key].queueName}}</p>
+                <div v-if="key == 2 && queueStatus ==1" class="flex-1">
+                    <div class="box-flex">
+                        <div class="clearfix mt5 content-items" v-for="(towers,towerId) in queue.towerList">
+                            <div style="text-align:left; ">
+                                <span class="ml5">{{towers.tower.towerName.substring(0, 2)}}</span>
+                                <span class="order green">{{towers.current.noText}}</span>
+                                <span class="name disib green">{{towers.current.childName}}</span>
+                            </div>
+                            <!--本台队列-->
+                            <div class="" v-for="(wait,waitId) in queue.queueList">
+                                <div v-if="towers.tower.id == wait.position" class="tc">
+                                    <span class="order white disib edge1">{{wait.noText}}</span>
+                                    <span class="name  white disib tl">{{wait.childName}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix mt10 content-items"></div>
+                    </div>
+                </div>
+                <div v-else class="flex-1">
+                    <div class="item-content">
+                        <div class="clearfix mt5" v-for="(towers,towerId) in queue.towerList">
+                            <div style="text-align:left; ">
+                                <span class="ml5">{{towers.tower.towerName.substring(0, 2)}}</span>
+                                <span class="order green">{{towers.current.noText}}</span>
+                                <span class="name disib green">{{towers.current.childName}}</span>
+                            </div>
+                        </div>
+                        <div class="clearfix " v-for="(wait,waitId) in queue.queueList">
+                            <span class="order white disib edge1">{{wait.noText}}</span>
+                            <span class="name  white disib tl">{{wait.childName}}</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="num-wrap">等待人数: <span class="waitNum">{{Object.keys(queue.queueList).length}}</span></p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="observe">
+    <div id="observe-main">
+        <div id="observe-list" class="observe-list" style="border-right: 2px white solid;">
+            <p>留观队列</p>
+            <div class="observe-row">
+                <div style="width:33%;color:green;display:inline-table">号码</div>
+                <div style="width:33%;color:green;display:inline-table">姓名</div>
+                <div style="width:33%;color:green;display:inline-table;text-align:right">剩余时间</div>
+            </div>
+            <div v-for="item in observeList" class="observe-row">
+                <div style="width:33%;color:red;display:inline-table">{{item.noText}}</div>
+                <div style="width:33%;color:red;display:inline-table">{{item.childName}}</div>
+                <div style="width:33%;color:red;display:inline-table;text-align:right">{{item.count|countDown}}</div>
+
+            </div>
+        </div>
+        <video id="observe-video" class="video-js observe-video" style="display: inline;"></video>
+        <div class = "notice" v-show="showNotice">
+                <p class="marquee">{{notice}}</p>
+        </div>
+    </div>
+</template>
+
+<template id="hallplayer">
+    <div>
+        <video id="hallplayer" class="video-js"></video>
+        <div class = "notice" v-show="showNotice">
+            <p class="marquee">{{notice}}</p>
+        </div>
+    </div>
+</template>
+
+</body>
+<script src="${rc.contextPath}/statics/libs/vue.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/sockjs.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/stomp.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/video.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/jquery.min.js"></script>
+<script src="${rc.contextPath}/statics/js/queue/caller.js"></script>
+<script src="${rc.contextPath}/statics/js/queue/observe.js"></script>
+<script src="${rc.contextPath}/statics/js/queue/hall.js"></script>
+<script src="${rc.contextPath}/statics/js/queue/hallplayer.js"></script>
+<script>
+    var monitorVm = new Vue({
+        el:'#monitor',
+        data:{
+            //显示器类别：大厅、留观、预检台、儿保台、登记台、接种台
+            monitorType:JSON.parse(localStorage.getItem("monitorType")) || {},
+            monitorTypes:[],
+            topics:['>','register','inoculate','healthcare','precheck','observe','hallplayer'],
+            host:'${queuerUrl}',
+            type:'',
+            notice:''
+        },
+        mounted:function(){
+            var self = this;
+            $.ajax({
+                url: "../tbasetower/listAll",
+                dataType: 'json',
+                method:'GET',
+                contentType:'application/json;charset=UTF-8',
+                success : function(result){
+                    if(result.tower instanceof Array){
+                        self.monitorTypes.push({towerType:'hallplayer',towerName:'视频播放',towerNatureId:6},{towerType:'hall',towerName:'大厅显示',towerNatureId:0},{towerType:'observe',towerName:'留观显示',towerNatureId:5})
+                        result.tower.forEach(function(t){
+                            t.towerType="caller";
+                            self.monitorTypes.push(t);
+                        })
+                    }
+                },error:function(){
+                    alert("获取数据失败,请联系管理员!");
+                }
+            });
+        },
+        methods:{
+            store:function(){
+                localStorage.setItem("monitorType",JSON.stringify(this.monitorType))
+            }
+        }
+    })
+</script>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查询统计各年龄组儿童构成情况统计表（免疫规划来源）</title>
+    #parse("sys/header.html")
+    <style>
+        .basic-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .basic-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        #printSytle p {
+            margin-top: 10px;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #000 !important;
+        }
+
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+            padding: 8px;
+            line-height: 1.42857143;
+            vertical-align: middle;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+<div id="childrenOfAllAgeGroups">
+    <div class="row" id="unprintdiv" style="padding: 15px 0 0 15px;">
+        <form class="form-inline">
+            <!--<div class="form-group">
+                &lt;!&ndash;<label class="col-sm-4 control-label" for="queryNian">查询年份:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="layui-input" id="queryNian" placeholder="请选择年">
+                </div>&ndash;&gt;
+                查询年份:
+                <input type="text" class="form-control" id="yearDate" placeholder="请选择年">
+            </div>
+            <div class="form-group">
+                月份:
+                <select class="form-control" style="width: 200px" id="monthDate" @change="changeQuery" name="month">
+                    <option value="01">一月</option>
+                    <option value="02">二月</option>
+                    <option value="03">三月</option>
+                    <option value="04">四月</option>
+                    <option value="05">五月</option>
+                    <option value="06">六月</option>
+                    <option value="07">七月</option>
+                    <option value="08">八月</option>
+                    <option value="09">九月</option>
+                    <option value="10">十月</option>
+                    <option value="11">十一月</option>
+                    <option value="12">十二月</option>
+                </select>
+            </div>-->
+            <div class="form-group" style="display: none;">
+                <label>开始时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="yearDate">
+            </div>
+            <div class="form-group" style="display: none;">
+                <label>&nbsp;&nbsp;结束时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="monthDate">
+            </div>
+            <div class="form-group" id="chilCommitteeIdParent">
+                &nbsp;居委会/行政村:
+                <select class="selectpicker" id="chilCommittees" name="chilCommittees" title="" multiple
+                        data-live-search="true"></select>
+            </div>
+
+            <button type="button" class="btn btn-warning" @click="query">
+                <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;查询
+            </button>
+            <button type="button" class="btn btn-primary" @click="excel">
+                <span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;导出
+            </button>
+            <button type="button" class="btn btn-info" @click="print">
+                <span class="glyphicon glyphicon-print"></span>&nbsp;&nbsp;打印
+            </button>
+        </form>
+    </div>
+
+    <!--<div id="printSytle" style="margin: 15px">
+        <h3 align="center">贵州省免疫规划目标儿童动态管理一览表</h3>
+        <p align="center">（<span id="year"></span>年<span id="month"></span>月）</p>
+        <p>填报单位：_________县（市、区）___________乡镇（街道办）____________村（居委会）</p>
+        <p style="overflow: hidden;"><span style="float:left">填报人：__________________</span> <span style="float: right; margin-right: 20px;">填报日期：_______年______月_____日</span></p>
+    </div>-->
+
+    <div class="row" style="padding-left: 20px;padding-right: 20px;border-top:none;">
+        <div style="text-align: center;">
+            <h4 style="margin-top: 5px;margin-bottom: 15px;">各年龄组儿童构成情况统计表（免疫规划来源）</h4>
+            <p>
+                贵州省
+                <u>&nbsp;&nbsp;&nbsp;&nbsp;<span id="city"> </span>&nbsp;&nbsp;&nbsp;&nbsp;</u>
+                市（州、地）
+                <u>&nbsp;&nbsp;&nbsp;&nbsp;<span id="county"> </span>&nbsp;&nbsp;&nbsp;&nbsp;</u>
+                县（市、区）
+                <u>&nbsp;&nbsp;&nbsp;&nbsp;<span id="countryside"> </span>&nbsp;&nbsp;&nbsp;&nbsp;</u>
+                乡（镇、街道办）
+                <u>&nbsp;&nbsp;&nbsp;&nbsp;<span id="year"></span>&nbsp;&nbsp;&nbsp;&nbsp;</u>
+
+                年</p>
+        </div>
+        <table class="table table-bordered basic-table">
+            <thead>
+            <tr>
+                <th rowspan="3">单位</th>
+                <th colspan="22">年龄（岁）</th>
+            </tr>
+            <tr>
+                <td colspan="3">0</td>
+                <td colspan="3">1</td>
+                <td colspan="3">2</td>
+                <td colspan="3">3</td>
+                <td colspan="3">4</td>
+                <td colspan="3">5</td>
+                <td colspan="3">6</td>
+                <td>合计</td>
+            </tr>
+            <tr>
+                <td>常住</td>
+                <td>流出</td>
+                <td>流入</td>
+                <td>常住</td>
+                <td>流出</td>
+                <td>流入</td>
+                <td>常住</td>
+                <td>流出</td>
+                <td>流入</td>
+                <td>常住</td>
+                <td>流出</td>
+                <td>流入</td>
+                <td>常住</td>
+                <td>流出</td>
+                <td>流入</td>
+                <td>常住</td>
+                <td>流出</td>
+                <td>流入</td>
+                <td>常住</td>
+                <td>流出</td>
+                <td>流入</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(item,index) in listData">
+                <td>{{item.committeeName}}</td>
+                <template v-if="item.age0">
+                    <td>{{item.age0.常住}}</td>
+                    <td>{{item.age0.流出}}</td>
+                    <td>{{item.age0.流入}}</td>
+
+                </template>
+                <template v-else>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </template>
+                <template v-if="item.age1">
+                    <td>{{item.age1.常住}}</td>
+                    <td>{{item.age1.流出}}</td>
+                    <td>{{item.age1.流入}}</td>
+                </template>
+                <template v-else>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </template>
+                <template v-if="item.age2">
+                    <td>{{item.age2.常住}}</td>
+                    <td>{{item.age2.流出}}</td>
+                    <td>{{item.age2.流入}}</td>
+                </template>
+                <template v-else>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </template>
+                <template v-if="item.age3">
+                    <td>{{item.age3.常住}}</td>
+                    <td>{{item.age3.流出}}</td>
+                    <td>{{item.age3.流入}}</td>
+                </template>
+                <template v-else>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </template>
+                <template v-if="item.age4">
+                    <td>{{item.age4.常住}}</td>
+                    <td>{{item.age4.流出}}</td>
+                    <td>{{item.age4.流入}}</td>
+                </template>
+                <template v-else>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </template>
+                <template v-if="item.age5">
+                    <td>{{item.age5.常住}}</td>
+                    <td>{{item.age5.流出}}</td>
+                    <td>{{item.age5.流入}}</td>
+                </template>
+                <template v-else>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </template>
+                <template v-if="item.age6">
+                    <td>{{item.age6.常住}}</td>
+                    <td>{{item.age6.流出}}</td>
+                    <td>{{item.age6.流入}}</td>
+                </template>
+                <template v-else>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </template>
+
+                <td>{{item.total}}</td>
+            </tbody>
+        </table>
+        <div class="row" style="border-top:none;margin-left: 40px;margin-bottom: 40px;">
+            流出：指户籍在本辖区，外出时间大于3个月的儿童。流入：指户籍在外地，在本辖区居住时间大于3个月的儿童
+        </div>
+    </div>
+</div>
+
+<script type="application/javascript">
+    var orgId = "$shiro.getBaseInfo('orgId')";
+</script>
+<script src="${rc.contextPath}/statics/js/report/childrenOfAllAgeGroups.js?_${date.systemTime}"></script>
+</body>
+</html>

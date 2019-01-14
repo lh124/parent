@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>未种通知</title>
+#parse("sys/header.html")
+	<script type="application/javascript">
+        var orgId="$shiro.getBaseInfo('orgId')";
+	</script>
+</head>
+<body style="padding: 5px">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div id="unprintdiv" class="grid-btn">
+			<form id="unInoNoteForm" class="form-inline" role="form">
+				<div class="form-group" style="border:1px solid #dddddd;border-radius:5px;-moz-border-radius:5px;padding-left: 5px;padding-right: 5px">
+					<label><input type="radio" name="selectType" checked="true" value="all">全部</label>
+					&nbsp;<label><input type="radio" name="selectType" value="in">应种通知</label>
+					&nbsp;<label><input type="radio" name="selectType" value="out">补种通知</label>
+				</div>
+				<div class="form-group" style="border:1px solid #dddddd;border-radius:5px;-moz-border-radius:5px;padding-left: 5px;padding-right: 5px">
+					<label><input type="radio" name="limitType" checked="true" value="1">限制针剂</label>
+					&nbsp;<label><input type="radio" name="limitType" value="0">不做限制</label>
+				</div>
+				<div class="form-group">
+					&nbsp;| &nbsp;月限：
+					<select class="form-control" data-live-search="false" name="monthLimit">
+						<option value=""></option>
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+						<option value="9">9</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+					</select>
+				</div>
+				<div class="form-group">
+					&nbsp;出生日期:<input type="text" class="form-control" v-model="q.chilBirthdayStart" id="chilBirthdayStart" name="chilBirthdayStart" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model="q.chilBirthdayEnd" id="chilBirthdayEnd" name="chilBirthdayEnd" @keyup.enter="query" style="width: 110px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;&nbsp;性别：
+					<select class="form-control" data-live-search="false" name="chilSex">
+						<option value=""></option>
+						<option value="1">男</option>
+						<option value="2">女</option>
+					</select>
+				</div>
+
+				<div class="form-group">
+					&nbsp;&nbsp;统计日期:<input type="text" class="form-control"  id="selectDate" name="selectDate" @keyup.enter="query" style="width: 120px" placeholder="">
+				</div>
+
+				<div class="form-group">
+					&nbsp;安排日期:<input type="text" class="form-control" id="planDate" name="planDate" @keyup.enter="query" style="width: 120px" placeholder="">
+				</div>
+
+				<br><br>
+
+				<div class="form-group">
+					&nbsp;学校:
+					<select class="form-control"  id="chilSchool" name="chilSchool" ></select>
+				</div>
+
+				<div class="form-group" id="chilCommitteeIdParent">
+					&nbsp;居委会/行政村:
+					<select  class="selectpicker" id="chilCommittees" name="chilCommittees" title=""  multiple data-live-search="true"></select>
+				</div>
+				<div class="form-group">
+					&nbsp;居住属性:
+					<select  class="form-control"  id="chilResidence" name="chilResidence" ></select>
+				</div>
+				<div class="form-group">
+					&nbsp;户籍属性:
+					<select  class="form-control"  id="chilAccount" name="chilAccount" ></select>
+				</div>
+				<div class="form-group">
+					&nbsp;在册情况:
+					<select  class="selectpicker" id="infostatus" name="infostatus" title=""  multiple data-live-search="true"></select>
+				</div>
+
+				<div class="form-group">
+					&nbsp;疫苗类别:
+					<select  class="selectpicker" id="biotypes" name="biotypes" title=""  multiple data-live-search="true"></select>
+				</div>
+				<br><br>&nbsp;
+				<a class="btn btn-primary" @click="query">查询</a>
+				<a class="btn btn-default" @click="print">打印</a>
+				<a class="btn btn-default" @click="printNote"><i class="fa fa-print"></i>&nbsp;打印通知单</a>
+				<a class="btn btn-default" @click="excel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+				<a class="btn btn-primary"  @click="historyRecord"></i>&nbsp;历史查询记录</a>
+			</form>
+		</div>
+		<table id="jqGrid"></table>
+		<br>
+		<div class="row">
+			<div class="col-xs-6">
+				<div style="color: #37B083">行政村/居委会的疫苗剂次汇总：</div>
+				<div style="width: 450px"><table id="statisticsGrid"></table></div>
+			</div>
+			<div class="col-xs-6">
+				<div style="color: #37B083">疫苗汇总：</div>
+				<div style="width: 450px"><table id="inoTotalGrid"></table></div>
+			</div>
+		</div>
+
+	    <!--<div id="jqGridPager"></div>-->
+    </div>
+
+</div>
+<script src="${rc.contextPath}/statics/js/schedule/unInoNote.js?_${date.systemTime}"></script>
+</body>
+</html>

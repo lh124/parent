@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite" xmlns:v-validate="http://java.sun.com/jsf/core">
+<head>
+	<title>仓库表</title>
+	#parse("sys/header.html")
+</head>
+<body>
+<ul id="myTab" class="nav nav-tabs">
+	<!--仓库管理界面-->
+	<li class="active"><a href="#store" data-toggle="tab">仓库管理</a></li>
+	<!--设备管理界面-->
+	<li><a href="#equipment" data-toggle="tab">设备管理</a></li>
+</ul>
+<div id="myTabContent" class="tab-content" style="margin-top: 10px">
+	<div class="tab-pane fade in active" id="store">
+		<div id="rrapp" v-cloak>
+			<div v-show="showList">
+				<!--<div class="grid-btn">
+
+					<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+					<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+					<a class="btn btn-primary" @click="stop" id="stop"><i class="fa fa-pencil-square-o"></i>&nbsp;启用/禁用</a>
+				</div>-->
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+			<div v-show="!showList" class="panel panel-default">
+				<div class="panel-heading">{{title}}</div>
+				<form class="form-horizontal" id="storeForm">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">仓库名称</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="name" v-model="tMgrStore.name" placeholder="仓库名称"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">仓库类型</div>
+						<div class="col-sm-10">
+							<select id="storeType"  class="form-control " name="type" v-model="tMgrStore.ttype"  @change="changeShow"  >
+								<option value="0">主仓库</option>
+								<option value="1">门诊分仓库</option>
+								<option value="2">村分仓库</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">仓库地址</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="address" v-model="tMgrStore.address" placeholder="仓库地址"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">管理员</div>
+						<div class="col-sm-10">
+							<select  class="form-control selectpicker" name="mgrUserId" id="users" v-model="tMgrStore.mgrUserId" placeholder="管理员"></select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">管理员电话</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="mgrPhone" v-model="tMgrStore.mgrPhone" placeholder="管理员电话"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">管理员邮箱</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="mgrEmail" v-model="tMgrStore.mgrEmail" placeholder="管理员邮箱"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">备注</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="remark" v-model="tMgrStore.remark" placeholder="备注"/>
+						</div>
+					</div>
+					<div class="form-group" id="selectTowers" style="display: none">
+						<div class="col-sm-2 control-label">关联接种台</div>
+						<div class="col-sm-10">
+							<select class="col-lg-12 form-control" name="posId" v-model="tMgrStore.posId">
+								<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+							</select>
+							<!--<input type="text" class="form-control" v-model="tMgrStore.posId" placeholder="选择接种台"/>-->
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label"></div>
+						<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+						&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+	<div class="tab-pane fade in active" id="equipment">
+		<div id="tab2" v-cloak>
+			<div v-show="showList2" >
+				<!--<div class="grid-btn">
+					<a class="btn btn-primary" @click="add2"><i class="fa fa-plus"></i>&nbsp;新增</a>
+					<a class="btn btn-primary" @click="update2"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+					<a class="btn btn-primary" @click="stop2" ><i class="fa fa-pencil-square-o"></i>&nbsp;启用/禁用</a>
+				</div>-->
+				<table id="equipmentGrid"></table>
+				<div id="equipmentPager"></div>
+			</div>
+			<div v-show="!showList2" class="panel panel-default">
+				<div class="panel-heading">{{title}}</div>
+				<form class="form-horizontal" id="equipmentForm">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备名称</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="equipmentName" required v-model="tMgrEquipment.name" placeholder="设备名称"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备编码</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="code" v-model="tMgrEquipment.code" placeholder="设备编码"/>
+						</div>
+					</div>
+					<div class="form-group">
+
+						<div class="col-sm-2 control-label">仓库名称</div>
+						<div class="col-sm-10">
+							<select class="col-lg-12 form-control" name="store"  v-model="tMgrEquipment.storeid">
+								<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">备注</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tMgrEquipment.remark" placeholder="备注"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label"></div>
+						<input type="button" id="equipmentBtn" class="btn btn-primary" @click="saveOrUpdate2" value="确定"/>
+						&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload2" value="返回"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div>
+<script>
+    /* $(function () {
+       /!*  $("#equipmentForm").bootstrapValidator({
+             live: 'enabled',//验证时机，enabled是内容有变化就验证（默认），disabled和submitted是提交再验证
+             excluded: [':disabled', ':hidden', ':not(:visible)'],//排除无需验证的控件，比如被禁用的或者被隐藏的
+             submitButtons: '#equipmentBtn',//指定提交按钮，如果验证失败则变成disabled，但我没试成功，反而加了这句话非submit按钮也会提交到action指定页面
+             message: '通用的验证失败消息',//好像从来没出现过
+             feedbackIcons: {//根据验证结果显示的各种图标
+                 valid: 'glyphicon glyphicon-ok',
+                 invalid: 'glyphicon glyphicon-remove',
+                 validating: 'glyphicon glyphicon-refresh'
+             },
+             fields: {
+                 equipmentName: {
+                     validators: {
+                         notEmpty: {//检测非空,radio也可用
+                             message: '文本框必须输入'
+                         }/!*,
+                         stringLength: {//检测长度
+                             min: 6,
+                             max: 30,
+                             message: '长度必须在6-30之间'
+                         },
+                         regexp: {//正则验证
+                             regexp: /^[a-zA-Z0-9_\.]+$/,
+                             message: '所输入的字符不符要求'
+                         },
+                         remote: {//将内容发送至指定页面验证，返回验证结果，比如查询用户名是否存在
+                             url: '指定页面',
+                             message: 'The username is not available'
+                         },
+                         different: {//与指定文本框比较内容相同
+                             field: '指定文本框name',
+                             message: '不能与指定文本框内容相同'
+                         },
+                         emailAddress: {//验证email地址
+                             message: '不是正确的email地址'
+                         },
+                         identical: {//与指定控件内容比较是否相同，比如两次密码不一致
+                             field: 'confirmPassword',//指定控件name
+                             message: '输入的内容不一致'
+                         },
+                         date: {//验证指定的日期格式
+                             format: 'YYYY/MM/DD',
+                             message: '日期格式不正确'
+                         },
+                         choice: {//check控件选择的数量
+                             min: 2,
+                             max: 4,
+                             message: '必须选择2-4个选项'
+                         }*!/
+                     }
+                 }
+             }
+         });*!/
+         $('#testForm').bootstrapValidator({
+
+             message: 'This value is not valid',
+             feedbackIcons: {
+                 valid: 'glyphicon glyphicon-ok',
+                 invalid: 'glyphicon glyphicon-remove',
+                 validating: 'glyphicon glyphicon-refresh'
+             },
+             fields: {
+                 username: {
+                     message: '用户名验证失败',
+                     validators: {
+                         notEmpty: {
+                             message: '用户名不能为空'
+                         }
+                     }
+                 }
+             }
+         });
+        /!* $("#equipmentBtn").click(function () {//非submit按钮点击后进行验证，如果是submit则无需此句直接验证
+             alert(1)
+             $("#equipmentForm").bootstrapValidator('validate');//提交验证
+             if ($("#equipmentForm").data('bootstrapValidator').isValid()) {//获取验证结果，如果成功，执行下面代码
+                 alert("yes");//验证成功后的操作，如ajax
+             }
+         });*!/
+     });*/
+
+</script>
+<script src="${rc.contextPath}/statics/js/mgr/tmgrstore.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/mgr/tmgrequipment_tabs.js?_${date.systemTime}"></script>
+</body>
+</html>

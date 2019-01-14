@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.basesetting.TMvUploadDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.basesetting.TMvUploadEntity">
+		select * from t_mv_upload where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.basesetting.TMvUploadEntity">
+		select * from t_mv_upload 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryListAndPlayerArea" resultType="HashMap">
+		select tu.id,tu.realname,tu.url,tu.filesize,tu.create_time as createTime,GROUP_CONCAT(tr.playerarea_id) as playerareaId
+		from t_mv_upload tu left join t_mv_relevance tr on tu.id=tr.mv_id
+		GROUP BY tu.id
+	</select>
+
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from t_mv_upload 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.basesetting.TMvUploadEntity">
+		insert into t_mv_upload
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			id,
+				<if test="realname != null">`realname` , </if>
+				<if test="url != null">`url` , </if>
+				<if test="createTime != null">`create_time` , </if>
+				<if test="filesize != null">`filesize` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+				<if test="realname != null">#{realname} , </if>
+				<if test="url != null">#{url} , </if>
+				<if test="createTime != null">#{createTime} , </if>
+				<if test="filesize != null">#{filesize} </if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.basesetting.TMvUploadEntity">
+		update t_mv_upload 
+		<set>
+			<if test="realname != null">`realname` = #{realname}, </if>
+			<if test="url != null">`url` = #{url}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="filesize != null">`filesize` = #{filesize}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mv_upload where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mv_upload where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

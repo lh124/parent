@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.sync.DataDao">
+
+
+	<!--将金卫信的数据库表转成预防接种的数据库表-->
+	<update id="renameBaseTableToOperation">
+			alter table `bacterin` rename `u_bacterin`;
+			alter table `child` rename `u_child`;
+			alter table `hjdm` rename `u_hjdm`;
+			alter table `qyhf` rename `u_qyhf`;
+			alter table `syswhb` rename `u_syswhb`;
+			alter table `zcqk` rename `u_zcqk`;
+
+
+			CREATE TABLE `zz_u_bacterin` select * from `u_bacterin` ;
+			CREATE TABLE `zz_u_child` select * from  `u_child` ;
+			CREATE TABLE `zz_u_hjdm` select * from  `u_hjdm` ;
+			CREATE TABLE `zz_u_qyhf` select * from  `u_qyhf` ;
+			CREATE TABLE `zz_u_syswhb` select * from  `u_syswhb` ;
+			CREATE TABLE `zz_u_zcqk` select * from  `u_zcqk` ;
+			CREATE TABLE `zz_u_all_child_excel` select * from  `u_all_child_excel` ;
+			CREATE TABLE `zz_u_all_inoculate_excel` select * from  `u_all_inoculate_excel` ;
+	</update>
+
+	<!--同步儿童数据 从金卫信原始child表导入-->
+	<update id="synchronizedChildFrom" parameterType="Map">
+			ALTER TABLE `t_child_info`
+			MODIFY COLUMN `chil_name` varchar(150) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT '姓名' AFTER `chil_code`;
+			UPDATE u_child set `发卡日期` = null WHERE `发卡日期` is null or `发卡日期` = '';
+			ALTER TABLE `t_child_info`
+			MODIFY COLUMN `chil_createsite` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL COMMENT '建档单位编码' AFTER `chil_createcounty`;
+
+			TRUNCATE table t_child_info;
+			TRUNCATE table t_base_committee;
+
+			INSERT INTO t_child_info (
+			chil_code,chil_name,chil_sex,chil_birthday,
+			chil_nati_id,chil_birthno,chil_mother,chil_father,
+			chil_committee,chil_habiaddress,chil_address,chil_school,
+			 chil_carddate,chil_residenceclient,chil_residence,chil_account,
+			chil_habi_id,chil_sensitivity,chil_motherhb,
+			chil_here,chil_leavedate,chil_leave,chil_leaveremark,chil_curdepartment,
+			chil_predepartment,chil_createsite,chil_createdate,chil_createman,
+			chil_birthhospitalname,chil_motherno,
+			chil_fatherno,create_card_time,
+			create_user_name,create_time)
+			SELECT  `儿童编码`,`儿童姓名`,`儿童性别`, CONCAT(出生日期,CONCAT(' ',CASE LENGTH(`出生时间`)
+				WHEN 0	THEN '00:00:00'
+				WHEN 2 THEN concat(`出生时间`,':00:00')
+				WHEN 5	THEN concat(`出生时间`,':00')
+				ELSE '00:00:00' END))
+			   as `出生日期`,
+			`民族`,`出生证编号`,`母亲姓名`,`父亲姓名`,
+			`儿童区域划分`,`户口地址`,`家庭住址`,`幼儿园编码`,
+			 `发卡日期`,`户籍属性`,`户籍属性`,`户籍属性`,
+			`户口县国标`,`过敏史`,`母亲HB`,
+			`在册情况`,`在册日期`,`在册变化`,`在册备注`,`原位置`,
+			`现位置`,`建卡单位`,`建卡日期`, `建卡人`,
+			`出生医院`,`母亲身份证`,
+			`父亲身份证`,`建卡日期`,`建卡人`,`建卡日期`
+			from u_child;
+
+
+			INSERT into t_base_committee (code,name,org_id,create_time)
+			SELECT `划分编码`,`划分名称`, #{orgId},NOW() from u_qyhf;
+
+
+			UPDATE t_child_info tcinfo , u_child u_cd set tcinfo.delete_status = 1 WHERE
+			tcinfo.chil_code=u_cd.`儿童编码` and u_cd.`数据状态` = 'D';
+
+
+			UPDATE t_child_info set chil_here =1 where chil_here='B' OR chil_here ='D'OR chil_here ='R';
+			UPDATE t_child_info set chil_here =2 where chil_here='W';
+			UPDATE t_child_info set chil_here =3 where chil_here='L';
+			UPDATE t_child_info set chil_here =9 where chil_here='9';
+			UPDATE t_child_info set chil_here =4 where chil_here='K' or chil_here='S';
+			UPDATE t_child_info set chil_here =8 where chil_here='8';
+			UPDATE t_child_info chl , sys_dict dic set chl.chil_sex=dic.`value` WHERE chl.chil_sex = dic.text and dic.ttype= 'sex_code';
+	</update>
+
+
+	<!--同步儿童历史接种记录-->
+	<update id="synchronizedChildInoculations">
+
+		UPDATE u_all_inoculate_excel set `儿童姓名` = null where `儿童姓名` ='';
+		UPDATE u_all_inoculate_excel set `父亲姓名` = null where `父亲姓名` ='';
+		UPDATE u_all_inoculate_excel set `母亲姓名` = null where `母亲姓名` ='';
+		UPDATE u_all_inoculate_excel set `儿童姓名` = null where `儿童姓名` ='';
+		UPDATE u_all_inoculate_excel set `父亲姓名` = null where `父亲姓名` ='';
+		UPDATE u_all_inoculate_excel set `母亲姓名` = null where `母亲姓名` ='';
+
+
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 1  where t.`剂次` = '①';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 2  where t.`剂次` = '②';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 3  where t.`剂次` = '③';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 4  where t.`剂次` = '④';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 5  where t.`剂次` = '⑤';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 6  where t.`剂次` = '⑥';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 7  where t.`剂次` = '⑦';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 8  where t.`剂次` = '⑧';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 9  where t.`剂次` = '⑨';
+		UPDATE u_all_inoculate_excel t   set t.`剂次` = 10  where t.`剂次` = '⑩';
+
+		UPDATE u_all_inoculate_excel inc,u_bacterin imp set inc.`接种疫苗` = imp.bact_nationcode where inc.`接种疫苗`=imp.bact_fullname or inc.`接种疫苗` = imp.bact_name;
+
+		UPDATE u_all_inoculate_excel set  `接种属性` = 0 where `接种属性`  = '常规';
+		UPDATE u_all_inoculate_excel set  `接种属性` = 1 where `接种属性`  = '加强';
+		UPDATE u_all_inoculate_excel set  `接种属性` = 3 where `接种属性`  = '应急';
+		UPDATE u_all_inoculate_excel set  `接种属性` = 2 where `接种属性`  = '强化';
+
+
+		UPDATE `u_all_inoculate_excel` set `接种部位` = '10' where `接种部位` is null or `接种部位` = '' or `接种部位` = '空';
+
+		UPDATE u_all_inoculate_excel set `免费` = 1 where `免费` = '是' ;
+ 		UPDATE u_all_inoculate_excel set `免费` = 0 where `免费` = '否' ;
+
+		UPDATE u_all_inoculate_excel set `性别` = 1 where `性别` = '男' ;
+ 		UPDATE u_all_inoculate_excel set `性别` = 2 where `免费` = '女' ;
+
+ 		UPDATE `u_all_inoculate_excel` uall , t_vac_factory tvf set uall.`生产企业` = tvf.factory_code WHERE  uall.`生产企业` = tvf.factory_cn_name;
+
+		UPDATE u_all_inoculate_excel  uall , sys_depart sd set uall.`接种地点`= sd.id WHERE uall.`接种地点` = sd.`name`;
+
+		UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code`
+					where inc.`儿童姓名` is null and inc.`母亲姓名` is null and inc.`父亲姓名`=imp.`chil_father`
+					and inc.`性别`=imp.`chil_sex` and inc.`出生日期` = LEFT(imp.`chil_birthday`,10);
+
+
+		UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code`
+					where inc.`儿童姓名` is null and inc.`父亲姓名`=imp.`chil_father` and
+					inc.`母亲姓名` = imp.`chil_mother` and inc.`性别`=imp.`chil_sex` and inc.`出生日期` = LEFT(imp.`chil_birthday`,10);
+
+
+		update u_all_inoculate_excel set `儿童编码`=null where `儿童姓名` is null and `父亲姓名` is null and `母亲姓名` is null;
+	    UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code` where inc.`儿童姓名` is null
+	    			and inc.`母亲姓名` is null and inc.`父亲姓名` is null and inc.`性别`=imp.`chil_sex` and inc.`出生日期` = LEFT(imp.`chil_birthday`,10);
+
+
+		update u_all_inoculate_excel set `儿童编码`=null where `儿童姓名` is null and `父亲姓名` is null and `母亲姓名` is not null;
+		UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code` where inc.`儿童姓名` is null and inc.`父亲姓名` is null
+					and inc.`母亲姓名` = imp.`chil_mother` and inc.`性别`=imp.`chil_sex` and inc.`出生日期` = LEFT(imp.`chil_birthday`,10);
+
+		update u_all_inoculate_excel set `儿童编码`=null where `儿童姓名` is not null and `父亲姓名` is not null and `母亲姓名` is null;
+		UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code` where inc.`儿童姓名`= imp.`chil_name` and inc.`父亲姓名`=imp.`chil_father`
+					and inc.`母亲姓名` is null and inc.`性别`=imp.`chil_sex` and inc.`出生日期` = LEFT(imp.`chil_birthday`,10);
+
+		update u_all_inoculate_excel set `儿童编码`=null where `儿童姓名` is not null and `父亲姓名` is not null and `母亲姓名` is not null;
+		UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code` where inc.`儿童姓名`= imp.`chil_name` and inc.`父亲姓名`=imp.`chil_father`
+		 			and inc.`母亲姓名` = imp.`chil_mother` and inc.`性别`=imp.`chil_sex` and inc.`出生日期` = LEFT(imp.`chil_birthday`,10);
+
+		update u_all_inoculate_excel set `儿童编码`=null where `儿童姓名` is not null and `父亲姓名` is null and `母亲姓名` is null;
+		UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code` where inc.`儿童姓名`= imp.`chil_name` and inc.`父亲姓名` is null
+					and inc.`母亲姓名` is null and inc.`性别`=imp.`chil_sex` and inc.`出生日期` = LEFT(imp.`chil_birthday`,10);
+
+
+		update u_all_inoculate_excel set `儿童编码`=null where `儿童姓名` is not null and `父亲姓名` is null and `母亲姓名` is not null;
+		UPDATE u_all_inoculate_excel inc,t_child_info imp set inc.`儿童编码`=imp.`chil_code` where inc.`儿童姓名`= imp.`chil_name` and inc.`父亲姓名` is null
+				and inc.`母亲姓名`=imp.`chil_mother` and inc.`性别`=imp.`chil_sex` and inc.`出生日期`  = LEFT(imp.`chil_birthday`,10);
+
+		DROP TABLE IF EXISTS `jwx_inoculate_error`;
+		CREATE TABLE `jwx_inoculate_error` (
+				`name` varchar(50) DEFAULT NULL,
+				`sex` varchar(50) DEFAULT NULL,
+				`birthdate` varchar(50) DEFAULT NULL,
+				`fathername` varchar(50) DEFAULT NULL,
+				`mothername` varchar(50) DEFAULT NULL,
+				`qyhf` varchar(50) DEFAULT NULL,
+				`hjsx` varchar(50) DEFAULT NULL,
+				`zcqk` varchar(50) DEFAULT NULL,
+				`vaccine` varchar(50) DEFAULT NULL,
+				`jc` varchar(50) DEFAULT NULL,
+				`inocatedate` varchar(50) DEFAULT NULL
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+		insert into u_bak_inoculate_error(`name`,sex,birthdate,fathername,mothername,qyhf,hjsx,zcqk,vaccine,jc,inocatedate)
+                    SELECT `儿童姓名`,`性别`,`出生日期`,`父亲姓名`,`母亲姓名`,`区域划分`,`户籍属性`,
+                    `在册情况`,`接种疫苗`,`剂次`,`接种日期` from `u_all_inoculate_excel` where  儿童编码 is null;
+
+		delete from `u_all_inoculate_excel` where 儿童编码 is null;
+
+
+		TRUNCATE TABLE t_child_inoculate;
+		INSERT INTO `t_child_inoculate`(id,
+				chil_code,inoc_bact_code,inoc_property,inoc_time,inoc_date,
+				inoc_depa_code,inoc_reinforce,inoc_batchno,inoc_dose,inoc_opinion,
+				inoc_union_code,inoc_validdate,inoc_corp_code,inoc_regulatory_code,inoc_pay,
+				inoc_free,inoc_depa_id,inoc_county,inoc_nationcode,inoc_inpl_id,
+				inoc_nurse,inoc_vcn_kind,zxhs,inoc_useticket,
+				inoc_modify_code,inoc_editdate,leave_time,type,syncstatus,
+				create_user_id,remark,`status`,delete_status,create_time
+				)	SELECT UUID(),
+				`儿童编码`,接种疫苗,接种属性,`剂次`,`接种日期`,
+				`接种地点`,'',`批号`,'','',
+				'',null,`生产企业`,'',1,
+				`免费`,'','','',`接种部位`,
+				`接种护士`,'','','',
+				'',null,null,0,0,
+				'','',5,0,NOW()
+				from u_all_inoculate_excel;
+
+	</update>
+
+
+	<!--以下内容为邓召仕20181020后添加.................................................................................-->
+	<select id="isTableExist" parameterType="string" resultType="Integer">
+		SELECT COUNT(*) FROM information_schema.TABLES WHERE table_name = #{tableName};
+	</select>
+
+	<insert id="syncData" parameterType="java.lang.String" >
+		/*导入行政村*/
+		  INSERT INTO `t_base_committee`
+			(`code`,`name`, `iscount`,`org_id`, `create_time`,`update_time`,`delete_status`)
+		  SELECT
+			`划分编码`,
+			`划分名称`,
+			`是否统计`,
+			#{orgId},
+			NOW(),
+			NOW(),
+			/*IF(`启用` == '1',0,1)*/
+			'0'
+		FROM qyhf;
+		/*导入学校*/
+		INSERT INTO `t_base_school`
+		(`code`,
+		  `name`,
+		  `sort_name`,
+		  `org_id`,
+		  `address`,
+		  `phone`,
+		  `link_man`,
+		  `update_time`
+		) SELECT
+			`幼儿园编码`,
+			`单位全称`,
+			`单位简称`,
+			#{orgId},
+			`地址`,
+			`手机`,
+			`联系人`,
+			NOW()
+		FROM
+			nursery;
+		/*导入儿童信息*/
+		INSERT INTO `t_child_info`
+			(chil_code,
+			 chil_name,
+			 chil_sex,
+			 chil_birthday,
+			 /*chil_birthweight,*/
+			 chil_nati_id,
+			/* chil_cardno,*/
+			 chil_no,
+			 chil_birthno,
+			 chil_mother,
+			 chil_father,
+			 chil_committee,
+			 chil_habiaddress,
+			 chil_address,
+			 chil_school,
+			 /*chil_carddate,*/
+			 chil_healthno,
+			 chil_residence,
+			 chil_account,
+			 chil_habi_id,
+			 chil_sensitivity,
+			 chil_motherhb,
+			 chil_here,
+			 /*chil_leavedate,*/
+			 chil_leave,
+			 /*chil_createsite,*/
+			 /*chil_createdate,*/
+			 chil_createman,
+			 chil_motherno,
+			 chil_fatherno,
+			 chil_curdepartment,
+			 remark,
+			 create_card_time,
+			 delete_status
+			) SELECT
+				`儿童编码`,
+				`儿童姓名`,
+				if(儿童性别="男",1,2),
+				`出生日期`,
+				/*CAST(IF(`出生体重` IS NULL OR `出生体重` ='' OR `出生体重` ='0',0,left(`出生体重`, 4)) AS decimal(10,2)),*/
+				(SELECT syswhb.`对应编码` FROM syswhb WHERE syswhb.`维护编码` = '13' AND syswhb.`编码` = child.`民族`),
+				/*免疫卡号,*/
+				`儿童身份证`,
+				`出生证编号`,
+				`母亲姓名`,
+				`父亲姓名`,
+				`儿童区域划分`,
+				`户口地址`,
+				(IF(`家庭住址` IS NULL OR `家庭住址` = '',`通讯地址`,`家庭住址`)),
+				`幼儿园编码`,
+				/*date_format(`发卡日期`, '%Y-%m-%d'),*/
+				`健康档案编码`,
+				`户籍属性`,
+				`户口属性`,
+				`户口县国标`,
+				`过敏史`,
+				`母亲HB`,
+				(case `在册情况`
+					when 'B' then '1'
+					when 'D' then '10'
+					when 'L' then '3'
+					when 'S' then '4'
+					when 'W' then '2'
+					when 'R' then '7'
+					when '8' then '8'
+					when '9' then '9'
+				else `在册情况`
+				end),
+				/*date_format(`在册日期`, '%Y-%m-%d'),*/
+				`省迁移`,
+				/*建卡单位,*/
+				/*date_format(`建卡日期`, '%Y-%m-%d'),*/
+				`建卡人`,
+				`母亲身份证`,
+				`父亲身份证`,
+				`现位置`,
+				`备注`,
+				`建卡日期`,
+				IF(`数据状态` = 'D',1,0)
+			FROM
+				child;
+
+	</insert>
+</mapper>

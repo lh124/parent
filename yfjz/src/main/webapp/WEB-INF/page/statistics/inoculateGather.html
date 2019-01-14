@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>接种记录完整性统计</title>
+	#parse("sys/header.html")
+	<script type="application/javascript">
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+	</script>
+</head>
+<body style="padding: 5px">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div  class="grid-btn">
+			<form id="inocGatherForm" class="form-inline" role="form">
+
+				<div class="form-group">
+					&nbsp; &nbsp;出生日期:<input type="text" class="form-control" v-model.trim="q.birthDayStart" id="birthDayStart" name="birthDayStart" @keyup.enter="query" style="width: 110px" placeholder="起始日期">
+				</div>
+				<div class="form-group">
+					—<input type="text" class="form-control" v-model.trim="q.birthDayEnd" id="birthDayEnd" name="birthDayEnd" @keyup.enter="query" style="width: 110px" placeholder="结束日期">
+				</div>
+
+				<div class="form-group" id="chilCommitteeIdParent">
+					&nbsp;居委会/行政村:
+					<select  class="selectpicker" @keyup.enter="query"  id="chilCommittees" name="chilCommittees" multiple data-live-search="true" title="" >
+					</select>
+				</div>
+				<div class="form-group">
+					&nbsp;在册情况:
+					<select class="selectpicker" @keyup.enter="query"  id="childInfoStatus" name="childInfoStatus" title="" multiple >
+					</select>
+				</div>
+				<div class="form-group">
+					&nbsp;居住属性:
+					<select class="selectpicker" @keyup.enter="query"  id="chilResidence" name="chilResidence" title="" multiple ></select>
+				</div>
+				<div class="form-group">
+					&nbsp;户籍属性:
+					<select class="selectpicker" @keyup.enter="query"  id="chilAccount" name="chilAccount" title="" multiple >
+					</select>
+				</div>
+				<br/>
+				<div style="margin-top: 10px">
+					<div class="form-group">
+						&nbsp; &nbsp;接种日期:<input type="text" class="form-control" v-model.trim="q.inocDateStart" id="inocDateStart" name="inocDateStart" @keyup.enter="query" style="width: 110px" placeholder="起始日期">
+					</div>
+					<div class="form-group">
+						—<input type="text" class="form-control" v-model.trim="q.inocDateEnd" id="inocDateEnd" name="inocDateEnd" @keyup.enter="query" style="width: 110px" placeholder="结束日期">
+					</div>
+                    <div class="form-group">
+                        儿童编号:<input type="text" class="form-control" v-model.trim="q.child_code" id="child_code" name="child_code" @keyup.enter="query" style="width: 170px" placeholder="儿童编号">
+                    </div>
+					<div class="form-group" id="inoVaccId">
+						&nbsp;接种疫苗:
+						<select  class="selectpicker" @keyup.enter="query"  id="inoVacc" name="inoVacc" title="" multiple data-live-search="true" >
+						</select>
+					</div>
+					<a class="btn btn-primary" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+					<a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+					<a class="btn btn-primary" @click="excel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+					<a class="btn btn-primary" @click="print"><i class="fa fa-print"></i>&nbsp;打印</a>
+				</div>
+			</form>
+		</div>
+		<table id="jqGrid"></table>
+		<div id="jqGridPager"></div>
+		<ul class="nav nav-tabs mt20">
+			<li class="active"><a href="#imperfectChild" data-toggle="tab">接种信息不完整儿童</a></li>
+		</ul>
+		<div class="tab-content" style="margin-top: 5px">
+			<!--不完整儿童-->
+			<div class="tab-pane fade in active" id="imperfectChild">
+				<div id="inoculation_tabs" v-cloak>
+					<div v-show="showList" class="panel panel-default">
+						<table id="childInfoGrid"></table>
+						<div id="childInfoGridPager"></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">疫苗</div>
+				<div class="col-sm-10">
+					<select class="form-control"  v-model="tChildInoculate.inocBactCode"  id="inocBactCode" name="inocBactCode" readonly="true" disabled="disabled" title=""  >
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">剂次</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocTime" readonly placeholder="剂次"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种日期</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocDate" id="inocDate"  placeholder="接种日期"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种单位</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocDepaCode" id="inocDepaCode" readonly placeholder="接种单位"/>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">批号</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocBatchno" id="inocBatchno" placeholder="批号"/>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">生产企业</div>
+				<div class="col-sm-10">
+					<select class="form-control" v-model="tChildInoculate.inocCorpCode" id="inocCorpCode" >
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">收费状态</div>
+				<div class="col-sm-10">
+					<select class="form-control" v-model="tChildInoculate.inocFree" id="inocFree" >
+						<option value="1">免费</option>
+						<option value="0">收费</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种部位</div>
+				<div class="col-sm-10">
+					<select class="form-control" v-model="tChildInoculate.inocInplId" id="inocInplId" >
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">接种医生</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.inocNurse" id="inocNurse" placeholder="接种护士"/>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">备注</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildInoculate.remark" id="remark" placeholder="备注"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="back" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/statistics/inoculateGather.js?_${date.systemTime}"></script>
+</body>
+</html>
+
+
+

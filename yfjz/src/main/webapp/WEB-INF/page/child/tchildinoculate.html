@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童基本信息表</title>
+	#parse("sys/header.html")
+	<style type="text/css">
+		.SelectBG{
+			background-color:red;
+		}
+	</style>
+</head>
+<body>
+<div id="rrapp_inoculation" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+		</div>
+	    <table id="inoculationGrid"></table>
+	    <div id="inoculationGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">儿童编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.chilCode" placeholder="儿童编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocBactCode" placeholder="疫苗编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种属性</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocProperty" placeholder="接种属性"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">剂次</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocTime" placeholder="剂次"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种日期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocDate" placeholder="接种日期"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种单位机构编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocDepaCode" placeholder="接种单位机构编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">强化属性</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocReinforce" placeholder="强化属性"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">批号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocBatchno" placeholder="批号"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">剂量</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocDose" placeholder="剂量"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">评价(及时,合格,超期,首针提前,间短)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocOpinion" placeholder="评价(及时,合格,超期,首针提前,间短)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">联合疫苗编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocUnionCode" placeholder="联合疫苗编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗失效期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocValiddate" placeholder="疫苗失效期"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">生产企业(编码)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocCorpCode" placeholder="生产企业(编码)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗监管码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocRegulatoryCode" placeholder="疫苗监管码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">是否补助疫苗1是,0不是</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocPay" placeholder="是否补助疫苗1是,0不是"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">是否免费疫苗1免费,0收费</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocFree" placeholder="是否免费疫苗1免费,0收费"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">部门id(平台数据)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocDepaId" placeholder="部门id(平台数据)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种县国标(机构编码前6位)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocCounty" placeholder="接种县国标(机构编码前6位)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种单位编码(机构编码后四位)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocNationcode" placeholder="接种单位编码(机构编码后四位)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种部位(存码表value值)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocInplId" placeholder="接种部位(存码表value值)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种途径</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inoculateRoad" placeholder="接种途径"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种护士</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocNurse" placeholder="接种护士"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">未知,保留字段</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocVcnKind" placeholder="未知,保留字段"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">未知,保留字段(平台产生)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.zxhs" placeholder="未知,保留字段(平台产生)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">未知,保留字段</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocUseticket" placeholder="未知,保留字段"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种记录修改单位机构编码(存下载时的值)</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocModifyCode" placeholder="接种记录修改单位机构编码(存下载时的值)"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">修改记录时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.inocEditdate" placeholder="修改记录时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">离开时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.leaveTime" placeholder="离开时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">0:本地；1：平台</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.type" placeholder="0:本地；1：平台"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">同步状态,0未同步;1同步</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.syncstatus" placeholder="同步状态,0未同步;1同步"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">状态：0：正常；-1：删除</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.status" placeholder="状态：0：正常；-1：删除"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.createUserId" placeholder="创建人编码"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">添加记录时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.createtime" placeholder="添加记录时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">备注</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildInoculate.remark" placeholder="备注"/>
+			    </div>
+			</div>
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/tchildinoculate.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/bus/registerAndInoculate.js?_${date.systemTime}"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/mouseoverinocdata.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/mouseoverinocdata.js"></script>
+</body>
+</html>

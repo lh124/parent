@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>建卡儿童出生医院分布统计表</title>
+    #parse("sys/header.html")
+    <style>
+        .basic-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .basic-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        #printSytle p {
+            margin-top: 10px;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #000 !important;
+        }
+
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+            padding: 8px;
+            line-height: 1.42857143;
+            vertical-align: middle;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div id="childrenOfAllAgeGroups">
+    <div class="row" id="unprintdiv" style="padding: 15px 0 0 15px;">
+        <form class="form-inline">
+            <div class="form-group">
+                <label>建卡时间：</label>
+                <input type="text" class="form-control" style="width: 150px" id="yearDate">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;&nbsp;至&nbsp;&nbsp;</label>
+                <input type="text" class="form-control" style="width: 150px" id="monthDate">
+            </div>
+            <!--<div class="form-group" id="chilCommitteeIdParent">
+                &nbsp;居委会/行政村:
+                <select class="selectpicker" id="chilCommittees" name="chilCommittees" title="" multiple
+                        data-live-search="true"></select>
+            </div>-->
+
+            <button type="button" class="btn btn-warning" @click="query">
+                <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;查询
+            </button>
+            <button type="button" class="btn btn-primary" @click="excel">
+                <span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;导出
+            </button>
+            <button type="button" class="btn btn-info" @click="print">
+                <span class="glyphicon glyphicon-print"></span>&nbsp;&nbsp;打印
+            </button>
+        </form>
+    </div>
+
+    <div class="row" style="padding-left: 20px;padding-right: 20px;border-top:none;">
+        <div style="text-align: center;">
+            <h4 style="margin-top: 5px;margin-bottom: 15px;">建卡儿童出生医院分布统计表</h4>
+            <p style="text-align: left;"> 单位：<span id="orgName"></span> &nbsp;&nbsp;&nbsp;&nbsp; 统计时间：<span id="startData"></span>&nbsp;<sup>~</sup>&nbsp;<span id="endData"></span></p>
+        </div>
+        <table class="table table-bordered basic-table">
+            <thead>
+                <tr>
+                    <td>出生医院</td>
+                    <td>0月龄</td>
+                    <td>1月龄</td>
+                    <td>2月龄</td>
+                    <td>3月龄</td>
+                    <td>4-6月龄</td>
+                    <td>7-12月龄</td>
+                    <td>12月龄以上</td>
+                    <td>合计</td>
+                    <td>第一剂接种数</td>
+                    <td>接种率</td>
+                    <td>及时接种数</td>
+                    <td>接种率</td>
+                </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(item,index) in listData">
+                <td>{{item.hospital_name}}</td>
+                <td>{{item.month0}}</td>
+                <td>{{item.month1}}</td>
+                <td>{{item.month2}}</td>
+                <td>{{item.month3}}</td>
+                <td>{{item.month4_6}}</td>
+                <td>{{item.month7_12}}</td>
+                <td>{{item.month12_}}</td>
+                <td>{{item.monthTotal}}</td>
+                <td>{{item.numberOfFirstDose}}</td>
+                <td>{{item.vaccinationRates1}}</td>
+                <td>{{item.timelyInoculationNumber}}</td>
+                <td>{{item.vaccinationRates2}}</td>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="application/javascript">
+    var orgId = "$shiro.getBaseInfo('orgId')";
+    var orgName = "$shiro.getBaseInfo('orgName')";
+    $("#orgName").html(orgName);
+</script>
+<script src="${rc.contextPath}/statics/js/report/childBirthHospitalDistribution.js?_${date.systemTime}"></script>
+</body>
+</html>

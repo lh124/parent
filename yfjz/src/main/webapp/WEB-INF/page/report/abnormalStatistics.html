@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>异常接种情况统计</title>
+#parse("sys/header.html")
+	<script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('userName')";
+	</script>
+
+</head>
+<body style="padding: 5px">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div id="unprintdiv" class="grid-btn">
+			<form id="inoculatelogsForm" class="form-inline" role="form">
+				<div class="form-group">
+					&nbsp;&nbsp;&nbsp;&nbsp;出生日期:<input type="text" class="form-control" id="chilBirthdayStart" name="chilBirthdayStart"  style="width: 110px"/>
+					至&nbsp;&nbsp;<input type="text" class="form-control" id="chilBirthdayEnd" name="chilBirthdayEnd" style="width: 110px"/>
+				</div>
+				<div class="form-group" id="chilCommitteeIdParent">
+					&nbsp;&nbsp;&nbsp;&nbsp;接种日期:<input type="text" class="form-control" id="inoculateStart" name="inoculateStart" style="width: 110px" />
+					至&nbsp;&nbsp;<input type="text" class="form-control" id="inoculateEnd" name="inoculateEnd" style="width: 110px"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;居委会/行政村:
+					<select  class="selectpicker" id="chilCommittees" name="chilCommittees" title=""  multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;居住属性:
+					<select class="selectpicker"  id="chilResidence" name="chilResidence" title="" multiple data-live-search="true"></select>
+				</div>
+				<div class="form-group" style="margin-top: 10px;">
+					&nbsp;&nbsp;&nbsp;&nbsp;在册情况:
+					<select  class="selectpicker" id="infostatus" name="infostatus" title=""   multiple data-live-search="true"></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;入学|入托机构:
+					<select  class="selectpicker" id="school" name="school" title=""  multiple data-live-search="true" ></select>
+					&nbsp;&nbsp;&nbsp;&nbsp;异常状态:
+					<select  class="selectpicker" id="abnormal" name="abnormal" title=""   data-live-search="true" ></select>
+				</div>
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<a class="btn btn-primary" @click="query">查询</a>
+				<a class="btn btn-primary" @click="reset">重置</a>
+				<a class="btn btn-default" @click="print">打印</a>
+				<a class="btn btn-default" @click="excel"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+			</form>
+		</div>
+		<!--基本信息-->
+		<div>
+			<table id="abnormalGrid"></table>
+			<div id="abnormalPage"></div>
+		</div>
+
+    </div>
+
+</div>
+<script src="${rc.contextPath}/statics/js/report/abnormalStatistics.js?_${date.systemTime}"></script>
+</body>
+</html>

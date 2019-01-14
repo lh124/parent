@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="io.yfjz.dao.child.TChildPrecheckDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildPrecheckEntity">
+		select * from t_child_precheck where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildPrecheckEntity">
+		select * from t_child_precheck  where 1=1
+		<if test="chilCode != null and chilCode != ''">
+			and chil_code=#{chilCode}
+		</if>
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_precheck where 1=1
+		<if test="chilCode != null and chilCode != ''">
+			and chil_code=#{chilCode}
+		</if>
+	</select>
+	 
+	<select id="waitsumprecheck" resultType="io.yfjz.entity.child.TChildPrecheckEntity">
+		select *  from  t_child_precheck WHERE to_days(create_time) = to_days(now()) GROUP BY chil_code
+	</select>
+
+	<select id="sumprechecks" resultType="io.yfjz.entity.child.TChildPrecheckEntity">
+		select count(*) as chil_code ,'预检台' as remark   from  t_child_precheck WHERE to_days(create_time) = to_days(now())
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildPrecheckEntity">
+		insert into t_child_precheck
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+		
+				            <if test="temp != null and temp  != ''">`temp` , </if>
+			
+				            <if test="result != null and result  != ''">`result` , </if>
+			
+				            <if test="remark != null and remark  != ''">`remark` , </if>
+			
+				            <if test="createTime != null">`create_time` , </if>
+			
+				            <if test="status != null">`status` , </if>
+			
+				            <if test="deleteStatus != null">`delete_status` , </if>
+			
+				            <if test="createUserId != null and createUserId  != ''">`create_user_id` , </if>
+			
+				            <if test="createUserName != null and createUserName  != ''">`create_user_name` , </if>
+			
+				            <if test="orgId != null">`org_id` , </if>
+			
+				            <if test="syncstatus != null">`syncstatus` , </if>
+			
+				            <if test="type != null">`type` , </if>
+			
+				            <if test="chilCode != null and chilCode  != ''">`chil_code` </if>
+			
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						            <if test="temp != null and temp  != ''">#{temp} , </if>
+		
+					            <if test="result != null and result  != ''">#{result} , </if>
+		
+					            <if test="remark != null and remark  != ''">#{remark} , </if>
+		
+					            <if test="createTime != null">#{createTime} , </if>
+		
+					            <if test="status != null">#{status} , </if>
+		
+					            <if test="deleteStatus != null">#{deleteStatus} , </if>
+		
+					            <if test="createUserId != null and createUserId  != ''">#{createUserId} , </if>
+		
+					            <if test="createUserName != null and createUserName  != ''">#{createUserName} , </if>
+		
+					            <if test="orgId != null">#{orgId} , </if>
+		
+					            <if test="syncstatus != null">#{syncstatus} , </if>
+		
+					            <if test="type != null">#{type} , </if>
+		
+					            <if test="chilCode != null and chilCode  != ''">#{chilCode} </if>
+		
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.child.TChildPrecheckEntity">
+		update t_child_precheck 
+		<set>
+	        <if test="temp != null and temp  != ''">`temp` = #{temp}, </if>
+		        <if test="result != null and result  != ''">`result` = #{result}, </if>
+		        <if test="remark != null and remark  != ''">`remark` = #{remark}, </if>
+		        <if test="createTime != null">`create_time` = #{createTime} , </if>
+		        <if test="status != null">`status` = #{status} , </if>
+		        <if test="deleteStatus != null">`delete_status` = #{deleteStatus} , </if>
+		        <if test="createUserId != null and createUserId  != ''">`create_user_id` = #{createUserId}, </if>
+		        <if test="createUserName != null and createUserName  != ''">`create_user_name` = #{createUserName}, </if>
+		        <if test="orgId != null">`org_id` = #{orgId} , </if>
+		        <if test="syncstatus != null">`syncstatus` = #{syncstatus} , </if>
+		        <if test="type != null">`type` = #{type} , </if>
+		        <if test="chilCode != null and chilCode  != ''">`chil_code` = #{chilCode}</if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_precheck where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_precheck where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

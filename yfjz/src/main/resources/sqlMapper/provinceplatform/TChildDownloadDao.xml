@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.provinceplatform.TChildDownloadDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.provinceplatform.TChildDownloadEntity">
+		select * from t_child_download where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.provinceplatform.TChildDownloadEntity">
+		select * from t_child_download
+		<where>
+			1=1
+			<if test="neboBirthtimeStart != null and neboBirthtimeEnd != null"  >
+				and TO_DAYS(nebo_birthtime) >= TO_DAYS(#{neboBirthtimeStart})
+				and TO_DAYS(#{neboBirthtimeEnd}) >= TO_DAYS(nebo_birthtime)
+			</if>
+			<if test="neboBirthtimeStart != null and neboBirthtimeEnd == null"  >
+				and TO_DAYS(nebo_birthtime) = TO_DAYS(#{neboBirthtimeStart})
+			</if>
+		</where>
+		order by createtime desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_download
+		<where>
+			1=1
+			<if test="neboBirthtimeStart != null and neboBirthtimeEnd != null"  >
+				and TO_DAYS(nebo_birthtime) >= TO_DAYS(#{neboBirthtimeStart})
+				and TO_DAYS(#{neboBirthtimeEnd}) >= TO_DAYS(nebo_birthtime)
+			</if>
+			<if test="neboBirthtimeStart != null and neboBirthtimeEnd == null"  >
+				and TO_DAYS(nebo_birthtime) = TO_DAYS(#{neboBirthtimeStart})
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.provinceplatform.TChildDownloadEntity">
+		insert into t_child_download
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+					id,
+				<if test="nebiHepbReason != null">`nebi_hepb_reason` , </if>
+				<if test="neboAdddate != null">`nebo_adddate` , </if>
+				<if test="neboAddress != null">`nebo_address` , </if>
+				<if test="neboAddressCommunity != null">`nebo_address_community` , </if>
+				<if test="neboAddressDepaIdName != null">`nebo_address_depa_id_name` , </if>
+				<if test="neboAddressHabiId != null">`nebo_address_habi_id` , </if>
+				<if test="neboAdduser != null">`nebo_adduser` , </if>
+				<if test="neboBinding != null">`nebo_binding` , </if>
+				<if test="neboBirthtime != null">`nebo_birthtime` , </if>
+				<if test="neboCardno != null">`nebo_cardno` , </if>
+				<if test="neboCode != null">`nebo_code` , </if>
+				<if test="neboCount != null">`nebo_count` , </if>
+				<if test="neboDownmac != null">`nebo_downmac` , </if>
+				<if test="neboDowntype != null">`nebo_downtype` , </if>
+				<if test="neboFather != null">`nebo_father` , </if>
+				<if test="neboFatherTel != null">`nebo_father_tel` , </if>
+				<if test="neboFatherno != null">`nebo_fatherno` , </if>
+				<if test="neboFhbsag != null">`nebo_fhbsag` , </if>
+				<if test="neboHabiDepaId != null">`nebo_habi_depa_id` , </if>
+				<if test="neboHabiDepaIdName != null">`nebo_habi_depa_id_name` , </if>
+				<if test="neboHabiId != null">`nebo_habi_id` , </if>
+				<if test="neboHabiaddressCommunity != null">`nebo_habiaddress_community` , </if>
+				<if test="neboHour != null">`nebo_hour` , </if>
+				<if test="neboId != null">`nebo_id` , </if>
+				<if test="neboMhbsag != null">`nebo_mhbsag` , </if>
+				<if test="neboMobile != null">`nebo_mobile` , </if>
+				<if test="neboMother != null">`nebo_mother` , </if>
+				<if test="neboMotherTel != null">`nebo_mother_tel` , </if>
+				<if test="neboMotherno != null">`nebo_motherno` , </if>
+				<if test="neboName != null">`nebo_name` , </if>
+				<if test="neboNatiId != null">`nebo_nati_id` , </if>
+				<if test="neboPackcount != null">`nebo_packcount` , </if>
+				<if test="neboResidence != null">`nebo_residence` , </if>
+				<if test="neboSex != null">`nebo_sex` , </if>
+				<if test="neboTel != null">`nebo_tel` , </if>
+				<if test="neboWeight != null">`nebo_weight` , </if>
+				`createtime`
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="neboCode != null">#{neboCode} , </if>
+				<if test="nebiHepbReason != null">#{nebiHepbReason} , </if>
+				<if test="neboAdddate != null">#{neboAdddate} , </if>
+				<if test="neboAddress != null">#{neboAddress} , </if>
+				<if test="neboAddressCommunity != null">#{neboAddressCommunity} , </if>
+				<if test="neboAddressDepaIdName != null">#{neboAddressDepaIdName} , </if>
+				<if test="neboAddressHabiId != null">#{neboAddressHabiId} , </if>
+				<if test="neboAdduser != null">#{neboAdduser} , </if>
+				<if test="neboBinding != null">#{neboBinding} , </if>
+				<if test="neboBirthtime != null">#{neboBirthtime} , </if>
+				<if test="neboCardno != null">#{neboCardno} , </if>
+				<if test="neboCode != null">#{neboCode} , </if>
+				<if test="neboCount != null">#{neboCount} , </if>
+				<if test="neboDownmac != null">#{neboDownmac} , </if>
+				<if test="neboDowntype != null">#{neboDowntype} , </if>
+				<if test="neboFather != null">#{neboFather} , </if>
+				<if test="neboFatherTel != null">#{neboFatherTel} , </if>
+				<if test="neboFatherno != null">#{neboFatherno} , </if>
+				<if test="neboFhbsag != null">#{neboFhbsag} , </if>
+				<if test="neboHabiDepaId != null">#{neboHabiDepaId} , </if>
+				<if test="neboHabiDepaIdName != null">#{neboHabiDepaIdName} , </if>
+				<if test="neboHabiId != null">#{neboHabiId} , </if>
+				<if test="neboHabiaddressCommunity != null">#{neboHabiaddressCommunity} , </if>
+				<if test="neboHour != null">#{neboHour} , </if>
+				<if test="neboId != null">#{neboId} , </if>
+				<if test="neboMhbsag != null">#{neboMhbsag} , </if>
+				<if test="neboMobile != null">#{neboMobile} , </if>
+				<if test="neboMother != null">#{neboMother} , </if>
+				<if test="neboMotherTel != null">#{neboMotherTel} , </if>
+				<if test="neboMotherno != null">#{neboMotherno} , </if>
+				<if test="neboName != null">#{neboName} , </if>
+				<if test="neboNatiId != null">#{neboNatiId} , </if>
+				<if test="neboPackcount != null">#{neboPackcount} , </if>
+				<if test="neboResidence != null">#{neboResidence} , </if>
+				<if test="neboSex != null">#{neboSex} , </if>
+				<if test="neboTel != null">#{neboTel} , </if>
+				<if test="neboWeight != null">#{neboWeight} , </if>
+				now()
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.provinceplatform.TChildDownloadEntity">
+		update t_child_download 
+		<set>
+			<if test="nebiHepbReason != null">`nebi_hepb_reason` = #{nebiHepbReason}, </if>
+			<if test="neboAdddate != null">`nebo_adddate` = #{neboAdddate}, </if>
+			<if test="neboAddress != null">`nebo_address` = #{neboAddress}, </if>
+			<if test="neboAddressCommunity != null">`nebo_address_community` = #{neboAddressCommunity}, </if>
+			<if test="neboAddressDepaIdName != null">`nebo_address_depa_id_name` = #{neboAddressDepaIdName}, </if>
+			<if test="neboAddressHabiId != null">`nebo_address_habi_id` = #{neboAddressHabiId}, </if>
+			<if test="neboAdduser != null">`nebo_adduser` = #{neboAdduser}, </if>
+			<if test="neboBinding != null">`nebo_binding` = #{neboBinding}, </if>
+			<if test="neboBirthtime != null">`nebo_birthtime` = #{neboBirthtime}, </if>
+			<if test="neboCardno != null">`nebo_cardno` = #{neboCardno}, </if>
+			<if test="neboCode != null">`nebo_code` = #{neboCode}, </if>
+			<if test="neboCount != null">`nebo_count` = #{neboCount}, </if>
+			<if test="neboDownmac != null">`nebo_downmac` = #{neboDownmac}, </if>
+			<if test="neboDowntype != null">`nebo_downtype` = #{neboDowntype}, </if>
+			<if test="neboFather != null">`nebo_father` = #{neboFather}, </if>
+			<if test="neboFatherTel != null">`nebo_father_tel` = #{neboFatherTel}, </if>
+			<if test="neboFatherno != null">`nebo_fatherno` = #{neboFatherno}, </if>
+			<if test="neboFhbsag != null">`nebo_fhbsag` = #{neboFhbsag}, </if>
+			<if test="neboHabiDepaId != null">`nebo_habi_depa_id` = #{neboHabiDepaId}, </if>
+			<if test="neboHabiDepaIdName != null">`nebo_habi_depa_id_name` = #{neboHabiDepaIdName}, </if>
+			<if test="neboHabiId != null">`nebo_habi_id` = #{neboHabiId}, </if>
+			<if test="neboHabiaddressCommunity != null">`nebo_habiaddress_community` = #{neboHabiaddressCommunity}, </if>
+			<if test="neboHour != null">`nebo_hour` = #{neboHour}, </if>
+			<if test="neboId != null">`nebo_id` = #{neboId}, </if>
+			<if test="neboMhbsag != null">`nebo_mhbsag` = #{neboMhbsag}, </if>
+			<if test="neboMobile != null">`nebo_mobile` = #{neboMobile}, </if>
+			<if test="neboMother != null">`nebo_mother` = #{neboMother}, </if>
+			<if test="neboMotherTel != null">`nebo_mother_tel` = #{neboMotherTel}, </if>
+			<if test="neboMotherno != null">`nebo_motherno` = #{neboMotherno}, </if>
+			<if test="neboName != null">`nebo_name` = #{neboName}, </if>
+			<if test="neboNatiId != null">`nebo_nati_id` = #{neboNatiId}, </if>
+			<if test="neboPackcount != null">`nebo_packcount` = #{neboPackcount}, </if>
+			<if test="neboResidence != null">`nebo_residence` = #{neboResidence}, </if>
+			<if test="neboSex != null">`nebo_sex` = #{neboSex}, </if>
+			<if test="neboTel != null">`nebo_tel` = #{neboTel}, </if>
+			<if test="neboWeight != null">`nebo_weight` = #{neboWeight}, </if>
+			<if test="createtime != null">`createtime` = #{createtime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_download where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_download where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

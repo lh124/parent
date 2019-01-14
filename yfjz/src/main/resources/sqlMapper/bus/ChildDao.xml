@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.bus.ChildDao">
+
+    <!-- 根据条件查询重复儿童记录 -->
+    <select id="listDataChildList" resultType="io.yfjz.entity.child.TChildInfoEntity">
+        SELECT
+        info.chil_code,
+        info.chil_name,
+        info.chil_sex,
+        info.chil_birthday,
+        info.chil_birthweight,
+        dict.text AS chil_nati_id,
+        info.chil_cardno,
+        chil_no,
+        info.chil_birthno,
+        info.chil_mother,
+        info.chil_father,
+        info.chil_committee,
+        info.chil_habiaddress,
+        info.chil_address,
+        info.chil_school,
+        info.chil_tel,
+        info.chil_mobile,
+        info.chil_carddate,
+        info.chil_healthno,
+        info.chil_residenceclient,
+        info.chil_residence,
+        info.chil_account,
+        info.chil_habi_id,
+        info.chil_inoctype,
+        info.chil_sensitivity,
+        info.chil_motherhb,
+        info.chil_motherhiv,
+        info.chil_here,
+        info.chil_leavedate,
+        info.chil_leave,
+        info.chil_leaveremark,
+        info.chil_curdepartment,
+        info.chil_predepartment,
+        info.chil_createcounty,
+        info.chil_createsite,
+        info.chil_createdate,
+        info.chil_createman,
+        info.chil_unitimmu,
+        info.chil_birthhospital,
+        info.chil_birthhospitalname,
+        info.chil_bcg_scar,
+        info.chil_motherno,
+        info.chil_fatherno,
+        info.chil_province,
+        info.chil_edit_date,
+        info.create_card_time,
+        info.type,
+        info.chil_habiaddress_town_id,
+        info.chil_address_town_id,
+        info.remark,
+        info.create_user_name,
+        info.create_user_id,
+        info.syncstatus,
+        info.status,
+        info.delete_status,
+        info.create_time,
+        info.update_time
+        FROM
+        t_child_info info LEFT JOIN sys_dict dict ON dict.value = info.chil_nati_id
+        and dict.ttype = 'nation_code' and dict.status = '0'
+        <where>
+             info.delete_status = 0 and
+            <if test="flag != null and flag != ''">
+                chil_name != '' and
+            </if>
+            (
+            <if test="chilSex != null and chilSex != ''">
+                chil_sex
+            </if>
+            <if test="chilBirthday != null">
+                ,TO_DAYS(chil_birthday)
+            </if>
+            <if test="chilName != null and chilName != ''">
+                ,chil_name
+            </if>
+            <if test="chilMother != null and chilMother != ''">
+                ,chil_mother
+            </if>
+            <if test="chilFather != null and chilFather != ''">
+                ,chil_father
+            </if>
+            <if test="chilBirthno != null and chilBirthno != ''">
+                ,chil_birthno
+            </if>
+            <if test="chilCardno != null and chilCardno != ''">
+                ,chil_cardno
+            </if>
+            <if test="chilCardno != null and chilCardno != ''">
+                ,chil_cardno
+            </if>
+            ,delete_status
+            )
+            IN
+            (
+            select
+            <if test="chilSex != null and chilSex != ''">
+                chil_sex
+            </if>
+            <if test="chilBirthday != null">
+                ,TO_DAYS(chil_birthday)
+            </if>
+            <if test="chilName != null and chilName != ''">
+                ,chil_name
+            </if>
+            <if test="chilMother != null and chilMother != ''">
+                ,chil_mother
+            </if>
+            <if test="chilFather != null and chilFather != ''">
+                ,chil_father
+            </if>
+            <if test="chilBirthno != null and chilBirthno != ''">
+                ,chil_birthno
+            </if>
+            <if test="chilCardno != null and chilCardno != ''">
+                ,chil_cardno
+            </if>
+            <if test="chilCardno != null and chilCardno != ''">
+                ,chil_cardno
+            </if>
+            ,delete_status
+
+            from t_child_info group by
+
+            <if test="chilSex != null and chilSex != ''">
+                chil_sex
+            </if>
+            <if test="chilBirthday != null">
+                ,TO_DAYS(chil_birthday)
+            </if>
+            <if test="chilName != null and chilName != ''">
+                ,chil_name
+            </if>
+            <if test="chilMother != null and chilMother != ''">
+                ,chil_mother
+            </if>
+            <if test="chilFather != null and chilFather != ''">
+                ,chil_father
+            </if>
+            <if test="chilBirthno != null and chilBirthno != ''">
+                ,chil_birthno
+            </if>
+            <if test="chilCardno != null and chilCardno != ''">
+                ,chil_cardno
+            </if>
+            <if test="chilCardno != null and chilCardno != ''">
+                ,chil_cardno
+            </if>
+            ,delete_status
+            having count(1) > 1
+
+            )
+        </where>
+
+        ORDER BY
+        <if test="chilSex != null and chilSex != ''">
+            chil_sex
+        </if>
+        <if test="chilBirthday != null">
+            ,chil_birthday
+        </if>
+        <if test="chilName != null and chilName != ''">
+            ,chil_name
+        </if>
+        <if test="chilMother != null and chilMother != ''">
+            ,chil_mother
+        </if>
+        <if test="chilFather != null and chilFather != ''">
+            ,chil_father
+        </if>
+        <if test="chilBirthno != null and chilBirthno != ''">
+            ,chil_birthno
+        </if>
+        <if test="chilCardno != null and chilCardno != ''">
+            ,chil_cardno
+        </if>
+        <if test="chilCardno != null and chilCardno != ''">
+            ,chil_cardno
+        </if>
+    </select>
+
+    <!-- 根据儿童编号查询儿童信息 -->
+    <select id="getChildInfoByChildId" resultType="Map">
+        select
+        child.chil_code,
+        child.chil_name,
+        dict.text
+        from
+        t_child_info child
+        left join sys_dict dict on dict.value = child.chil_here
+        and dict.ttype = 'child_info_status' and dict.status = '0'
+        where
+        child.delete_status = '0'
+          and child.chil_code = #{chilCode}
+    </select>
+
+    <!-- 查询儿童的针次 -->
+    <select id="getInoculateInfoByChildId" resultType="int">
+        select count(1) from t_child_inoculate where
+        chil_code=#{chilCode}  and delete_status = '0'  and inoc_date is not null
+    </select>
+
+    <!-- 查询当前儿童的接种记录 -->
+    <select id="getChildRecord" resultType="Map">
+        SELECT
+        inoculate.id,
+        inoculate.inoc_bact_code as bio_code,
+        vac.bio_cn_sortname as bio_name,
+        inoculate.inoc_property,
+        inoculate.inoc_time,
+        inoculate.inoc_batchno,
+        DATE_FORMAT( inoculate.inoc_date, '%Y-%m-%d' ) AS inoc_date,
+        ifnull( fac.factory_name, inoculate.inoc_corp_code ) AS factory,
+        ifnull(dict.text,inoculate.inoc_inpl_id) as inoc_inpl_id,
+        ifnull( depart.NAME, inoculate.inoc_depa_code ) AS inoc_depa_code,
+        inoculate.inoc_nurse
+    FROM
+        t_child_inoculate inoculate
+        LEFT JOIN sys_depart depart ON depart.id = inoculate.inoc_depa_code
+        LEFT JOIN t_vac_info vac ON vac.bio_code = inoculate.inoc_bact_code
+        LEFT JOIN t_vac_factory fac ON fac.factory_code = inoculate.inoc_corp_code
+        left join sys_dict dict on dict.value = inoculate.inoc_inpl_id and dict.ttype='code_inoculation_site'
+    WHERE
+        inoculate.chil_code = #{chilCode}
+        AND inoculate.delete_status = '0'
+        AND inoculate.inoc_date IS NOT NULL
+
+        order by inoculate.inoc_bact_code,inoculate.inoc_time
+    </select>
+
+    <!-- 查询儿童最后一次接种时间 -->
+    <select id="getLastInoculateDateByChildId" resultType="String">
+        select DATE_FORMAT(inoc_date, '%Y-%m-%d') as inoc_date from t_child_inoculate
+        where chil_code= #{chilCode}  and delete_status = '0' and inoc_date is not null
+        order by inoc_date desc limit 1
+    </select>
+
+    <!-- 根据儿童编号和接种记录编号查询当前这个接种记录编号是不是保存儿童的这个接种记录编号 -->
+    <select id="queryChildId" resultType="String">
+        select ino.id from t_child_inoculate ino
+        where ino.chil_code = #{chilCode} and ino.id = #{id} and delete_status = '0'
+    </select>
+
+    <resultMap id="ChildinoculateResult" type="java.util.HashMap">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="inoc_time" property="inocTime" jdbcType="VARCHAR"/>
+        <result column="inoc_property" property="inocProperty" jdbcType="INTEGER"/>
+        <result column="inoc_bact_code" property="inocBactCode" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 根据勾选的id，查询出疫苗名称，剂次，接种属性 -->
+    <select id="queryRepeationInfoMap" resultMap="ChildinoculateResult">
+        SELECT
+        ino.id,
+        ino.inoc_time,
+        ino.inoc_property,
+        ino.inoc_bact_code
+        FROM
+            t_child_inoculate ino
+        WHERE
+        ino.id = #{id} and delete_status = '0'
+    </select>
+
+    <!-- 根据勾选的儿童的接种记录查询出来的接种疫苗，剂次，然后查询需要保存的儿童的节中记录中是否存在统一疫苗，同一剂次的疫苗，如果存在，更新，不存在则新增 -->
+    <select id="queryChildRecord" resultType="String">
+        SELECT
+            ino.id
+        FROM
+            t_child_inoculate ino
+        WHERE
+            ino.chil_code = #{chilCode}
+            AND ino.inoc_time = #{inocTime}
+            AND ino.inoc_property = #{inocProperty}
+            AND ino.inoc_bact_code = #{inocBactCode}
+            and delete_status = '0'
+    </select>
+
+    <!-- 根据接种编号查询这条接种记录 -->
+    <select id="queryChildInoculate" resultType="io.yfjz.entity.child.TChildInoculateEntity">
+      select id,chil_code,inoc_bact_code,inoc_property,inoc_time,inoc_date,inoc_depa_code,
+      inoc_reinforce,inoc_batchno,inoc_dose,inoc_opinion,inoc_union_code,inoc_validdate,
+      inoc_corp_code,inoc_regulatory_code,inoc_pay,inoc_free,inoc_depa_id,inoc_county,
+      inoc_nationcode,inoc_inpl_id,inoc_nurse,inoc_vcn_kind,zxhs,inoc_useticket,
+      inoc_modify_code,inoc_editdate,leave_time,type,syncstatus,create_user_id,
+      remark,status,delete_status,create_time,update_time,other_depa
+      from  t_child_inoculate
+      where id = #{id} and delete_status = '0'
+    </select>
+
+    <!-- 根据儿童编号添加接种记录 -->
+    <insert id="addChildInoculate" parameterType="io.yfjz.entity.child.TChildInoculateEntity">
+
+        insert into t_child_inoculate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            `id`,
+            <if test="chilCode != null">`chil_code` , </if>
+            <if test="inocBactCode != null">`inoc_bact_code` , </if>
+            <if test="inocProperty != null">`inoc_property` , </if>
+            <if test="inocTime != null">`inoc_time` , </if>
+            <if test="inocDate != null">`inoc_date` , </if>
+            <if test="inocDepaCode != null">`inoc_depa_code` , </if>
+            <if test="inocReinforce != null">`inoc_reinforce` , </if>
+            <if test="inocBatchno != null">`inoc_batchno` , </if>
+            <if test="inocDose != null">`inoc_dose` , </if>
+            <if test="inocOpinion != null">`inoc_opinion` , </if>
+            <if test="inocUnionCode != null">`inoc_union_code` , </if>
+            <if test="inocValiddate != null">`inoc_validdate` , </if>
+            <if test="inocCorpCode != null">`inoc_corp_code` , </if>
+            <if test="inocRegulatoryCode != null">`inoc_regulatory_code` , </if>
+            <if test="inocPay != null">`inoc_pay` , </if>
+            <if test="inocFree != null">`inoc_free` , </if>
+            <if test="inocDepaId != null">`inoc_depa_id` , </if>
+            <if test="inocCounty != null">`inoc_county` , </if>
+            <if test="inocNationcode != null">`inoc_nationcode` , </if>
+            <if test="inocInplId != null">`inoc_inpl_id` , </if>
+            <if test="inocNurse != null">`inoc_nurse` , </if>
+            <if test="inocVcnKind != null">`inoc_vcn_kind` , </if>
+            <if test="zxhs != null">`zxhs` , </if>
+            <if test="inocUseticket != null">`inoc_useticket` , </if>
+            <if test="inocModifyCode != null">`inoc_modify_code` , </if>
+            <if test="inocEditdate != null">`inoc_editdate` , </if>
+            <if test="leaveTime != null">`leave_time` , </if>
+            <if test="type != null">`type` , </if>
+            <if test="syncstatus != null">`syncstatus` , </if>
+            <if test="status != null">`status` , </if>
+            <if test="createUserId != null">`create_user_id` , </if>
+            <if test="createTime != null">`create_time` , </if>
+            <if test="otherDepa != null">`other_depa` , </if>
+            <if test="remark != null">`remark` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            uuid(),
+            <if test="chilCode != null">#{chilCode} , </if>
+            <if test="inocBactCode != null">#{inocBactCode} , </if>
+            <if test="inocProperty != null">#{inocProperty} , </if>
+            <if test="inocTime != null">#{inocTime} , </if>
+            <if test="inocDate != null">#{inocDate} , </if>
+            <if test="inocDepaCode != null">#{inocDepaCode} , </if>
+            <if test="inocReinforce != null">#{inocReinforce} , </if>
+            <if test="inocBatchno != null">#{inocBatchno} , </if>
+            <if test="inocDose != null">#{inocDose} , </if>
+            <if test="inocOpinion != null">#{inocOpinion} , </if>
+            <if test="inocUnionCode != null">#{inocUnionCode} , </if>
+            <if test="inocValiddate != null">#{inocValiddate} , </if>
+            <if test="inocCorpCode != null">#{inocCorpCode} , </if>
+            <if test="inocRegulatoryCode != null">#{inocRegulatoryCode} , </if>
+            <if test="inocPay != null">#{inocPay} , </if>
+            <if test="inocFree != null">#{inocFree} , </if>
+            <if test="inocDepaId != null">#{inocDepaId} , </if>
+            <if test="inocCounty != null">#{inocCounty} , </if>
+            <if test="inocNationcode != null">#{inocNationcode} , </if>
+            <if test="inocInplId != null">#{inocInplId} , </if>
+            <if test="inocNurse != null">#{inocNurse} , </if>
+            <if test="inocVcnKind != null">#{inocVcnKind} , </if>
+            <if test="zxhs != null">#{zxhs} , </if>
+            <if test="inocUseticket != null">#{inocUseticket} , </if>
+            <if test="inocModifyCode != null">#{inocModifyCode} , </if>
+            <if test="inocEditdate != null">#{inocEditdate} , </if>
+            <if test="leaveTime != null">#{leaveTime} , </if>
+            <if test="type != null">#{type} , </if>
+            <if test="syncstatus != null">#{syncstatus} , </if>
+            <if test="status != null">#{status} , </if>
+            <if test="createUserId != null">#{createUserId} , </if>
+            <if test="createTime != null">#{createTime} , </if>
+            <if test="otherDepa != null">#{otherDepa} , </if>
+            <if test="remark != null">#{remark} </if>
+        </trim>
+    </insert>
+
+    <!-- 伪删除接种记录 -->
+    <update id="updateChildRecord">
+        update t_child_inoculate set delete_status = #{delete}
+        where id = #{id}
+    </update>
+
+    <!-- 根据儿童编号伪删除接种记录 -->
+    <update id="updateInoculateChildCode">
+        update t_child_inoculate set delete_status = #{delete}
+        where chilCode = #{chilCode}
+    </update>
+
+    <!-- 更新本条记录的儿童编码为保留的儿童的编码 -->
+    <update id="updateChildRecordCode">
+        update t_child_inoculate set
+        <if test="chilCode != null and chilCode!= ''">
+            chil_code = #{chilCode},
+        </if>
+        type= '0' ,syncstatus = '0'
+        where id = #{id}
+    </update>
+
+    <!-- 伪删除儿童信息记录-->
+    <update id="updateChildInfoRecord">
+        update t_child_info set delete_status = #{delete}
+        where chil_code = #{chilCode}
+    </update>
+
+    <!-- 根据儿童编号查询儿童迁移记录表-->
+    <select id="TchildMove" resultType="io.yfjz.entity.child.TChildMoveEntity">
+      select id,chhe_chil_id,chil_code,chhe_here,chhe_prehere,
+      chhe_chil_province,chhe_chil_provinceremark,chhe_changedate,
+      chhe_depa_id,type,syncstatus,create_user_id,create_user_name,org_id,
+      status,delete_status,create_time,update_time
+       from t_child_move where chil_code = #{chilCode} and delete_status = '0'
+    </select>
+
+    <!-- 根据儿童编号修改儿童编号合并用 -->
+    <update id="updateTchildMove">
+        update t_child_move set chil_code = #{code},syncstatus='0' where chil_code = #{chilCode}
+    </update>
+
+    <!-- 根据儿童编号查询儿童禁忌表 -->
+    <select id="TchildTaboo" resultType="io.yfjz.entity.child.TChildTabooEntity">
+        select id,chil_code,ista_code,ista_bio_code,ista_check_date,type,
+        syncstatus,remark,create_user_name,create_user_id,status,delete_status,create_time,update_time
+        from t_child_taboo where chil_code = #{chilCode} and delete_status = '0'
+    </select>
+
+    <update id="updateTchildTaboo">
+        update t_child_taboo set chil_code = #{code},syncstatus='0' where chil_code = #{chilCode}
+    </update>
+
+    <!-- 根据儿童编号查询儿童异常反应表 -->
+    <select id="TchildAbnormal" resultType="io.yfjz.entity.child.TChildAbnormalEntity">
+        select id,chil_code,aefi_bact_code,aefi_code,aefi_date,type,syncstatus,
+        delete_status,create_user_id,create_user_name,create_time,org_id
+        from t_child_abnormal where chil_code = #{chilCode} and delete_status = '0'
+    </select>
+
+    <update id="updateTchildAbnormal">
+        update t_child_abnormal set chil_code = #{code},syncstatus='0' where chil_code = #{chilCode}
+    </update>
+
+    <!-- 根据儿童编号查询儿童过敏表 -->
+    <select id="TchildAllergy" resultType="io.yfjz.entity.child.TChildAllergyEntity">
+        select id,chil_code,describes,registrant,check_date,type,syncstatus,
+        delete_status,create_user_id,create_user_name,create_time,remark,bio_code
+         from t_child_allergy where chil_code = #{chilCode} and delete_status = '0'
+    </select>
+
+    <update id="updateTchildAllergy">
+        update t_child_allergy set chil_code = #{code},syncstatus='0' where chil_code = #{chilCode}
+    </update>
+
+    <!-- 根据儿童编号查询儿童传染病表 -->
+    <select id="TchildInfection" resultType="io.yfjz.entity.child.TChildInfectionEntity">
+        select id,chil_code,infe_code,infe_date,type,syncstatus,
+        delete_status,create_user_id,create_user_name,create_time,org_id
+        from t_child_infection where chil_code = #{chilCode} and delete_status = '0'
+    </select>
+
+    <update id="updateTchildInfection">
+        update t_child_infection set chil_code = #{code},syncstatus='0' where chil_code = #{chilCode}
+    </update>
+
+
+</mapper>

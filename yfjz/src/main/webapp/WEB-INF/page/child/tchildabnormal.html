@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童异常反应表</title>
+	#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp_abnormal" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+
+
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+
+		</div>
+	    <table id="abnormalGrid"></table>
+	    <div id="abnormalGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="abnormal">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">儿童编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.chilCode" readonly  placeholder=""/>
+			    </div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童姓名</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="chilName" readonly placeholder=""/>
+				</div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗</div>
+			   	<div class="col-sm-10">
+					<select v-model="tChildAbnormal.aefiBactCode" class="form-control selectpicker"  id="aefiBactCode"  name="aefiBactCode" data-live-search="true">
+						<option value=""></option>
+					</select>
+<!--
+					<input type="text" class="form-control" v-model="tChildAbnormal.aefiBactCode" id="aefiBactCode" placeholder=""/>
+-->
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">反应症状<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+			   	<div class="col-sm-10">
+					<select v-model="tChildAbnormal.aefiCode" class="form-control selectpicker"  id="aefiCode"  name="aefiCode" data-live-search="true" >
+						<option value=""></option>
+					</select>
+<!--
+			      <input type="text" class="form-control" v-model="tChildAbnormal.aefiCode" id="" placeholder="反应症状编码"/>
+-->
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">反应日期<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.aefiDate" id="aefiDate" name="aefiDate" placeholder=""/>
+			    </div>
+			</div>
+									<!--<div class="form-group">
+			   	<div class="col-sm-2 control-label">0:本地；：平台</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.type" placeholder="0:本地；：平台"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">同步状态,0未同步;1同步</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.syncstatus" placeholder="同步状态,0未同步;1同步"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">0:正常；-1删除</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.status" placeholder="0:正常；-1删除"/>
+			    </div>
+			</div>-->
+									<!--<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.createUserId" placeholder="创建人id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.createUserName" placeholder="创建人名字"/>
+			    </div>
+			</div>-->
+									<!--<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">机构编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildAbnormal.orgId" placeholder="机构编码"/>
+			    </div>
+			</div>-->
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/tchildabnormal.js?_${date.systemTime}"></script>
+</body>
+</html>

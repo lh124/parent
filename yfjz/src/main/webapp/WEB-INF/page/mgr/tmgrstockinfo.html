@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+<title>疫苗库存信息表（库存管理）</title>
+#parse("sys/header.html")
+	<style type="text/css">
+		.oneMonth{
+			background-color: #D9534F;
+		}
+		.threeMonth{
+			background-color: #f5f94f;
+		}
+	</style>
+</head>
+<body class="myBody">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<form class="form-inline" style="margin-top: 10px;margin-bottom: 10px" id="searchForm">
+			<div class="form-group">
+				<label>名称:</label>
+				<input type="text" class="form-control" style="width: 150px" id="searchProductName" placeholder="物品名称">
+			</div>
+			<div class="form-group">
+				<label>生产厂家:</label>
+				<input type="text" class="form-control" style="width: 150px" id="searchFactoryName" placeholder="生产厂家">
+			</div>
+			<div class="form-group">
+				<label>批号:</label>
+				<input type="text" class="form-control" style="width: 150px" id="searchBatch" placeholder="批号">
+			</div>
+			<div class="form-group">
+				<label>类型:</label>
+				<!--<input type="text" class="form-control" style="width: 150px"  placeholder="类型">-->
+				<select id="searchType" class="form-control" style="width: 150px">
+					<option value=""></option>
+					<option value="0">疫苗</option>
+					<option value="1">其他</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>失效期:</label>
+				<input type="text" class="form-control" style="width: 150px" id="searchDate" placeholder="失效期"
+					   data-date-format="yyyy-mm-dd">
+			</div>
+			<div class="form-group">
+				<label>查询类型:</label>
+				<select id="selectType" class="form-control" >
+					<option value="hideOverdue">隐藏过期</option>
+					<option value="displayAll">显示所有疫苗</option>
+					<option value="displayOverdue">显示过期疫苗</option>
+					<option value="hideZero">隐藏库存为0的疫苗</option>
+				</select>
+			</div>
+			<a class="btn btn-warning" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+			<a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+		</form>
+		<div class="grid-btn">
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;入库</a>
+			<a class="btn btn-primary" @click="damage"><i class="fa fa-pencil-square-o"></i>&nbsp;报损</a>
+			<a class="btn btn-primary" @click="salesReturn"><i class="fa fa-minus"></i>&nbsp;退货</a>
+			<a class="btn btn-primary" @click="print"><i class="fa fa-print"></i>&nbsp;打印</a>
+		</div>
+		<table id="jqGrid"></table>
+		<div id="jqGridPager"></div>
+	</div>
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-inline" style="margin: 10px" id="putForm">
+			<div class="form-group">
+				<label>入库单号:</label>
+				<input type="text" class="form-control" style="width: 150px" id="order" placeholder="入库单号">
+			</div>
+			<div class="form-group">
+				<label>入库人:</label>
+				<input type="text" class="form-control" style="width: 150px" id="saveUser"
+					   value="$shiro.getBaseInfo('realName')" placeholder="入库人">
+			</div>
+			<div class="form-group">
+				<label>入库时间:</label>
+				<input type="text" class="form-control" style="width: 150px" id="saveTime" placeholder="入库时间"
+					   data-date-format="yyyy-mm-dd">
+			</div>
+			<div class="form-group">
+				<label>入库仓库:</label>
+				<select class="form-control" id="store" @change="changeStore" style="width: 150px" v-model="storeId">
+					<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>备注:</label>
+				<input type="text" class="form-control" style="width: 350px" id="remark" placeholder="备注">
+			</div>
+		</form>
+		<input type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" value="选择产品"/>
+		<div style="width: 1300px">
+			<table id="orderList"></table>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2 control-label"></div>
+			<input type="button" class="btn btn-primary" @click="saveOrUpdate" id="inStockBtn" value="提交"/>
+			&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+		</div>
+	</div>
+
+	<!--选择疫苗弹出框-->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" style="width: 1200px;">
+			<div class="modal-content" role="document">
+				<div class="modal-header">
+					产品信息基础信息表
+				</div>
+				<div class="modal-body" style="width: 1200px;">
+					<input type="text" class="form-control" id="searchName" placeholder="请输入关键字查询" style="width: 300px"
+						   oninput="searchProduct()"/>
+					<table id="productList"></table>
+				</div>
+				<div class="modal-footer">
+					<div align="center">
+						<a class="btn btn-primary" @click="selectVac"><i class="fa fa-save"></i>&nbsp;确定</a>
+						<a class="btn btn-default" @click="cancelVac"><i class="fa fa-remove"></i>&nbsp;取消</a>
+					</div>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal -->
+	</div>
+</div>
+<!--报损弹出框-->
+<div class="modal fade" id="damageModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: 650px;">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					报损操作
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal"  id="damageForm">
+					<input type="hidden" class="form-control" style="width: 150px" name="stockInfoId" >
+					<input type="hidden" class="form-control" style="width: 150px" name="storeId" >
+					<input type="hidden" class="form-control" style="width: 150px" name="equipId" >
+					<input type="hidden" class="form-control" style="width: 150px" name="conversion" >
+					<div class="form-group">
+						<div class="col-sm-2 control-label">产品名称</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="productName"  placeholder="产品名称" disabled/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">库存数量</div>
+						<div class="col-sm-10">
+							<input type="text" disabled class="form-control" name="stockNumber" placeholder="报损数量"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">报损类型</div>
+						<div class="col-sm-10">
+							<select class="col-lg-12 form-control" id="type" name="type"  >
+								<option value="0">报废</option>
+								<option value="1">损耗</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">报损数量<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+						<div class="col-sm-10">
+							<input type="number" class="form-control" name="number" placeholder="报损数量"/>
+						</div>
+					</div>
+					<!--<div class="form-group">
+						<div class="col-sm-2 control-label">报损人</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="damageUser"  placeholder="报损人"/>
+						</div>
+					</div>-->
+					<div class="form-group">
+						<div class="col-sm-2 control-label">报损原因<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+						<div class="col-sm-10">
+							<textarea class="form-control" name="reason" rows="3"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" >
+				<button id="damageBtn" class="btn btn-warning" onclick="commitDamage()"><i class="fa fa-save"></i>&nbsp;提交</button>
+				<a class="btn btn-primary" onclick="cancel(1)"><i class="fa fa-remove"></i>&nbsp;取消</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+<!--退货弹出框-->
+<div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: 650px;">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title">
+					退货操作
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal"  id="returnForm">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">产品名称</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="productName"  placeholder="产品名称" disabled/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">库存数量</div>
+						<div class="col-sm-10">
+							<input type="text" disabled class="form-control" name="stockNumber" />
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-2 control-label">退货数量<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+						<div class="col-sm-10">
+							<input type="number" class="form-control" name="returnNumber" placeholder="退货数量"/>
+						</div>
+					</div>
+					<!--<div class="form-group">
+						<div class="col-sm-2 control-label">报损人</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" name="damageUser"  placeholder="报损人"/>
+						</div>
+					</div>-->
+					<div class="form-group">
+						<div class="col-sm-2 control-label">退货原因<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+						<div class="col-sm-10">
+							<textarea class="form-control" name="returnReason" rows="3"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer" >
+				<button id="returnBtn" class="btn btn-warning" onclick="commitReturn()"><i class="fa fa-save"></i>&nbsp;提交</button>
+				<a class="btn btn-primary" onclick="cancel(2)"><i class="fa fa-remove"></i>&nbsp;取消</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    $(function () {
+
+        $('#saveTime,#searchDate').datetimepicker(
+            {
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayBtn: true,
+                startView: 'month',
+                minView:'month',
+                language:  'zh-CN'
+            }
+        );
+	});
+
+</script>
+<script src="${rc.contextPath}/statics/js/mgr/tmgrstockinfo.js?_${date.systemTime}"></script>
+</body>
+</html>

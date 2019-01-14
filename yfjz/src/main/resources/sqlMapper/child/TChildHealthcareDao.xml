@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="io.yfjz.dao.child.TChildHealthcareDao">
+
+	<!-- 可根据自己需要-->
+	<sql id="allColumnsAlias">
+		id as id ,chil_code as chilCode ,content as content ,register_date as registerDate ,register_user_id as registerUserId ,result as result ,height as height ,weight as weight ,head_circ as headCirc ,fontanel_a as fontanelA ,fontanel_b as fontanelB ,tooth_num as toothNum ,hemoglobin_val as hemoglobinVal ,taked_vitd as takedVitd ,remark as remark ,deleteStatus as delete_status ,create_user_id as createUserId ,create_time as createTime ,org_id as orgId
+	</sql>
+	<!-- 可根据自己需要-->
+	<sql id="allColumns">
+		id ,chil_code ,content ,register_date ,register_user_id ,result ,height ,weight ,head_circ ,fontanel_a ,fontanel_b ,tooth_num ,hemoglobin_val ,taked_vitd ,remark ,delete_status ,create_user_id ,create_time ,org_id
+	</sql>
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap type="io.yfjz.entity.child.TChildHealthcareEntity" id="tChildHealthcareMap">
+		<result property="id" column="id"/>
+		<result property="chilCode" column="chil_code"/>
+		<result property="content" column="content"/>
+		<result property="registerDate" column="register_date"/>
+		<result property="registerUserId" column="register_user_id"/>
+		<result property="result" column="result"/>
+		<result property="height" column="height"/>
+		<result property="weight" column="weight"/>
+		<result property="headCirc" column="head_circ"/>
+		<result property="fontanelA" column="fontanel_a"/>
+		<result property="fontanelB" column="fontanel_b"/>
+		<result property="toothNum" column="tooth_num"/>
+		<result property="hemoglobinVal" column="hemoglobin_val"/>
+		<result property="takedVitd" column="taked_vitd"/>
+		<result property="remark" column="remark"/>
+		<result property="deleteStatus" column="delete_status"/>
+		<result property="createUserId" column="create_user_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="orgId" column="org_id"/>
+	</resultMap>
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildHealthcareEntity">
+		select <include refid="allColumns"></include> from t_child_healthcare where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildHealthcareEntity">
+		SELECT
+		heal.id,
+		info.chil_name AS chil_code,
+		content,
+		register_date,
+		USER.real_name AS register_user_id,
+		result,
+		height,
+		weight,
+		head_circ,
+		fontanel_a,
+		fontanel_b,
+		tooth_num,
+		hemoglobin_val,
+		taked_vitd,
+		heal.remark,
+		USER.real_name AS create_user_id,
+		heal.delete_status
+		FROM
+		t_child_healthcare heal
+		LEFT JOIN t_child_info info ON heal.chil_code = info.chil_code
+		LEFT JOIN sys_user USER ON heal.create_user_id = USER.user_id
+		<where>
+			<if test="chilCode !=null and chilCode != ''">
+                heal.chil_code=#{chilCode}
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by id desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_healthcare
+		<where>
+			<if test="chilCode !=null and chilCode != ''">
+				chil_code=#{chilCode}
+			</if>
+		</where>
+	</select>
+
+	<select id="healthcarelist" resultType="io.yfjz.entity.child.TChildHealthcareEntity">
+		select * from t_child_healthcare WHERE to_days(create_time) = to_days(now()) GROUP BY chil_code
+	</select>
+	<select id="healthcarelists" resultType="io.yfjz.entity.child.TChildHealthcareEntity">
+		select count(*) as chil_code ,'儿保' as remark from t_child_healthcare WHERE to_days(create_time) = to_days(now())
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildHealthcareEntity">
+		insert into t_child_healthcare
+		(
+					`id`, 
+								`chil_code`,
+								`content`, 
+								`register_date`, 
+								`register_user_id`, 
+								`result`, 
+								`height`, 
+								`weight`, 
+								`head_circ`, 
+								`fontanel_a`, 
+								`fontanel_b`, 
+								`tooth_num`, 
+								`hemoglobin_val`, 
+								`taked_vitd`, 
+								`remark`, 
+								`delete_status`,
+								`create_user_id`, 
+								`create_time`, 
+								`org_id`
+					)
+		values
+		(
+					#{id}, 
+								#{chilCode},
+								#{content}, 
+								#{registerDate}, 
+								#{registerUserId}, 
+								#{result}, 
+								#{height}, 
+								#{weight}, 
+								#{headCirc}, 
+								#{fontanelA}, 
+								#{fontanelB}, 
+								#{toothNum}, 
+								#{hemoglobinVal}, 
+								#{takedVitd}, 
+								#{remark}, 
+								#{deleteStatus},
+								#{createUserId}, 
+								#{createTime}, 
+								#{orgId}
+					)
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.child.TChildHealthcareEntity">
+		update t_child_healthcare
+		<set>
+			<if test="chilCode != null">`chil_code` = #{chilCode}, </if>
+			<if test="content != null">`content` = #{content}, </if>
+			<if test="registerDate != null">`register_date` = #{registerDate}, </if>
+			<if test="registerUserId != null">`register_user_id` = #{registerUserId}, </if>
+			<if test="result != null">`result` = #{result}, </if>
+			<if test="height != null">`height` = #{height}, </if>
+			<if test="weight != null">`weight` = #{weight}, </if>
+			<if test="headCirc != null">`head_circ` = #{headCirc}, </if>
+			<if test="fontanelA != null">`fontanel_a` = #{fontanelA}, </if>
+			<if test="fontanelB != null">`fontanel_b` = #{fontanelB}, </if>
+			<if test="toothNum != null">`tooth_num` = #{toothNum}, </if>
+			<if test="hemoglobinVal != null">`hemoglobin_val` = #{hemoglobinVal}, </if>
+			<if test="takedVitd != null">`taked_vitd` = #{takedVitd}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="deleteStatus != null">`delete_status` = #{deleteStatus}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from t_child_healthcare where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from t_child_healthcare where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

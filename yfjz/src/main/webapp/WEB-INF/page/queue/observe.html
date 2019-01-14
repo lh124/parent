@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <style>
+        html,body,.container {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .row {
+            width: 100%;
+            font-size: 0;
+            text-align: center;
+        }
+        .row-items {
+            display: inline-block;
+            box-sizing: border-box;
+            vertical-align: top;
+            width: 33.333333333%;
+            font-size: 30px;
+            color: red;
+        }
+        .items-top {
+            font-size: 30px;
+        }
+        .green {
+            color: #22cd44;
+        }
+        .items-top {
+            padding: 35px 0 20px 0;
+        }
+        .item-content {
+            position: relative;
+            box-sizing: border-box;
+            min-height: 200px;
+            padding-bottom: 60px;
+            border: 1px solid red;
+            border-bottom: none;
+        }
+        .num-wrap {
+            position: absolute;
+            left: 0;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="container" id="observe">
+</div>
+</body>
+<script src="${rc.contextPath}/statics/libs/sockjs.min.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/libs/stomp.min.js?_${date.systemTime}"></script>
+<script>
+    var Vm = new Vue({
+        el:'#observe',
+        data:{
+            start:new Date()
+        },
+        mounded:function(){
+            var self = this
+            window.setInterval(function(){
+                self.start = new Date();
+            },1000)
+        }
+    })
+</script>
+</html>

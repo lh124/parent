@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.TSPositionDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TSPositionEntity">
+		select * from t_s_position where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TSPositionEntity">
+		select * from t_s_position 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+
+	<select id="queryprovince" resultType="Map">
+		SELECT  province_id AS id, province_name AS name FROM t_s_position
+		<where>
+			<if test="province_id!=null and province_id != ''">
+				and province_id = #{province_id}
+			</if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+		GROUP BY province_id HAVING count( 1 ) > 1
+	</select>
+	<select id="querycity" resultType="Map">
+		SELECT DISTINCT city_id AS id, city_name AS name FROM t_s_position
+		<where>
+			<if test="provinceId!=null and provinceId!='' and provinceId!='undefined'">
+				province_id = #{provinceId}
+			</if>
+			<if test="city_id!=null and city_id!='' and city_id!='undefined'">
+				city_id = #{city_id}
+			</if>
+		</where>
+
+	</select>
+	<select id="querycounty" resultType="Map">
+		SELECT DISTINCT county_id AS id, county_name AS name FROM t_s_position
+		<where>
+			<if test="cityId!=null and cityId!='' and cityId!='undefined'">
+				city_id = #{cityId}
+			</if>
+			<if test="country_id!=null and country_id!='' and country_id!='undefined'">
+				county_id = #{country_id}
+			</if>
+		</where>
+
+	</select>
+
+
+	<select id="querytown" resultType="Map">
+		SELECT DISTINCT town_id AS id, town_name AS name FROM t_s_position
+		<where>
+			<if test="countyId!=null and countyId!='' and countyId!='undefined'">
+				county_id = #{countyId}
+			</if>
+			<if test="town_id!=null and town_id!='' and town_id!='undefined'">
+				town_id = #{town_id}
+			</if>
+		</where>
+
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_s_position 
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.child.TSPositionEntity">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select uuid()
+        </selectKey>
+        insert into t_s_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+`id`,
+<if test="provinceId != null">`province_id`  , </if>
+<if test="provinceName != null and provinceName  != ''">`province_name` , </if>
+<if test="cityId != null">`city_id`  , </if>
+<if test="cityName != null and cityName  != ''">`city_name` , </if>
+<if test="countyId != null">`county_id`  , </if>
+<if test="countyName != null and countyName  != ''">`county_name` , </if>
+<if test="townId != null">`town_id`  , </if>
+<if test="townName != null and townName  != ''">`town_name` , </if>
+<if test="villageId != null">`village_id`  , </if>
+<if test="villageName != null and villageName  != ''">`village_name` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#{id},
+<if test="provinceId != null">#{provinceId} , </if>
+<if test="provinceName != null and provinceName  != ''">#{provinceName} , </if>
+<if test="cityId != null">#{cityId} , </if>
+<if test="cityName != null and cityName  != ''">#{cityName} , </if>
+<if test="countyId != null">#{countyId} , </if>
+<if test="countyName != null and countyName  != ''">#{countyName} , </if>
+<if test="townId != null">#{townId} , </if>
+<if test="townName != null and townName  != ''">#{townName} , </if>
+<if test="villageId != null">#{villageId} , </if>
+<if test="villageName != null and villageName  != ''">#{villageName} </if>
+	</trim>
+    </insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.child.TSPositionEntity">
+		update t_s_position 
+		<set>
+	<if test="provinceId != null">`province_id` = #{provinceId} , </if>
+	<if test="provinceName != null and provinceName  != ''">`province_name` = #{provinceName}, </if>
+	<if test="cityId != null">`city_id` = #{cityId} , </if>
+	<if test="cityName != null and cityName  != ''">`city_name` = #{cityName}, </if>
+	<if test="countyId != null">`county_id` = #{countyId} , </if>
+	<if test="countyName != null and countyName  != ''">`county_name` = #{countyName}, </if>
+	<if test="townId != null">`town_id` = #{townId} , </if>
+	<if test="townName != null and townName  != ''">`town_name` = #{townName}, </if>
+	<if test="villageId != null">`village_id` = #{villageId} , </if>
+	<if test="villageName != null and villageName  != ''">`village_name` = #{villageName}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_s_position where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_s_position where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

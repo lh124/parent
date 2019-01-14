@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+             http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+             http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+             http://cxf.apache.org/transports/http/configuration
+             http://cxf.apache.org/schemas/configuration/http-conf.xsd ">
+    <!-- 设置客户端超时信息 单位为毫秒-->
+    <http-conf:conduit name="*.http-conduit">
+        <http-conf:client ConnectionTimeout="500000"
+                          ReceiveTimeout="600000"/>
+    </http-conf:conduit>
+
+    <!-- 上传数据接口 -->
+    <jaxws:client id="uploadPlatformWebservice"
+                  serviceClass="io.yfjz.webservice.UploadPlatformWebservice"
+                  address="${UPLOADPLATFORM.HOST}">
+    </jaxws:client>
+
+
+</beans>

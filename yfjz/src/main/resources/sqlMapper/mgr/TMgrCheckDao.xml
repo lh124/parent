@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrCheckDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrCheckEntity">
+		select ch.*,store.name as storeName from t_mgr_check ch
+		join t_mgr_store store on ch.fk_store_id=store.id
+ 		where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.mgr.TMgrCheckEntity">
+		select ch.*,store.name as storeName from t_mgr_check ch
+		join t_mgr_store store on ch.fk_store_id=store.id
+		<include refid="basewhere"/>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_mgr_check ch
+		join t_mgr_store store on ch.fk_store_id=store.id
+		<include refid="basewhere"/>
+	</select>
+    <select id="queryListByLately" resultType="io.yfjz.entity.mgr.TMgrCheckItemEntity">
+			SELECT
+				item.*
+			FROM
+				t_mgr_check total
+				JOIN t_mgr_check_item item ON total.id = item.fk_check_total_id
+			WHERE
+				TO_DAYS( total.check_time ) = TO_DAYS( #{checkTime} )
+	</select>
+    <select id="queryTowerStock" resultType="map">
+		select * from t_mgr_stock_info  where fk_store_id in (select id from t_mgr_store where ttype=1) AND person_amount>0 and use_amount>0
+	</select>
+    <select id="queryOrderId" resultType="string">
+		select check_code as code from t_mgr_check  where  TO_DAYS(create_time)=TO_DAYS(NOW())  ORDER BY check_code DESC  LIMIT 0,1
+	</select>
+    <sql id="basewhere">
+		<where>
+			<if test="searchOrder!=null and searchOrder!=''">
+				and check_code like concat('%',#{searchOrder},'%')
+			</if>
+			<if test="searchUser!=null and searchUser!=''">
+				and fk_check_user_id  like concat('%',#{searchUser},'%')
+			</if>
+			<if test="startDate!=null">
+				AND check_time 	&gt;=#{startDate}
+			</if>
+			<if test="endDate!=null">
+				AND check_time 	&lt;#{endDate}
+			</if>
+		</where>
+	</sql>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.mgr.TMgrCheckEntity">
+		insert into t_mgr_check
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+		
+			<if test="checkCode != null and checkCode  != ''">`check_code` , </if>
+
+			<if test="fkStoreId != null and fkStoreId  != ''">`fk_store_id` , </if>
+
+			<if test="checkTime != null">`check_time` , </if>
+
+			<if test="fkCheckUserId != null and fkCheckUserId  != ''">`fk_check_user_id` , </if>
+
+			<if test="createUserId != null and createUserId  != ''">`create_user_id` , </if>
+
+			<if test="createTime != null">`create_time` , </if>
+			
+
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        #{id},
+			<if test="checkCode != null and checkCode  != ''">#{checkCode} , </if>
+
+			<if test="fkStoreId != null and fkStoreId  != ''">#{fkStoreId} , </if>
+
+			<if test="checkTime != null">#{checkTime} , </if>
+
+			<if test="fkCheckUserId != null and fkCheckUserId  != ''">#{fkCheckUserId} , </if>
+
+			<if test="createUserId != null and createUserId  != ''">#{createUserId} , </if>
+
+			<if test="createTime != null">#{createTime} , </if>
+
+		
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrCheckEntity">
+		update t_mgr_check 
+		<set>
+	        <if test="checkCode != null and checkCode  != ''">`check_code` = #{checkCode}, </if>
+		        <if test="fkStoreId != null and fkStoreId  != ''">`fk_store_id` = #{fkStoreId}, </if>
+		        <if test="checkTime != null">`check_time` = #{checkTime} , </if>
+		        <if test="fkCheckUserId != null and fkCheckUserId  != ''">`fk_check_user_id` = #{fkCheckUserId}, </if>
+		        <if test="createUserId != null and createUserId  != ''">`create_user_id` = #{createUserId}, </if>
+		        <if test="status != null">`status` = #{status} , </if>
+		        <if test="deleteStatus != null">`delete_status` = #{deleteStatus} , </if>
+		        <if test="createTime != null">`create_time` = #{createTime} , </if>
+		        <if test="updateTime != null">`update_time` = #{updateTime} </if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mgr_check where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_check where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

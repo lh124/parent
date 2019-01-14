@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrStockInfoDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+		select info.*,base.conversion from t_mgr_stock_info info join
+		t_mgr_stock_base base on info.fk_base_info=base.id  where info.id = #{value}
+	</select>
+
+	<select id="queryListMap" resultType="hashmap">
+		SELECT
+		info.id,
+		store.id AS storeId,
+		equip.id AS equipId,
+		base.id AS baseId,
+		base.product_name AS productName,
+		base.batchnum,
+		base.factory_name AS factoryName,
+		info.amount,
+		(select text from sys_dict where ttype='dose_code' AND value=dosenorm) as dosenorm,
+		(select text from sys_dict where ttype='code_drug' AND value=drug) as drug,
+		(select text from sys_dict where ttype='vaccine_unit' AND value=dosemin_unit_code) as doseminUnitCode,
+		base.price,
+		DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+		info.person_amount AS personAmount,
+		base.conversion,
+		base.lot_release AS lotRelease,
+		base.license_number AS licenseNumber,
+		store.`name` AS storeName,
+		base.type,
+		equip.`name` AS equipmentName
+		FROM
+		t_mgr_stock_info info
+		 JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+		LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+		LEFT JOIN t_mgr_equipment equip ON info.fk_equipment_id = equip.id
+		<include refid="whereBase"/>
+		ORDER BY base.type,base.fk_vaccine_code,expiryDate
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(info.id) from t_mgr_stock_info info
+		left join t_mgr_stock_base base on info.fk_base_info=base.id
+		left join t_mgr_store store on info.fk_store_id=store.id
+		left join t_mgr_equipment equip on info.fk_equipment_id=equip.id
+		<include refid="whereBase"/>
+	</select>
+	<sql id="whereBase">
+		<where>
+			store.ttype=0  and base.status=0
+			<choose>
+				<when test="selectType!=null and selectType=='hideOverdue'.toString()">
+					<![CDATA[ and to_days(base.expiry_date) > to_days(now()) ]]>
+				</when>
+				<when test="selectType!=null and selectType=='displayOverdue'.toString()">
+					<![CDATA[ and to_days(base.expiry_date) < to_days(now()) ]]>
+				</when>
+				<when test="selectType!=null and selectType=='hideZero'.toString()">
+					AND info.amount>0
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+			<if test="searchProductName != null">
+				AND  base.product_name like concat('%',#{searchProductName},'%')
+			</if>
+			<if test="searchFactoryName != null">
+				AND  base.factory_name like concat('%',#{searchFactoryName},'%')
+			</if>
+			<if test="searchBatch != null">
+				AND  base.batchnum like concat('%',#{searchBatch},'%')
+			</if>
+			<if test="searchDate != null">
+				AND  base.expiry_date &lt;= #{searchDate}
+			</if>
+			<if test="searchType != null">
+				AND  base.`type` = #{searchType}
+			</if>
+			<if test="storeId != null">
+				AND  info.fk_store_id = #{storeId}
+			</if>
+			<if test="type!=null and type!=''">
+				AND info.amount>0
+			</if>
+		</where>
+	</sql>
+	<select id="queryByBaseInfoId" resultType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+		select * from t_mgr_stock_info where  fk_base_info=#{baseInfoId} and fk_store_id=#{storeId}
+		<if test="equipmentId!=null and equipmentId!=''">
+		   and fk_equipment_id=#{equipmentId}
+		</if>
+	</select>
+	<select id="queryRegisterList" resultType="map">
+		SELECT
+			info.id,
+			base.fk_vaccine_code AS vaccineCode,
+			vac.bio_cn_sortname AS productName,
+			class.class_name AS className,
+			base.batchnum,
+			vac.bio_spec_id as bioSpecId,
+			base.factory_id AS factoryId,
+			base.factory_name AS factoryName,
+			sum(info.amount) as amount,
+			sum(info.person_amount) AS personAmount,
+			base.price,
+			base.inoculation_site AS inoculateSiteCode,
+			siteDic.text AS inoculateSite,
+			DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+			base.conversion
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			LEFT JOIN sys_dict siteDic on siteDic.ttype='code_inoculation_site' and base.inoculation_site= siteDic.value
+			JOIN t_mgr_store store ON info.fk_store_id = store.id
+			LEFT JOIN t_mgr_equipment equip ON info.fk_equipment_id = equip.id
+			JOIN t_vac_info vac ON base.fk_vaccine_code = vac.bio_code
+			JOIN t_vac_class class ON vac.bio_class_id = class.class_code
+		WHERE
+			base.type =0  and base.status=0
+			<![CDATA[ and to_days(base.expiry_date) > to_days(now()) ]]>
+		    AND  store.ttype!=2
+		GROUP BY productName,batchnum
+		having personAmount > 0
+		ORDER BY price asc,base.fk_vaccine_code,expiry_date asc
+		<!--<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>-->
+	</select>
+	<select id="queryRegisterTotal" resultType="int">
+		SELECT count(*) FROM (
+		SELECT
+			count(*)
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+			LEFT JOIN t_mgr_equipment equip ON info.fk_equipment_id = equip.id
+			JOIN t_vac_info vac ON base.fk_vaccine_code = vac.bio_code
+			JOIN t_vac_class class ON vac.bio_class_id = class.class_code
+		WHERE
+			base.type =0  AND  base.status=0
+			<![CDATA[ and to_days(base.expiry_date) > to_days(now()) ]]>
+		GROUP BY base.product_name,base.batchnum
+
+		) AS a
+
+	</select>
+    <select id="queryStoreInfo" resultType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+		select * from t_mgr_stock_info where  fk_base_info=#{baseInfoId} and fk_store_id=#{storeId}
+	</select>
+    <select id="queryListByCodeIdAndBatchnum" resultType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+      SELECT
+            info.*,base.conversion
+        FROM
+            t_mgr_stock_info info
+            JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+        WHERE
+            info.fk_store_id = #{storeId}
+            AND base.fk_vaccine_code = #{bioCode}
+            AND base.batchnum = #{batchnum}
+            AND base.status=0
+            limit 1
+	</select>
+    <select id="queryByCodeAndStore" resultType="map">
+		SELECT
+			info.id,
+			base.id as baseId,
+			info.fk_store_id,
+			base.product_name AS productName,
+			base.batchnum,
+			base.fk_vaccine_code as vaccineCode,
+			base.factory_name AS factoryName,
+			base.factory_id AS factoryId,
+			info.amount,
+			info.receive_amount as receiveAmount,
+			info.use_amount AS useAmount,
+			(select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) as dosenorm,
+		    (select text from sys_dict where ttype='code_drug' AND value=base.drug) as drug,
+		    (select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) as doseminUnitCode,
+			base.price,
+			DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+			info.person_amount AS personAmount,
+			base.conversion,
+			base.lot_release AS lotRelease,
+			base.license_number AS licenseNumber,
+			store.`name` AS storeName,
+			base.type
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+		WHERE
+			base.type = 0  and base.status=0
+			AND base.fk_vaccine_code = #{bioCode}
+			AND info.fk_store_id = #{storeId}
+			AND info.person_amount > 0
+			AND base.batchnum=#{batchnum}
+			AND TO_DAYS( base.expiry_date ) > TO_DAYS( NOW( ) )
+
+		ORDER BY base.expiry_date
+	</select>
+    <select id="queryAllStock" resultType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+			SELECT
+				info.fk_base_info,
+				sum( info.amount ) AS amount,
+				info.fk_create_user_id,
+				person_amount,
+				fk_store_id,
+				fk_equipment_id,
+				info.STATUS,
+				info.delete_status
+			FROM
+				t_mgr_stock_info info
+				LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			GROUP BY
+				base.id
+	</select>
+	<select id="queryReceiveVaccine" resultType="map">
+		SELECT
+			info.id,
+			base.id as baseId,
+			info.fk_store_id,
+			base.product_name AS productName,
+			base.batchnum,
+			base.fk_vaccine_code as vaccineCode,
+			base.factory_name AS factoryName,
+			base.factory_id AS factoryId,
+			info.amount,
+			info.use_amount AS useAmount,
+			(select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) as dosenorm,
+		    (select text from sys_dict where ttype='code_drug' AND value=base.drug) as drug,
+		    (select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) as doseminUnitCode,
+			base.price,
+			DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+			info.person_amount AS personAmount,
+			info.receive_amount as receiveAmount,
+			base.conversion,
+			base.lot_release AS lotRelease,
+			base.license_number AS licenseNumber,
+			store.`name` AS storeName,
+			base.type
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+				LEFT JOIN t_vac_info vac ON vac.bio_code = base.fk_vaccine_code
+		WHERE
+			base.type = 0  AND  base.status=0
+			AND vac.bio_class_id = #{classCode}
+			AND info.fk_store_id = #{storeId}
+			AND info.person_amount > 0
+			AND TO_DAYS( base.expiry_date ) > TO_DAYS( NOW( ) )
+		ORDER BY base.expiry_date
+
+	</select>
+	<select id="queryStockAmount" resultType="map">
+		SELECT
+		LEFT ( base.fk_vaccine_code, 2 ) AS classCode,
+		sum( info.person_amount ) AS number
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+			LEFT JOIN t_vac_info vac ON vac.bio_code = base.fk_vaccine_code
+		WHERE
+			base.type = 0  and base.status=0
+			AND vac.bio_class_id = #{classId}
+			AND info.fk_store_id = #{storeId}
+			and info.person_amount>0
+			AND TO_DAYS( base.expiry_date ) > TO_DAYS( NOW( ) )
+		GROUP BY
+				LEFT ( base.fk_vaccine_code, 2 )
+	</select>
+    <select id="queryStockInfoByEquipmentAndStore" resultType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+		SELECT
+			*
+		FROM
+			t_mgr_stock_info
+		WHERE
+			fk_base_info = #{baseId}
+			AND fk_store_id =(select store_id from t_mgr_stock_in_total where id=#{totalId})
+			<if test="equipId!=null and equipId!=''">
+				AND fk_equipment_id = #{equipId}
+			</if>
+
+	</select>
+    <select id="queryDispatchList" resultType="map">
+		SELECT
+			item.create_time as createTime,
+			CASE total.in_type
+				WHEN 0 THEN
+					item.provider_factory
+				ELSE
+					store.name
+			END  AS storeName,
+			base.factory_name as factoryName,
+			base.license_number as licenseNumber,
+			base.lot_release as lotRelease,
+			item.amount as inAmount,
+			item.person_amount as inPersonAmount,
+			base.batchnum as inBatchnum,
+			DATE_FORMAT(base.expiry_date,'%Y-%m-%d')  as inExpiryDate,
+			NULL as outAmount,
+			NULL as outPersonAmount,
+			NULL as outBatchnum,
+			NULL as outExpiryDate,
+		    sys.real_name as realName
+		FROM
+			t_mgr_stock_in_item item
+			join t_mgr_stock_in_total total on item.total_id=total.id
+			join t_mgr_stock_base base on item.fk_stock_info_id=base.id
+			left join sys_user sys on total.fk_create_user_id=sys.user_id
+			left join t_mgr_store store on store.pos_id=item.tower_id
+		WHERE
+			fk_stock_info_id in (select fk_base_info from t_mgr_stock_info where id=#{infoId})
+		union
+
+		SELECT
+		 	item.create_time as createTime,
+			store.name as storeName,
+			base.factory_name factoryName,
+		    base.license_number licenseNumber,
+		    base.lot_release  lotRelease,
+			NULL as inAmount,
+			NULL as inPersonAmount,
+			NULL as inBatchnum,
+			NULL as inExpiryDate,
+			item.amount as outAmount,
+			item.person_amount as outPersonAmount,
+			base.batchnum as outBatchnum,
+			DATE_FORMAT(base.expiry_date,'%Y-%m-%d')  as outExpiryDate,
+			sys.real_name realName
+		FROM
+			t_mgr_stock_out_item item
+			join t_mgr_stock_info  info on item.stock_info_id=info.id
+			JOIN t_mgr_stock_out_total total on item.total_id=total.id
+			join t_mgr_stock_base base on info.fk_base_info=base.id
+			left join t_mgr_store store on store.id=total.in_store_id
+			left join sys_user sys on total.create_user_id=sys.user_id
+		WHERE
+			stock_info_id =#{infoId}
+		UNION
+		SELECT
+		item.create_time,
+		store.name as storeName,
+		base.factory_name,
+		base.license_number,
+		base.lot_release,
+		CASE WHEN diff_number>0 THEN	diff_number ELSE null END inAmount ,
+		CASE WHEN diff_number>0 THEN	diff_number*base.conversion ELSE null END inPersonAmount ,
+		CASE WHEN diff_number>0 THEN	base.batchnum ELSE null END inBatchnum,
+		CASE WHEN diff_number>0 THEN	DATE_FORMAT(base.expiry_date,'%Y-%m-%d') ELSE null END inExpiryDate ,
+		CASE WHEN diff_number &lt;0 THEN	ABS(diff_number) ELSE null END outAmount ,
+		CASE WHEN diff_number &lt;0 THEN	ABS(diff_number*base.conversion) ELSE null END outPersonAmount ,
+		CASE WHEN diff_number &lt;0 THEN	base.batchnum ELSE null END outBatchnum,
+		CASE WHEN diff_number &lt;0 THEN	DATE_FORMAT(base.expiry_date,'%Y-%m-%d') ELSE null END outExpiryDate ,
+		sys.real_name
+		FROM
+		t_mgr_check_item item
+		join t_mgr_stock_info  info on item.fk_stock_info_id=info.id
+		JOIN t_mgr_check total on item.fk_check_total_id=total.id
+		join t_mgr_stock_base base on info.fk_base_info=base.id
+		left join t_mgr_store store on store.id=total.fk_store_id
+		left join sys_user sys on total.create_user_id=sys.user_id
+		WHERE
+		fk_stock_info_id = #{infoId} AND diff_number!=0
+		order by createTime
+
+	</select>
+	<select id="queryVaccineBatchum" resultType="map">
+		SELECT
+			base.batchnum,
+		    (select text from sys_dict where ttype='code_inoculation_site' and value=base.inoculation_site) as inocSite
+		FROM
+			t_mgr_stock_info info
+			JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			JOIN t_vac_info vac ON vac.bio_code = base.fk_vaccine_code
+			JOIN t_mgr_store store ON info.fk_store_id = store.id
+		WHERE
+			vac.bio_class_id = ( SELECT bio_sort_id FROM t_rule_dic WHERE id =#{planId})
+			AND base.`status`=0
+			AND info.person_amount >0
+			AND TO_DAYS(base.expiry_date)>TO_DAYS(NOW())
+			AND base.price &lt;=0
+			<choose >
+				<when test="storeId!=null and storeId!=''">
+					AND  info.fk_store_id=#{storeId}
+				</when>
+				<otherwise>
+					AND store.ttype = 0
+				</otherwise>
+			</choose>
+		order by base.expiry_date
+	</select>
+	<select id="queryReceiveVaccineByBatchnum" resultType="map">
+		SELECT
+			info.id,
+			base.id as baseId,
+			info.fk_store_id,
+			base.product_name AS productName,
+			base.batchnum,
+			base.fk_vaccine_code as vaccineCode,
+			base.factory_name AS factoryName,
+			base.factory_id AS factoryId,
+			info.amount,
+			info.use_amount AS useAmount,
+			(select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) as dosenorm,
+		    (select text from sys_dict where ttype='code_drug' AND value=base.drug) as drug,
+		    (select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) as doseminUnitCode,
+			base.price,
+			DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+			info.person_amount AS personAmount,
+			info.receive_amount as receiveAmount,
+			base.conversion,
+			base.lot_release AS lotRelease,
+			base.license_number AS licenseNumber,
+			store.`name` AS storeName,
+			base.type
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+			LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+				LEFT JOIN t_vac_info vac ON vac.bio_code = base.fk_vaccine_code
+		WHERE
+			base.type = 0  AND  base.status=0
+			AND vac.bio_class_id = #{classCode}
+			AND info.fk_store_id = #{storeId}
+			AND info.person_amount > 0
+			AND TO_DAYS( base.expiry_date ) > TO_DAYS( NOW( ) )
+			<if test="batchnum!=null and batchnum!=''">
+				AND base.batchnum=#{batchnum}
+			</if>
+		ORDER BY base.expiry_date
+
+	</select>
+	<update id="updateOther" parameterType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+		update t_mgr_stock_info
+		<set>
+			<if test="amount != null">`amount` = #{amount} , </if>
+			<if test="personAmount != null">`person_amount` = #{personAmount} ,</if>
+			<if test="useAmount != null">`use_amount` = #{useAmount},  </if>
+			<if test="receiveAmount != null">`receive_amount` = #{receiveAmount} </if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<insert id="insertStockInit">
+		INSERT INTO t_mgr_stock_info_init SELECT
+		uuid( ),
+		info.fk_base_info,
+		sum( info.amount ) AS amount,
+		info.fk_create_user_id,
+		person_amount,
+		fk_store_id,
+		fk_equipment_id,
+		info.STATUS,
+		info.delete_status,
+		now( ),
+		NOW( ),
+		0,
+		0
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+		GROUP BY
+			base.id
+	</insert>
+
+	<insert id="save" parameterType="io.yfjz.entity.mgr.TMgrStockInfoEntity" useGeneratedKeys="true">
+		insert into t_mgr_stock_info
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+		
+			<if test="fkBaseInfo != null and fkBaseInfo  != ''">`fk_base_info` , </if>
+
+			<if test="amount != null">`amount` , </if>
+			<if test="fkCreateUserId != null and fkCreateUserId  != ''">`fk_create_user_id` , </if>
+
+			<if test="personAmount != null">`person_amount` , </if>
+
+			<if test="fkStoreId != null and fkStoreId  != ''">`fk_store_id` , </if>
+			<if test="fkEquipmentId != null and fkEquipmentId  != ''">`fk_equipment_id` , </if>
+			<if test="createTime != null ">`create_time` , </if>
+			<if test="receiveAmount != null ">`receive_amount` , </if>
+
+
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+			<if test="fkBaseInfo != null and fkBaseInfo  != ''">#{fkBaseInfo} , </if>
+
+			<if test="amount != null">#{amount} , </if>
+
+			<if test="fkCreateUserId != null and fkCreateUserId  != ''">#{fkCreateUserId} , </if>
+
+			<if test="personAmount != null">#{personAmount} , </if>
+
+			<if test="fkStoreId != null and fkStoreId  != ''">#{fkStoreId} , </if>
+			<if test="fkEquipmentId != null and fkEquipmentId  != ''">#{fkEquipmentId} , </if>
+			<if test="createTime != null">#{createTime} , </if>
+			<if test="receiveAmount != null">#{receiveAmount} , </if>
+			</trim>
+	</insert>
+	<insert id="insertUseRecord" parameterType="io.yfjz.entity.mgr.TMgrUseRecord">
+		insert into t_mgr_use_record  VALUES (uuid(),#{nowTowerId},#{receiveStoreId},#{baseInfoId},#{usePersonAmount},
+		#{createUserId},#{createTime},#{deleteStatus})
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrStockInfoEntity">
+		update t_mgr_stock_info 
+		<set>
+		        <if test="amount != null">`amount` = #{amount} , </if>
+		        <if test="personAmount != null">`person_amount` = #{personAmount} ,</if>
+		        <if test="receiveAmount != null">`receive_amount` = #{receiveAmount},  </if>
+		        <if test="useAmount != null">`use_amount` = #{useAmount}  </if>
+			</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from t_mgr_stock_info where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_stock_info where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

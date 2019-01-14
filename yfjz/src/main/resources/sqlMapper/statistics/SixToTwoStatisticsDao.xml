@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.SixToTwoStatisticsDao">
+
+
+    <select id="queryList" resultType="map">
+        SELECT
+        COUNT( * ) number,
+        inoc_bact_code as classCode
+        FROM
+        t_child_inoculate inoc
+        WHERE
+        TO_DAYS( inoc_date ) >= TO_DAYS( #{startDate} )
+        AND TO_DAYS( inoc_date ) &lt;= TO_DAYS( #{endDate} )
+
+        AND inoc_free = 0
+        AND inoc.delete_status = 0
+        and inoc_county=left(#{orgId},6)
+        and inoc_nationcode=right(#{orgId},4)
+        AND (inoc_union_code='' or inoc_union_code is null)
+        GROUP BY
+        classCode;
+    </select>
+    <select id="queryAllVaccine" resultType="map">
+        SELECT
+		class_code classCode,class_name AS className
+		FROM
+				t_vac_class
+		WHERE
+		class_code not IN (01,05,07,09,26,27,31,32,39,40,41,42,43,44,45,46,48,51,9999,57,17,16,25,60,03,55,33)
+
+		UNION
+
+		select bio_code classCode, bio_cn_sortname className from t_vac_info  where bio_class_id=17
+		UNION
+
+		select bio_code classCode, bio_cn_sortname className from t_vac_info  where bio_class_id=25
+		UNION
+
+		select bio_code classCode, bio_cn_sortname className from t_vac_info  where bio_class_id=55
+				UNION
+
+		select bio_code classCode, bio_cn_sortname className from t_vac_info  where bio_code='0303'
+
+		 order by FIELD(classCode,02,06,04,08,14,13,12,11,10,18,58,1701,1702,1703,19,59,20,23,22,24,21,2501,2502,2503,29,34,36,28,30,37,35,38,47,0303,52,50,49,53,54,5501,5502)
+
+    </select>
+
+    <select id="queryUploadList" resultType="map">
+        SELECT
+        inoc_time,
+        inoc_bact_code AS classCode
+        FROM
+        t_child_inoculate inoc
+        WHERE
+        TO_DAYS( inoc_date )<![CDATA[ >= ]]> TO_DAYS( #{startDate} )
+        AND TO_DAYS( inoc_date ) <![CDATA[ <= ]]> TO_DAYS( #{endDate} )
+        AND inoc_free = 0
+        AND inoc.delete_status = 0
+        AND inoc_nationcode = #{nationcode}
+        AND ( inoc_union_code = '' OR inoc_union_code IS NULL )
+        AND inoc_bact_code IN (
+        SELECT
+        bio_code classCode
+        FROM
+        t_vac_info
+        WHERE
+        bio_class_id IN (
+        25,
+        17,
+        53,
+        54,
+        23,
+        02,
+        18,
+        58,
+        55,
+        30,
+        29,
+        37,
+        52,
+        47,
+        22,
+        36,
+        28,
+        20,
+        19,
+        59,
+        33,
+        06,
+        49,
+        50,
+        04,
+        03,
+        10,
+        24,
+        34,
+        38,
+        11,
+        13,
+        12,
+        14,
+        35
+        )
+        HAVING
+        classCode NOT IN ( '0202', '0203' )
+        );
+
+    </select>
+</mapper>

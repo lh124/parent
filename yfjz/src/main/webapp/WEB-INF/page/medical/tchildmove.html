@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/core">
+<head>
+	<title>儿童迁移记录表</title>
+	#parse("sys/header.html")
+
+	<link href="../statics/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+	<script src="../statics/libs/moment-with-locales.js"></script>
+	<script src="../statics/libs/bootstrap-datetimepicker.min.js"></script>
+	<script src="../statics/libs/bootstrap-datetimepicker.zh-CN.js"></script>
+</head>
+<body>
+<input type="hidden" id="chilCode" value="${request.getParameter('chilCode')}">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<!--<div class="form-group col-sm-2">-->
+				<!--<input type="text" class="form-control" v-model="q.chilCode"  @keyup.enter="query" placeholder="按姓名搜索">-->
+			<!--</div>-->
+			<!--<a class="btn btn-info" @click="query"><i class="fa fa-search"></i>&nbsp; 查询</a>-->
+			<!--#if($shiro.hasPermission("tchildmove:save"))-->
+			<!--<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>-->
+			<!--#end-->
+			<!--#if($shiro.hasPermission("tchildmove:update"))-->
+			<!--<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>-->
+			<!--#end-->
+			<!--#if($shiro.hasPermission("tchildmove:delete"))-->
+			<!--<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+			<!--#end-->
+			<!--<a class="btn btn-primary" href="javascript:history.go(-1)">返回上一级</a>-->
+		</div>
+		<table id="jqGrid"></table>
+		<div id="jqGridPager"></div>
+	</div>
+
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="moveForm">
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童编码</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildMove.chilCode" readonly placeholder=""/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童姓名</div>
+				<div class="col-sm-10">
+					<input type="text" id="chilName" class="form-control" value="${request.getParameter('chilName')}" readonly>
+					<!--<input type="text" class="form-control"  id="${request.getParameter('chilNames')}" readonly placeholder=""/>-->
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">在册情况</div>
+				<div class="col-sm-10">
+
+					<select v-model="tChildMove.chheHere" class="form-control"  id="chheHere" name="chheHere" >
+						<option v-for="item in infostatus" v-bind:value="item.value">{{item.text}}</option>
+					</select>
+					<!--<input type="text" class="form-control" v-model="tChildMove.chheHere" name="chheHere" placeholder="现在册状态"/>-->
+				</div>
+			</div>
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">原在册状态</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.chhePrehere" placeholder="原在册状态"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label">出省状态</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildMove.chheChilProvince" name="chheChilProvince" placeholder="出省状态"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">变更原因</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildMove.chheChilProvinceremark" name="chheChilProvinceremark" placeholder="变更原因"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">变更时间</div>
+				<div class="col-sm-10">
+					<!--<input type="text" class="form-control" v-model="tChildMove.chheChangedate" placeholder="变更时间"/>-->
+					<a class="input-group date" id="datetimepicker1" style="float: left; " >
+						<input type="text" class="form-control" v-model="tChildMove.chheChangedate" placeholder="变更时间" id='chheChangedate' name="chheChangedate" style="width: 320px; height: 35px;" />
+						<span class="input-group-addon" style="float: left; width: 50px; height: 35px;">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+					</a>
+				</div>
+			</div>
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">变更单位编码</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.chheDepaId" placeholder="变更单位编码"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">是否来源平台 0:本地 ，1：平台</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.type" placeholder="是否来源平台 0:本地 ，1：平台"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">同步状态,0未同步;1同步</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.syncstatus" placeholder="同步状态,0未同步;1同步"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">状态：0：正常；-1：删除</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.status" placeholder="状态：0：正常；-1：删除"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">创建人id</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.createUserId" placeholder="创建人id"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">创建人名字</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.createUserName" placeholder="创建人名字"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">创建时间</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.createTime" placeholder="创建时间"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">机构编码</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildMove.orgId" placeholder="机构编码"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/medical/tchildmove.js?_${date.systemTime}"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.rule.TRuleHivDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.rule.TRuleHivEntity">
+		select * from t_rule_hiv where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.rule.TRuleHivEntity">
+		select * from t_rule_hiv 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_rule_hiv 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.rule.TRuleHivEntity">
+		insert into t_rule_hiv
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				id,
+				<if test="hivType != null">`hiv_type` , </if>
+				<if test="symptomType != null">`symptom_type` , </if>
+				<if test="cannotPlanClass != null">`cannot_plan_class` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				uuid(),
+				<if test="hivType != null">#{hivType} , </if>
+				<if test="symptomType != null">#{symptomType} , </if>
+				<if test="cannotPlanClass != null">#{cannotPlanClass} </if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.rule.TRuleHivEntity">
+		update t_rule_hiv 
+		<set>
+			<if test="hivType != null">`hiv_type` = #{hivType}, </if>
+			<if test="symptomType != null">`symptom_type` = #{symptomType}, </if>
+			<if test="cannotPlanClass != null">`cannot_plan_class` = #{cannotPlanClass}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_rule_hiv where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_rule_hiv where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

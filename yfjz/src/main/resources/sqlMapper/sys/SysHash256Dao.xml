@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.sys.SysHash256Dao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.sys.SysHash256Entity">
+		select * from sys_hash256 where hashcode = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.sys.SysHash256Entity">
+		select * from sys_hash256 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from sys_hash256 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.sys.SysHash256Entity">
+		insert into sys_hash256
+		(
+			`hashcode`, 
+			`filename`, 
+			`uploadtime`
+		)
+		values
+		(
+			#{hashcode}, 
+			#{filename}, 
+			#{uploadtime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.sys.SysHash256Entity">
+		update sys_hash256 
+		<set>
+			<if test="filename != null">`filename` = #{filename}, </if>
+			<if test="uploadtime != null">`uploadtime` = #{uploadtime}</if>
+		</set>
+		where hashcode = #{hashcode}
+	</update>
+	
+	<delete id="delete">
+		delete from sys_hash256 where hashcode = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from sys_hash256 where hashcode in 
+		<foreach item="hashcode" collection="array" open="(" separator="," close=")">
+			#{hashcode}
+		</foreach>
+	</delete>
+
+</mapper>

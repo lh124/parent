@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童禁忌表</title>
+	#parse("sys/header.html")
+</head>
+<body>
+<div id="rrapp_taboo" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+
+		</div>
+	    <table id="tabooGrid"></table>
+	    <div id="tabooGridPager"></div>
+    </div>
+    
+    <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="taboo">
+											<div class="form-group">
+			   	<div class="col-sm-2 control-label">儿童编码</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.chilCode" readonly placeholder=""/>
+			    </div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童姓名</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" id="chilName" readonly placeholder=""/>
+				</div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">接种禁忌<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+			   	<div class="col-sm-10">
+					<select v-model="tChildTaboo.istaCode"  class="form-control selectpicker"  id="istaCode"   name="istaCode" data-live-search="true" >
+						<option value=""></option>
+					</select>
+<!--
+			      <input type="text" class="form-control" v-model="tChildTaboo.istaCode" id="istaCode" name="istaCode" placeholder=""/>
+-->
+			    </div>
+			</div>
+									<!--<div class="form-group">
+			   	<div class="col-sm-2 control-label">疫苗</div>
+			   	<div class="col-sm-10">
+					<select v-model="tChildTaboo.istaBioCode" class="form-control"  id="istaBioCode"  name="istaBioCode" >
+
+					</select>
+&lt;!&ndash;
+			      <input type="text" class="form-control" v-model="tChildTaboo.istaBioCode" placeholder=""/>
+&ndash;&gt;
+			    </div>
+			</div>-->
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">检测日期</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.istaCheckDate" id="istaCheckDate" placeholder=""/>
+			    </div>
+			</div>
+									<!--<div class="form-group">
+			   	<div class="col-sm-2 control-label">type,0本地,1平台</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.type" placeholder="type,0本地,1平台"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">同步状态,0未同步;1同步</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.syncstatus" placeholder="同步状态,0未同步;1同步"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">状态,0正常,-1删除</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.status" placeholder="状态,0正常,-1删除"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人id</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.createUserId" placeholder="创建人id"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建人名字</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.createUserName" placeholder="创建人名字"/>
+			    </div>
+			</div>
+									<div class="form-group">
+			   	<div class="col-sm-2 control-label">创建时间</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="tChildTaboo.createTime" placeholder="创建时间"/>
+			    </div>
+			</div>-->
+
+							<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/child/tchildtaboo.js?_${date.systemTime}"></script>
+</body>
+</html>

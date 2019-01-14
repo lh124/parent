@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Title</title>
+    #parse("sys/header.html")
+    <script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('realName')";
+    </script>
+</head>
+<body>
+
+
+<div id="myModal_updataino" class="tmpl layui-row none" style="overflow-y: auto">
+    <div class="tmpl-body" id="updateInosss" style="margin-left: 17px">
+        <!--<input type="hidden" id="bio" />-->
+        <!--<input type="hidden" id="selectRowId" />-->
+        <table style="border-collapse:separate; border-spacing:5px 10px;" >
+            <tr>
+                <td >疫苗名称:</td><td>
+                <select id="inocBactCode" name="inocBactCode" v-model="ino.inocBactCode" class="selectpicker"  data-live-search="true"  title=""  style="width: 110px">
+                    <!--<option value="" ></option>-->
+                </select></td>
+                <td >批号:</td><td><input type="text" v-model="ino.inocBatchno"  id="inocBatchno" name="inocBatchno" class="form-control"  style="width: 110px"></td>
+                <td >剂次:</td><td><input type="text" v-model="ino.inocTime"  id="inocTime" name="inocTime" class="form-control"  style="width: 110px"></td>
+            </tr>
+            <tr>
+                <td >接种属性:</td><td>
+                <select type="text"  id="inocProperty" v-model="ino.inocProperty" name="inocProperty" class="form-control"  style="width: 80px">
+                    <option value=""></option>
+                    <option value="0">基础</option>
+                    <option value="1">加强</option>
+                    <option value="2">强化</option>
+                    <option value="3">应急</option>
+
+                </select></td>
+                <td >接种日期:</td><td><input type="text"  v-model="ino.inocDate"  id="inocDate" name="inocDate" class="form-control"  style="width: 140px"></td>
+                <td>接种部位:</td><td>
+                <select type="text"  id="inocInplId" v-model="ino.inocInplId" name="inocInplId" class="form-control"  style="width: 110px">
+                    <option value=""></option>
+                    <option value="1">左上臂</option>
+                    <option value="2">右上臂</option>
+                    <option value="9">口服</option>
+                    <option value="4">左大腿</option>
+                    <option value="5">右大腿</option>
+                    <option value="7">左臀部</option>
+                    <option value="8">右臀部</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td>修改单位:</td><td><input type="text" v-model="ino.inocModifyCode"  id="inocModifyCode" name="inocModifyCode" class="form-control" readonly style="width: 150px"></td>
+                <td>生产企业:</td><td id="inocCorpCodeCass"><select  class="form-control"  title="" id="inocCorpCode" name="inocCorpCode"  style="width: 100px">
+
+                <!--<option value=""></option>-->
+            </select></td>
+                <td>是否免费:</td><td>
+                <select type="text"  id="inocFree" v-model="ino.inocFree" name="inocFree" class="form-control"  style="width: 80px">
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td>接种护士:</td><td><input type="text" v-model="ino.inocNurse" id="inocNurse"  class="form-control"  style="width: 140px"></td>
+                <td>修改原因:</td><td colspan="9"><textarea class="form-control"  id="updatasremark" name="remark" ></textarea></td>
+            </tr>
+                <tr>
+                    <td>接种单位:</td><td>
+                    <select type="text"  id="inocDepaCode" v-model="ino.inocDepaCode" name="inocDepaCode"  class="selectpicker" data-live-search="true"  style="width: 120px"  >
+                        <option value=""></option>
+                    </select></td>
+                </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <input type="button" class="btn btn-primary" id="createFileSureBut" onclick="saveInott()"  value="保存"/>
+    </div>
+</div>
+
+
+</body>
+
+<script>
+    $(function () {
+        updateloadInocBactCode();
+        updatefactory();
+        hospitaljzdw();
+    })
+    function  updateloadInocBactCode () {
+        //初始化下拉框
+        $('#inocBactCode').selectpicker({
+            'selectedText': 'cat',
+            search:false,
+        });
+        $.ajax({
+            url: '../tvacinfo/list?page=1&limit=1000',
+            dataType: "json",
+            type: 'POST',
+            success: function (results) {
+                var con = '';
+                var seldata = results.page.list;
+                // updateVue.inocBactCode = seldata;
+                $.each(seldata, function (i, n) {
+                    $("#inocBactCode").append(" <option value=\"" + n.bioCode + "\">" + n.bioCnSortname + "</option>");
+                })
+                $("#inocBactCode").selectpicker('refresh');
+            }
+        });
+    }
+
+    function updatefactory() {
+        $.ajax({
+            type:"post",
+            url:"../tvacfactory/getAllData",
+            dataType:'json',
+            async: false,
+            contentType:'application/json;charset=UTF-8',
+            success: function (data) {
+                console.log(data);
+                var con='';
+                for (var i=0;i<data.page.length;i++){
+                    con+='<option value="'+data.page[i].factoryCode+'">'+data.page[i].factoryCnName+'</option>';
+                }
+                $("#inocCorpCode").append(con);
+                // $("#inocCorpCode").selectpicker('refresh');
+            }
+        });
+    }
+
+    //接种单位
+    function hospitaljzdw() {
+        $('#inocDepaCode').selectpicker({
+            'selectedText': 'cat',
+            noneSelectedText:'请选择接种单位...',
+        });
+        $.ajax({
+            type: "post",
+            url: "../tbaseposition/gethospital",
+            dataType: 'json',
+            async: false,
+            contentType: 'application/json;charset=UTF-8',
+            success: function (data) {
+                console.log("---------------");
+                console.log(data.data);
+                console.log("---------------");
+                var option='';
+                for(var i=0;i<data.data.length;i++){
+                    option += '<option  value="' + data.data[i].id + '">'+data.data[i].name+'</option>';
+                    // option += $("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
+                }
+                $("#inocDepaCode").append(option);
+                $("#inocDepaCode").selectpicker('refresh');
+            }
+        });
+    }
+</script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/updatainoRecorddialog.js"></script>
+</html>

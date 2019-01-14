@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>儿童重复筛选</title>
+    #parse("sys/header.html")
+    <link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+    <script type="text/javascript" src="${rc.contextPath}/statics/plugins/easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/statics/plugins/layui/layui.js"></script>
+
+    <style type="text/css">
+        a:link, a:visited, a:hover, a:active {
+            text-decoration: none;
+            outline: none;
+        }
+
+        .condition {
+            vertical-align: middle;
+            display: inline-block;
+            height: 16px;
+            margin-right: 8px;
+            width: 15px;
+            line-height: 1
+        }
+
+        .layui-table-view .layui-form-checkbox[lay-skin=primary] i {
+            margin-top: 6px;
+        }
+
+        .layui-table td, .layui-table th {
+            font-size: 12px;
+        }
+        .ui-jqgrid td input, .ui-jqgrid td select, .ui-jqgrid td textarea{
+            margin-left: 5px;
+            margin-top: 5px;
+        }
+    </style>
+<body style="background-color: #F4F4F4;">
+<div id="tb" style="padding:5px;height:auto">
+    <form method="post" id="tt" class="form-inline" role="form">
+        <span style="font-size:12px;float: left;margin-top: 6px;margin-left: 20px;">必选条件：</span>
+
+        <div style="float: left;border:white 2px solid;padding: 4px;margin-bottom: 2px;">
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilSex" class="condition" value="0" checked disabled>
+                <span style="color:rgba(0,0,0,0.44)" disabled>儿童性别</span>
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilBirthday" class="condition" value="" checked disabled>
+                <span style="color:rgba(0,0,0,0.44)" disabled>出生日期</span>
+            </label>
+        </div>
+        <span style="font-size:12px;float: left;margin-top: 7px;margin-left: 20px;">必选一项：</span>
+        <div style="float: left;border:white 2px solid;padding: 4px;margin-right: 20px;">
+
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilName" class="condition" id="chilName" value="chilName"/>儿童姓名
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilMother" class="condition" id="chilMother" value="chilMother"/>母亲姓名
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilFather" class="condition" id="chilFather" value="chil_father"/>父亲姓名
+            </label>
+        </div>
+
+        <span style="float: left;margin-top: 6px;">
+             <label class="checkbox-inline">
+                <input type="checkbox" name="flag" class="condition" id="flag" value="flag"/>姓名为空时不计算为重复个案
+             </label>
+        </span>
+
+        <span style="font-size:12px;float: left;margin-top: 7px;margin-left: 20px;">可选条件：</span>
+        <div style="float: left;border:white 2px solid;padding: 4px;margin-right: 20px;">
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilBirthno" class="condition" id="chilBirthno" value="chilBirthno"/>出生证号
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilCommittee" class="condition" id="r3" value="chilCommittee"/>所在区域
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" name="chilCardno" class="condition" id="chilCardno" value="chilCardno"/>免疫卡号
+            </label>
+        </div>
+        <a class="btn btn-warning" id="searchChild" >
+            <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;查询
+        </a>
+        <a class="btn btn-primary" id="reset">
+            <span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;重置
+        </a>
+    </form>
+</div>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<!-- 合并儿童数据弹出框 开始 -->
+<div id="popup" style="display: none;">
+    <div class="row" style="text-align: center;">
+        <button type="button" class="btn btn-success" id="theMergeRecord" style="width: 100px;">合并</button>
+    </div>
+    <div class="row" style="border: none; padding: 0px 0 0 25px;">
+        <form class="layui-form">
+            <div id="top_div" style="height: 60px;background-color:#fff;width: auto;margin-bottom: 5px;">
+                <div id="top_div1" style="width: 49%;height:60px;float: left;">
+                    <input type="radio" name="save_child" id="save_child1" value="1" title="保留儿童"><br/>
+                    编码：<label id="child_id1"></label>
+                    姓名：<label id="child_name1"></label>
+                    在册情况：<label id="zcqk1"></label>
+                    总针次：<label id="dose_no1"></label>
+                    最后一次接种日期：<label id="inoculate_date1"></label>
+                </div>
+                <div id="top_div2" style="width: 49%;height:60px;float: right;">
+                    <input type="radio" name="save_child" id="save_child2" value="2" title="保留儿童"><br/>
+                    编码：<label id="child_id2"></label>
+                    姓名：<label id="child_name2"></label>
+                    在册情况：<label id="zcqk2"></label>
+                    总针次：<label id="dose_no2"></label>
+                    最后一次接种日期：<label id="inoculate_date2"></label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row" style="border:none; margin-top: 0px;margin-left: 20px;padding: 0;overflow: hidden;">
+        &nbsp;&nbsp;&nbsp;&nbsp;<span><samp style="width: 10px;height: 10px;border: #ccc solid 1px;background-color: red;">&nbsp;&nbsp;</samp>&nbsp;&nbsp;没有相同疫苗接种记录或有相同疫苗没有相同剂次</span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><samp style="width: 10px;height: 10px;border: #ccc solid 1px;background-color: green;">&nbsp;&nbsp;</samp> &nbsp;&nbsp;相同疫苗 相同剂次 相同接种日期</span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><samp style="width: 10px;height: 10px;border: #ccc solid 1px;background-color: yellow;">&nbsp;&nbsp;</samp>&nbsp;&nbsp;相同疫苗 相同剂次 不相同接种日期</span>
+        <!--&nbsp;&nbsp;&nbsp;&nbsp;<span>相同疫苗，没有相同剂次为： <samp style="width: 10px;height: 10px;border: #ccc solid 1px;background-color: yellow;">&nbsp;&nbsp;</samp></span>-->
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>注：标注颜色是按前面排序的级别显示的</span><!--合并儿童时请选择要合并的接种记录，只合并选中接种记录-->
+    </div>
+    <div class="row" style="border:none; margin-top: 15px;padding-top: 0;">
+        <div  style="width: 850px;padding-left: 15px;position: absolute;padding-right: 15px;display: block;float: left;">
+            <table id="children01"></table>
+        </div>
+        <div style="width: 844px;padding-left: 8px;padding-right: 15px;display: block;float: right;">
+            <table id="children02"></table>
+        </div>
+    </div>
+</div>
+
+<!--合并儿童数据弹出框 结束-->
+
+<script type="text/html" id="barDemo">
+    <div class="layui-btn-container">
+        <button class="btn btn-primary" lay-event="getCheckData" >
+            <span class="glyphicon glyphicon-ok"></span>&nbsp;合并
+        </button>
+    </div>
+</script>
+
+<script type="text/javascript" src="../statics/js/bus/child_filter.js"></script>
+
+<script type="text/javascript">
+
+    //单击行勾选checkbox事件
+    $(document).on("click", ".layui-table-body table.layui-table tbody tr", function () {
+        var index = $(this).attr('data-index');
+        var tableBox = $(this).parents('.layui-table-box');
+        //存在固定列
+        if (tableBox.find(".layui-table-fixed.layui-table-fixed-l").length > 0) {
+            tableDiv = tableBox.find(".layui-table-fixed.layui-table-fixed-l");
+        } else {
+            tableDiv = tableBox.find(".layui-table-body.layui-table-main");
+        }
+        var checkCell = tableDiv.find("tr[data-index=" + index + "]").find("td div.laytable-cell-checkbox div.layui-form-checkbox I");
+        if (checkCell.length > 0) {
+            checkCell.click();
+        }
+    });
+
+    $(document).on("click", "td div.laytable-cell-checkbox div.layui-form-checkbox", function (e) {
+        e.stopPropagation();
+    });
+
+
+</script>
+</body>
+</html>

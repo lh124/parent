@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<title>平台下载</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/register.css" media="all" />
+
+	#parse("sys/header.html")
+	<script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('realName')";
+        var chilCode = "$!request.getParameter('chilCode')";
+	</script>
+	<style>
+		[v-cloak] {
+		    display: none;
+		}
+		.borderWrap,.table-wrapper {
+			height: auto;
+		}
+
+		.panel-default {
+			border: none;
+		}
+	</style>
+</head>
+<body class="childrenBody">
+	<div class="layui-row layui-col-space20" id="platformSearch" v-cloak>
+        <!--登记主界面开始-->
+		<div v-show="showList">
+        <section class="layui-col-md10 layui-col-sm9" style="width: 100%">
+
+			<form class="form-inline mb15" role="form" id="conditionForm">
+
+				<div class="form-group">
+					儿童编码:<input type="text" class="form-control" v-model="q.childCode" @keyup.enter="query" id="chilCode"  style="width: 180px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;母亲姓名:<input type="text" class="form-control" v-model="q.motherName" @keyup.enter="query" id="mother" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;儿童姓名:	<input type="text" class="form-control" v-model="q.childName" @keyup.enter="query" style="width: 100px" placeholder="">
+
+				</div>
+				<div class="form-group">
+					&nbsp;性别:
+					<select class="form-control" v-model="q.sex" >
+						<option value="1">男</option>
+						<option value="2">女</option>
+					</select>
+<!--
+					<input type="text" class="form-control" v-model="q.sex" @keyup.enter="query" id="sex" style="width: 100px" placeholder="">
+-->
+
+				</div>
+
+				<div class="form-group">
+					&nbsp;出生日期:<input type="text" class="form-control" v-model="q.birthday"  @keyup.enter="query" style="width: 100px" placeholder="">
+				</div>
+				<div class="form-group">
+					&nbsp;父亲姓名:<input type="text" class="form-control" v-model="q.fatherName" @keyup.enter="query" id="father" style="width: 100px" placeholder="">
+				</div>
+
+			<!--	<a class="btn btn-default" @click="query">查询</a>
+				<a class="btn btn-default"  @click="resetCondition">重置</a>-->
+				<a class="btn btn-primary"  @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+				<a class="btn btn-primary"  @click="resetCondition"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+
+				<!--<a class="btn btn-default" @click="downloadChild">平台下载</a>-->
+			</form>
+			<div class="layui-row layui-col-md12" >
+				<section class="layui-col-md6" style="width: 100%;">
+					<div class="borderWrap">
+						<p class="section-title">查询结果</p>
+						<div class="table-wrapper">
+							<table id="queryResultTable" lay-filter="queryResult"></table>
+						</div>
+					</div>
+				</section>
+			</div>
+			<section class="layui-col-md12 mt20">
+				<!--接种记录、过敏史、异常反应等-->
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#inoculation" data-toggle="tab">接种记录</a></li>
+					<li><a href="#abnormal" data-toggle="tab">异常反应</a></li>
+					<li><a href="#taboo" data-toggle="tab">接种禁忌</a></li>
+					<!--<li><a href="#allergy" data-toggle="tab">过敏史</a></li>-->
+					<li><a href="#infection" data-toggle="tab">传染病史</a></li>
+					<li><a href="#move" id="moveTitle" data-toggle="tab">变更记录</a></li>
+					<!--<li><a href="#serviceRecord" data-toggle="tab">服务记录</a></li>-->
+
+				</ul>
+				<!--以上类容展示-->
+				<div class="tab-content" style="margin-top: 5px">
+
+					<!--接种记录-->
+					<div class="tab-pane fade in active" id="inoculation">
+						<div id="inoculation_tabs" v-cloak>
+							<div v-show="showList" class="panel panel-default">
+								<table id="inoculationGrid"></table>
+								<div id="inoculationGridPager"></div>
+							</div>
+
+						</div>
+
+					</div>
+					<!--变更记录-->
+					<div class="tab-pane fade in " id="move">
+						<div id="move_tabs" v-cloak>
+							<div v-show="showList" class="panel panel-default">
+								<table id="moveGrid"></table>
+								<div id="moveGridPager"></div>
+							</div>
+						</div>
+
+					</div>
+					<div class="tab-pane fade in " id="abnormal">
+						<div id="abnormal_tabs" v-cloak>
+							<div v-show="showList" class="panel panel-default">
+								<table id="abnormalGrid"></table>
+								<div id="abnormalGridPager"></div>
+							</div>
+
+
+						</div>
+
+					</div>
+					<div class="tab-pane fade in " id="taboo">
+						<div id="taboo_tabs" v-cloak>
+							<div v-show="showList" class="panel panel-default">
+								<table id="tabooGrid"></table>
+								<div id="tabooGridPager"></div>
+							</div>
+
+
+						</div>
+
+					</div>
+					<div class="tab-pane fade in " id="allergy">
+						<div id="allergy_tabs" v-cloak>
+							<div v-show="showList" class="panel panel-default">
+								<table id="allergyGrid"></table>
+								<div id="allergyGridPager"></div>
+							</div>
+
+
+						</div>
+
+					</div>
+					<div class="tab-pane fade in " id="infection">
+						<div id="infection_tabs" v-cloak>
+<!--
+							<iframe name="" style="width:100%; height:250px" frameborder="0" id="infection_iframe"   src="../child/tchildinfection.html"></iframe>
+-->
+							<div v-show="showList" class="panel panel-default">
+                                <table id="infectionGrid"></table>
+                                <div id="infectionGridPager"></div>
+                            </div>
+
+						</div>
+
+					</div>
+
+
+				</div>
+			</section>
+
+			<!--<section class="layui-col-md12 mt20">
+				<div class="borderWrap">
+					<div class="section-title">
+						<span>历史接种记录</span>
+						<ul class="fr clearfix">
+							<li class="fl mr15 history-action-items">
+								<i class="layui-icon layui-icon-add-1 pr5"></i>补录1
+							</li>
+							<li class="fl mr15 history-action-items">
+								<i class="layui-icon layui-icon-add-1 pr5"></i>补录2
+							</li>
+							<li class="fl mr15 history-action-items">
+								<i class="layui-icon layui-icon-add-1 pr5"></i>补录3
+							</li>
+						</ul>
+					</div>
+					<table id="historyTable" lay-filter="history"></table>
+				</div>
+			</section>-->
+		</section>
+		</div>
+	</div>
+
+
+<script type="text/javascript" src="${rc.contextPath}/statics/plugins/layui/layui.js"></script>
+<!--<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/register.js"></script>-->
+<script type="text/javascript" src="${rc.contextPath}/statics/js/provinceplatform/platformSearch.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/tchildabnormal.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/tchildtaboo.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/child/tchildinfection.js"></script>
+</body>
+</html>

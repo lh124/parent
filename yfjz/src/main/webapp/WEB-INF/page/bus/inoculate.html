@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<title>接种</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/public/register.css" media="all" />
+
+	#parse("sys/header.html")
+	<script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('realName')";
+        var towerId="$shiro.getBaseInfo('inocTowerId')";
+	</script>
+	<style>
+		[v-cloak] {
+			display: none;
+		}
+
+		#cb_inoculateTable{
+			width: 0px;
+		}
+		.myBody{
+			padding: 10px 30px;
+		}
+	</style>
+</head>
+<body class="myBody inoculatePage">
+#parse("bus/dialog.html")
+<!--判断导航栏显示-->
+<input type="hidden" id="jz01" value="inoculate">
+<div class="row-box font0" id="navigationMonitoring" ></div>
+<ul id="myTab" class="nav nav-tabs">
+	<li class="active">
+		<a href="#home" data-toggle="tab">儿童接种</a>
+	</li>
+	<li><a href="#receive" data-toggle="tab">领取疫苗</a></li>
+	<li><a href="#return" data-toggle="tab">归还疫苗</a></li>
+</ul>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane fade in active" id="home">
+
+		<div class="layui-row layui-col-space20" id="childrenBody" v-cloak>
+			<section class="layui-col-md10 layui-col-sm9">
+				<div class="layui-row layui-col-space10">
+					<section class="layui-col-md4 pravite-message">
+						<div class="borderWrap">
+							<div class="section-title">
+								<span style="font-weight: bold" >儿童信息</span>
+								<ul class="fr clearfix">
+									<li class="fl mr15 history-action-items" id="single" onclick="single()" >
+										<i class="layui-icon layui-icon-search pr5"  ></i>查看历史接种记录
+									</li>
+								</ul>
+							</div>
+							<div class="layui-row pl15 pr15 mb5 mt20">
+								<!--更新儿童信息的时候用来判断下拉框的标识-->
+								<input type="hidden" id="updatastatus11" value="3">
+								<div class="layui-col-md6 space-between">
+									<span class="span1" style="width: 80px;">儿童姓名<i class="disib"></i></span>
+									<span class="message-value textset">：
+										<!--{{message.name}}-->
+										<input   id="inoname" onchange="updatainoculate()"   v-model="message.name" type="text" style="border-width: 0;font-size:18px;font-weight:bold;"/>
+									</span>
+								</div>
+
+								<div class="layui-col-md6 space-between layui-row">
+									<span class="span1" style="width: 80px;">年龄<i class="disib"></i></span>
+									<span class="message-value textset">：{{message.age}}</span>
+								</div>
+							</div>
+
+							<div class="layui-row pl15 pr15 mb5">
+								<div class="layui-col-md6 space-between">
+									<span class="span1" style="width: 80px;">出生日期<i class="disib"></i></span>
+									<span class="message-value textset">：
+										<!--{{message.birthday}}-->
+										<input   id="inobirthday"  onchange="updatainoculate()"  v-model="message.birthday" type="text" style="border-width: 0;"/>
+									</span>
+								</div>
+								<div class="layui-col-md6 space-between layui-row">
+									<span class="span1" style="width: 80px;">性别<i class="disib"></i></span>
+									<span class="message-value textset" >：
+										<input  v-model="message.sex" id="inosexId" style="border-width: 0;width: 40px;position: relative" >
+										<select  id="inosex" name="inosex"  ondblclick="selectupdatasex()"  style="position: absolute; float: left;margin-left: -43px;" >
+
+										</select>
+									</span>
+								</div>
+							</div>
+							<div class="layui-row pl15 pr15 mb5">
+								<div class="layui-col-md6 space-between">
+									<span class="span1" style="width: 80px;">行政村<i class="disib"></i></span>
+									<span class="message-value textset">：
+										 <input  v-model="message.committee" id="committeeIds" style="border-width: 0;width: 110px;position: relative;">
+                            <select  id="updatachilcommittees"  ondblclick="updatecommittee()" name="updatachilcommittees" style="position: absolute; float: left;margin-left: -68px;">
+                            </select>
+										<!--{{message.committee}}-->
+									</span>
+								</div>
+								<div class="layui-col-md6 space-between layui-row">
+									<span class="span1" style="width: 80px;">父亲姓名<i class="disib"></i></span>
+									<span class="message-value textset" id="inochilCode" style="margin-top: -19px;padding-left: 13px;display:none;">{{message.chilCode}}</span>
+									<span class="message-value textset">：
+										<!--{{message.montherName}}-->
+										<input id="inofatherName" onchange="updatainoculate()"   v-model="message.fatherName" type="text" style="border-width: 0"/>
+									</span>
+								</div>
+							</div>
+							<div class="layui-row pl15 pr15 mb5">
+								<div class="layui-col-md6 space-between">
+									<span class="span1" style="width: 80px;">母亲姓名<i class="disib"></i></span>
+									<span class="message-value textset">：
+										<!--{{message.montherName}}-->
+										<input   id="inomontherName" onchange="updatainoculate()"   v-model="message.montherName" type="text" style="border-width: 0"/>
+									</span>
+								</div>
+								<div class="layui-col-md6 space-between layui-row">
+									<span class="span1" style="width: 80px;">联系电话<i class="disib"></i></span>
+									<span class="message-value textset">：
+										<!--{{message.tel}}-->
+											<input   id="inotel"  onchange="updatainoculate()"  v-model="message.tel" type="text" style="border-width: 0;"/>
+									</span>
+								</div>
+							</div>
+							<div class="layui-row pl15 pr15 mb5">
+								<div class="layui-col-md6 space-between">
+									<span class="span1" style="width: 80px;">户籍属性<i class="disib"></i></span>
+									<span class="message-value textset" style="width: 80px;">：
+										<input  v-model="message.account" id="inoaccountId" style="border-width: 0;width: 60px;position: relative" >
+                            <select  id="inoaccount" name="inoaccount" ondblclick="selectupdataaccount()"   style="position: absolute; float: left;margin-left: -60px;" >
+
+                            </select>
+									</span>
+								</div>
+								<div class="layui-col-md6 space-between layui-row">
+									<span class="span1" style="width: 80px;">在册情况<i class="disib"></i></span>
+									<span class="message-value textset">：{{message.here}}
+										<!--<input  v-model="message.here" id="inohereId" style="border-width: 0;width: 80px;position: relative" >-->
+										<!--<select  id="inohere" name="inohere"  onclick="selectupdatahere()"  style="position: absolute; float: left;margin-left: -83px;" >-->
+
+										<!--</select>-->
+									</span>
+								</div>
+							</div>
+							<div class="layui-row pl15 pr15 mb5" style="color: red">
+								<div class="layui-col-md12 space-between">
+									<span class="span1" style="width: 80px;">现居地址<i class="disib"></i></span>
+									<span class="message-value textset" style="color: rgba(13,2,10,0.94)">：
+										<!--{{message.address}}-->
+										<input   id="inoaddress"  onchange="updatainoculate()"  v-model="message.address" type="text" style="border-width: 0;width: 350px"/>
+									</span>
+								</div>
+							</div>
+							<div class="layui-row pl15 pr15 mb5">
+								<div class="layui-col-md12 space-between">
+									<span class="span1" style="width: 80px;">户籍地址<i class="disib"></i></span>
+									<span class="message-value textset">：
+										<!--{{message.habiaddress}}-->
+											<input   id="inohabiaddress"  onchange="updatainoculate()"  v-model="message.habiaddress" type="text" style="border-width: 0;width: 350px"/>
+									</span>
+								</div>
+							</div>
+							<div class="layui-row pl15 pr15 mb5">
+								<div class="layui-col-md12 space-between">
+									<span class="span1" style="color: red;width: 80px;">备注<i class="disib"></i></span>
+									<span class="message-value textset" style="color: red">：
+										<!--{{message.remark}}-->
+										<input   id="inoremark" onchange="updatainoculate()"   v-model="message.remark" type="text" style="border-width: 0;"/>
+									</span>
+								</div>
+
+							</div>
+
+							<div class="pravite-message-bottom ">
+								<p class="space-between layui-row pl15 pr4 ">
+									<span class="span1 red" onclick="noabnormal()">异常反应史<i class="disib"></i></span>
+									<span class="message-value" id="abnormalHistory"><i class="red pl5 pr5">:</i>{{message.reactionHistory}}</span>
+								</p>
+								<p class="space-between layui-row pl15 pr4 ">
+									<span class="span1 red" onclick="allergy()">过敏史<i class="disib"></i></span>
+									<span class="message-value" id="allergyHistory"><i class="red pl5 pr5">:</i>{{message.reactionHistory}}</span>
+								</p>
+								<p class="space-between layui-row pl15 pr4 ">
+									<span class="span1 red" onclick="taboo()">接种禁忌<i class="disib"></i></span>
+									<span class="message-value" id="taboo"><i class="red pl5 pr5">:</i>{{message.taboo}}</span>
+								</p>
+								<p class="space-between layui-row pl15 pr4 ">
+									<span class="span1 red" onclick="infection()">传染病史<i class="disib"></i></span>
+									<span class="message-value" id="infectionHistory"><i class="red pl5 pr5">:</i>{{message.contagionHistory}}</span>
+								</p>
+							</div>
+						</div>
+					</section>
+					<section class="layui-col-md8" id="inoculateTableWrap">
+						<div class="borderWrap">
+							<p class="section-title" style="font-weight: bold">登记疫苗</p>
+							<div class="table-wrapper">
+								<table id="inoculateTable" lay-filter="selectResult"></table>
+							</div>
+							<div class="btn-group layui-row tc">
+								<span class="pl30 pr30"><button class="layui-btn layui-btn-radius register-btn" id="complete" disabled @click="complete">完成注射</button></span>
+								<button id="btn_evaluate" class="layui-btn layui-btn-radius register-btn" @click="inoculationPj">服务评价</button>
+								<span class="pl30 pr30"><button class="layui-btn layui-btn-radius register-btn" @click="nextOrder">下次预约</button></span>
+								<button class="layui-btn layui-btn-radius" @click="printInoculation">接种证打印</button>
+								<button class="layui-btn layui-btn-radius" @click="printCard">接种卡打印</button>
+							</div>
+						</div>
+					</section>
+				</div>
+				<!--打印弹框选择开始-->
+				<div id="printCardDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+					<br/>
+
+					<br/>
+					<div style="text-align: center">
+						<div style="text-align: center">
+							请输入打印行数:
+							<input  class="form-control"  id="cardLineCount" name="lineCount" style="width: 80px;margin-right: 10px"/>
+						</div>
+						<br/>
+						<div>接种记录打印字体大小：<input id="cardFontSize" style="width: 40px"></div>
+						<br/>
+						<div style="width: 680px">
+							<table id="currentInoculateVaccForCard"></table>
+						</div>
+						<br/>
+						<br/>
+						<br/>
+						<button onclick="printCurrentDayInoculation(0,2,'')" class="layui-btn" style="width: 150px;height: 50px;font-size: 16px" >打印接种记录</button>
+						&nbsp;&nbsp;&nbsp;<button onclick="printChildInfoCard(1)" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >新卡打印</button>
+						&nbsp;&nbsp;&nbsp;<button onclick="printChildInfoCard(5)" class="layui-btn" style="width: 150px;height: 50px;font-size: 16px" >打印儿童信息</button>
+
+					</div>
+					<br/>
+					<div style="text-align: left;margin-left:30px;margin-bottom:10px;color: red">
+						请注意：<br/>
+						<font color="red">  1.“接种记录打印字体大小”默认值为"8"</font><br/>
+						<font color="red">  2.“打印接种记录”按钮为打印所选择的接种记录</font><br/>
+						<font color="red">  3.新卡打印”按钮为打印儿童基本信息和所有历次接种记录</font><br/>
+						<font color="red">  4.指定行打印主要针对接种卡上没有标识的疫苗</font><br/>
+					</div>
+
+				</div>
+				<!--打印弹框选择开始-->
+				<div id="printDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+					<ul id="inoculateTab" class="nav nav-tabs">
+						<!--接种记录-->
+						<li class="active"><a href="#inoculate" data-toggle="tab">接种记录</a></li>
+						<!--儿童信息-->
+						<li><a href="#info" data-toggle="tab">儿童信息</a></li>
+					</ul>
+					<div id="inoculateTabContent" class="tab-content" style="margin-top: 10px;margin-left: 10px">
+						<div class="tab-pane fade in active" name="div1" id="inoculate" style="margin-left: 20px">
+							<h5 style="margin-left: 30px">请选择接种证打印模板：</h5>
+							<div  style="width:100%; text-align:center">
+								<div style="display: inline-block">
+									接种证打印模板:
+									<select  class="form-control"  id="inocModelName" name="modelName" >
+
+									</select>
+								</div>
+								<br/>
+								<br/>
+								<div style="display: inline-block">
+									或输入打印行数:
+									<input  class="form-control"  id="lineCount" name="lineCount" />&nbsp;&nbsp;<input id="lineCountCheck" type="checkbox"/>下半页
+								</div>
+								<br/>
+								<div style="margin-top: 10px">接种记录打印字体大小：<input id="fontSize" style="width: 40px"></div>
+							</div>
+							<br/>
+							<div style="width: 680px">
+								<table id="currentInoculateVacc"></table>
+							</div>
+							<br/>
+							<div style="text-align: center">
+								<button onclick="printCurrentDayInoculation(0,1,$('#inocModelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打&nbsp;&nbsp;印</button>
+							</div>
+							<div style="text-align: left;margin-left:30px;color: red">
+								请注意：<br/>
+								<font color="red">1.“接种记录打印字体大小”默认值为"8"</font><br/>
+								<font color="red">2.不同的打印模板打印效果不同。</font><br/>
+								<font color="red">3.如果打印需要分页，请注意放置顺序：先放入接种记录（一）（二）再放入接种记录（三）（四）！</font><br/>
+								<font color="red">4.指定行打印主要针对接种证上没有标识的疫苗</font><br/>
+								<font color="red">5.指定行打印与选择打印模板无关</font>
+								<br/>
+							</div>
+						</div>
+						<div class="tab-pane fade in" id="info" name="info" style="margin-left: 20px">
+							<br/>
+							<h5 style="margin-left: 30px">请选择接种证打印模板：</h5>
+							<div  style="width:100%; text-align:center">
+								<div style="display: inline-block">
+									接种证打印模板:
+									<select  class="form-control"  id="infoModelName" name="infoModelName" >
+
+									</select>
+								</div>
+							</div>
+							<br/>
+							<div style="text-align: center">
+								&nbsp;&nbsp;&nbsp;<button onclick="printChildInfo(1,$('#infoModelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打&nbsp;&nbsp;印</button>
+							</div>
+
+							<br/>
+							<div style="text-align: left;margin-left:30px;color: red;margin-top: 200px">
+								请注意：
+								<font color="red">  不同的打印模板打印效果不同</font><br/>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<section class="layui-col-md12 mt20" id="historyTableWrap">
+					<div class="borderWrap" id="center" style="width: 49.6%;position: absolute">
+						<div class="section-title">
+							<span style="font-weight: bold">今日待接种儿童</span>
+							<ul class="fr clearfix">
+								<li class="fl mr15 history-action-items" id="printCurrentDayWaitInocChild" onclick="printCurrentDayWaitInocChild()" >
+									<i class="layui-icon layui-icon-print pr5"  ></i>打印
+								</li>
+							</ul>
+						</div>
+						<table id="currentDayWaitInocChild" style="text-align: center" lay-filter="history"></table>
+						<div id="currentDayWaitInocChildGridPager"></div>
+					</div>
+					<div class="borderWrap" style="float: right;width: 49.7%">
+						<div class="section-title">
+							<span style="font-weight: bold">今日已接种儿童</span>
+							<ul class="fr clearfix">
+								<li class="fl mr15 history-action-items" id="printCurrentDayInocChild" onclick="printCurrentDayInocChild()" >
+									<i class="layui-icon layui-icon-print pr5"  ></i>打印
+								</li>
+
+							</ul>
+						</div>
+						<table id="currentDayInocChild" style="text-align: center" lay-filter="history"></table>
+						<div id="currentDayInocChildGridPager"></div>
+					</div>
+				</section>
+			</section>
+
+			<queuer host="$shiro.getBaseInfo('queuer.host')"
+					type="$shiro.getBaseInfo('queuer.inocType')"
+					tower="$shiro.getBaseInfo('inocTowerId')"
+					user="$shiro.getBaseInfo('userId')">
+				<!--user="$shiro.getBaseInfo('userName')">-->
+
+			</queuer>
+			<!--操作-->
+			<script type="text/html" id="inoculateBar">
+				<select name="select" id="" lay-filter="test">
+					<option value="请选择"></option>
+					<option value="1">左上臂</option>
+					<option value="2">右上臂</option>
+				</select>
+			</script>
+		</div>
+	</div>
+	<div class="tab-pane fade" id="receive">
+		<iframe name="" style="width:100%; height:800px;" scrolling="no" frameborder="0" id="receive_iframe"  src="../bus/receviceVaccine.html"></iframe>
+	</div>
+	<div class="tab-pane fade" id="return">
+		<iframe name="" style="width:100%; height:800px" scrolling="no" frameborder="0" id="return_iframe"  src="../bus/returnVaccine.html"></iframe>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/libs/sockjs.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/stomp.min.js"></script>
+<script src="${rc.contextPath}/statics/js/queue/queue.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/inoculate.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/monitordialog.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/updatachild.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/noabnormal.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/registerAndInoculate.js"></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.sys.SysUserDao">
+    <select id="queryObject" resultType="io.yfjz.entity.sys.SysUserEntity">
+		select * from sys_user where user_id = #{value} and delete_status = 0
+	</select>
+
+    <select id="queryList" resultType="io.yfjz.entity.sys.SysUserEntity">
+        select * from sys_user
+        <where>
+            <if test="username != null and username.trim() != ''">
+                and username like concat('%',#{username},'%')
+            </if>
+           and delete_status = 0
+        </where>
+        order by user_id desc
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryByUserId" resultType="io.yfjz.entity.sys.SysUserEntity">
+        select * from sys_user where user_id=#{userId} and delete_status = 0
+
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from sys_user
+        <where>
+            <if test="username != null and username.trim() != ''">
+                and username like concat('%',#{username},'%')
+            </if>
+            and delete_status = 0
+        </where>
+    </select>
+
+    <!--自定义查询 放在这里-->
+    <!--查询用户列表，还需要关联用户的角色名称-->
+    <select id="queryListGroup" resultType="io.yfjz.entity.sys.SysUserEntity">
+        select suser.*,GROUP_CONCAT(srole.role_name) as roleNames
+        from sys_user suser
+        left join sys_user_role surole on suser.user_id = surole.user_id
+        left join sys_role srole on surole.role_id = srole.role_id
+        left join sys_depart_user depart on suser.user_id = depart.user_id
+        <where>
+            <if test="userName != null and userName.trim() != ''">
+                and suser.username like concat('%',#{userName},'%')
+            </if>
+            <if test="type != 1 and orgId != null and orgId.trim() != ''">
+                and depart.org_id = #{orgId}
+            </if>
+            and suser.delete_status = 0
+        </where>
+        GROUP BY suser.user_id
+        order by suser.user_id desc
+
+    </select>
+
+    <!--一起连用，统计总数-->
+    <select id="queryListGroupTotal" resultType="int">
+        select count(0)
+        from (
+            select count(0)
+            from sys_user suser
+            left join sys_user_role surole on suser.user_id = surole.user_id
+            LEFT JOIN sys_role srole on surole.role_id = srole.role_id
+            <where>
+                <if test="username != null and username.trim() != ''">
+                    and suser.username like concat('%',#{username},'%')
+                </if>
+                and suser.delete_status = 0
+            </where>
+            GROUP BY suser.user_id
+        ) c
+    </select>
+
+    <!-- 查询用户的所有权限 -->
+    <select id="queryAllPerms" resultType="String">
+        select m.perms from sys_user_role ur
+        LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
+        LEFT JOIN sys_menu m on rm.menu_id = m.menu_id
+        where ur.user_id = #{userId}
+    </select>
+
+    <!-- 查询用户的所有菜单ID -->
+    <select id="queryAllMenuId" resultType="String">
+        select m.menu_id from sys_user_role ur
+        LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
+        LEFT JOIN sys_menu m on rm.menu_id = m.menu_id
+        where ur.user_id = #{userId}
+    </select>
+
+    <select id="queryByUserName" resultType="io.yfjz.entity.sys.SysUserEntity">
+        select * from sys_user where username = #{username} and delete_status = 0
+    </select>
+
+    <insert id="save" parameterType="io.yfjz.entity.sys.SysUserEntity" useGeneratedKeys="true" keyProperty="userId">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            user_id,
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+            <if test="email != null">email,</if>
+            <if test="status != null">status,</if>
+            <if test="mobile != null">mobile,</if>
+            <if test="realName != null">real_name,</if>
+            <if test="type != null">type,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+           #{userId},
+            <if test="username != null">#{username},</if>
+            <if test="password != null">#{password},</if>
+            <if test="email != null">#{email},</if>
+            <if test="status != null">#{status},</if>
+            <if test="mobile != null">#{mobile},</if>
+            <if test="realName != null">#{realName},</if>
+            <if test="type != null">#{type},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.sys.SysUserEntity">
+        update sys_user
+        <set>
+            <if test="username != null">username = #{username}, </if>
+            <if test="password != null">password = #{password}, </if>
+            <if test="email != null">email = #{email}, </if>
+            <if test="mobile != null">mobile = #{mobile}, </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <update id="updatePassword" parameterType="map">
+		update sys_user set password = #{newPassword}
+			where user_id = #{userId} and password = #{password}
+	</update>
+
+    <delete id="deleteBatch">
+       update  sys_user set delete_status = 1 where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+        ;
+        delete  from sys_user_role where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <!--获取当前登录用户的权限-->
+    <select id="getLoginUserRoleName" resultType="String">
+        SELECT sr.role_name as roleName FROM `sys_user_role` sur
+        LEFT JOIN sys_role sr on sur.role_id = sr.role_id
+        WHERE sur.user_id = #{userId}
+    </select>
+</mapper>

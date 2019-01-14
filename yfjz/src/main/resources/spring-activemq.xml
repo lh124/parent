@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:amq="http://activemq.apache.org/schema/core" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.8.0.xsd http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+	<amq:broker brokerName="YFJZ-Broker" useJmx="true" persistent="true">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="ws://0.0.0.0:61616"/>
+		</amq:transportConnectors>
+		<amq:persistenceAdapter>
+			<amq:kahaDB directory="kahadb-store"/>
+		</amq:persistenceAdapter>
+	</amq:broker>
+	<amq:managementContext connectorHost="localhost" connectorPort="1099" connectorPath="jmxrmi" rmiServerPort="1099" jmxDomainName="rmi"/>
+
+	<amq:connectionFactory id="amqConnectionFactory" brokerURL="failover:(vm://YFJZ-Broker:61616)"/>
+
+	<!--<bean class="org.springframework.jmx.support.MBeanServerConnectionFactoryBean" id="mbeanServerConnection1">
+		<property name="serviceUrl" value="${mq_jmx_url1}"/>
+		<property name="connectOnStartup" value="false"/>
+
+	</bean>-->
+	<!--预检topic-->
+	<bean id="precheck" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg>
+			<value>yfjz.precheck</value>
+		</constructor-arg>
+	</bean>
+	<!--儿保topic-->
+	<bean id="healthcare" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg>
+			<value>yfjz.healthcare</value>
+		</constructor-arg>
+	</bean>
+	<!--登记topic-->
+	<bean id="register" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg>
+			<value>yfjz.register</value>
+		</constructor-arg>
+	</bean>
+	<!--接种topic-->
+	<bean id="inoculate" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg>
+			<value>yfjz.inoculate</value>
+		</constructor-arg>
+	</bean>
+	<!--留观topic-->
+	<bean id="observe" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg>
+			<value>yfjz.observe</value>
+		</constructor-arg>
+	</bean>
+	<!--大厅视频-->
+	<bean id="hallplayer" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg>
+			<value>yfjz.hallplayer</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="all" class="org.apache.activemq.command.ActiveMQTopic">
+		<constructor-arg>
+			<value>yfjz.></value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="queueConfig" class="io.yfjz.entity.queue.QueueConfig">
+		<property name="topicMap">
+			<map>
+				<entry key="precheck" value-ref="precheck"/>
+				<entry key="healthcare" value-ref="healthcare"/>
+				<entry key="register" value-ref="register"/>
+				<entry key="inoculate" value-ref="inoculate"/>
+				<entry key="observe" value-ref="observe"/>
+				<entry key="hallplayer" value-ref="hallplayer"/>
+				<entry key="all" value-ref="all"/>
+			</map>
+		</property>
+	</bean>
+
+
+
+
+
+
+	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+		<!-- 目标ConnectionFactory对应真实的可以产生JMS Connection的ConnectionFactory -->
+		<property name="targetConnectionFactory" ref="amqConnectionFactory"/>
+	</bean>
+	<!-- Spring提供的JMS工具类，它可以进行消息发送、接收等 -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->
+		<property name="connectionFactory" ref="connectionFactory"/>
+		<property name="messageConverter" ref="defaultMessageConverter"/>
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+
+
+
+
+
+	<bean id = "jmsListenerContainerFactory" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="connectionFactory"/>
+		<property name="destination" ref="all"/>
+		<property name="messageListener" ref="messageListenerAdapter"/>
+		<property name="pubSubDomain" value="true"/>
+		<property name="messageConverter" ref="defaultMessageConverter"/>
+	</bean>
+
+	<bean id="messageListenerAdapter"
+		  class="org.springframework.jms.listener.adapter.MessageListenerAdapter">
+		<property name="delegate" ref="defaultMessageListener" />
+		<property name="defaultListenerMethod" value="receiveMessage" />
+		<property name="messageConverter" ref="defaultMessageConverter" />
+	</bean>
+
+	<bean id="defaultMessageListener" class="io.yfjz.activemq.DefaultMessageListener"/>
+	<bean id="defaultMessageConverter" class="org.springframework.jms.support.converter.MappingJackson2MessageConverter">
+	</bean>
+</beans>

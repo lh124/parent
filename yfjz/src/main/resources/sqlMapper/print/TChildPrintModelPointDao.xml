@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.print.TChildPrintModelPointDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.print.TChildPrintModelPointEntity">
+		select * from t_child_print_model_point where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.print.TChildPrintModelPointEntity">
+		select * from t_child_print_model_point 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryListMap" resultType="java.util.HashMap">
+		select * from t_child_print_model_point
+		<where>
+			<if test="printType!=null">
+				and printType = #{printType}
+			</if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_print_model_point 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.print.TChildPrintModelPointEntity">
+		insert into t_child_print_model_point
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+		
+				            <if test="bioName != null and bioName  != ''">`bio_name` , </if>
+			
+				            <if test="ename != null and ename  != ''">`ename` , </if>
+			
+				            <if test="inoculateDatex != null">`inoculate_dateX` , </if>
+			
+				            <if test="inoculateDatey != null">`inoculate_dateY` , </if>
+			
+				            <if test="textx != null">`textX` , </if>
+			
+				            <if test="texty != null">`textY` , </if>
+			
+				            <if test="batchnumx != null">`batchnumX` , </if>
+			
+				            <if test="batchnumy != null">`batchnumY` , </if>
+			
+				            <if test="factoryNamex != null">`factory_nameX` , </if>
+			
+				            <if test="factoryNamey != null">`factory_nameY` , </if>
+			
+				            <if test="departnamex != null">`departnameX` , </if>
+			
+				            <if test="departnamey != null">`departnameY` , </if>
+			
+				            <if test="doctorx != null">`doctorX` , </if>
+			
+				            <if test="doctory != null">`doctorY` , </if>
+			
+				            <if test="expirationDatex != null">`expiration_dateX` , </if>
+			
+				            <if test="expirationDatey != null">`expiration_dateY` , </if>
+			
+				            <if test="printtype != null and printtype  != ''">`printType` , </if>
+			
+				            <if test="status != null">`status` , </if>
+			
+				            <if test="deleteStatus != null">`delete_status` , </if>
+			
+				            <if test="createTime != null">`create_time` , </if>
+			
+				            <if test="updateTime != null">`update_time` </if>
+			
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						            <if test="bioName != null and bioName  != ''">#{bioName} , </if>
+		
+					            <if test="ename != null and ename  != ''">#{ename} , </if>
+		
+					            <if test="inoculateDatex != null">#{inoculateDatex} , </if>
+		
+					            <if test="inoculateDatey != null">#{inoculateDatey} , </if>
+		
+					            <if test="textx != null">#{textx} , </if>
+		
+					            <if test="texty != null">#{texty} , </if>
+		
+					            <if test="batchnumx != null">#{batchnumx} , </if>
+		
+					            <if test="batchnumy != null">#{batchnumy} , </if>
+		
+					            <if test="factoryNamex != null">#{factoryNamex} , </if>
+		
+					            <if test="factoryNamey != null">#{factoryNamey} , </if>
+		
+					            <if test="departnamex != null">#{departnamex} , </if>
+		
+					            <if test="departnamey != null">#{departnamey} , </if>
+		
+					            <if test="doctorx != null">#{doctorx} , </if>
+		
+					            <if test="doctory != null">#{doctory} , </if>
+		
+					            <if test="expirationDatex != null">#{expirationDatex} , </if>
+		
+					            <if test="expirationDatey != null">#{expirationDatey} , </if>
+		
+					            <if test="printtype != null and printtype  != ''">#{printtype} , </if>
+		
+					            <if test="status != null">#{status} , </if>
+		
+					            <if test="deleteStatus != null">#{deleteStatus} , </if>
+		
+					            <if test="createTime != null">#{createTime} , </if>
+		
+					            <if test="updateTime != null">#{updateTime} </if>
+		
+			</trim>
+	</insert>
+	 
+	<!--<update id="update" parameterType="io.yfjz.entity.print.TChildPrintModelPointEntity">
+		update t_child_print_model_point 
+		<set>
+	        <if test="bioName != null and bioName  != ''">`bio_name` = #{bioName}, </if>
+		        <if test="ename != null and ename  != ''">`ename` = #{ename}, </if>
+		        <if test="inoculateDatex != null">`inoculate_dateX` = #{inoculateDatex} , </if>
+		        <if test="inoculateDatey != null">`inoculate_dateY` = #{inoculateDatey} , </if>
+		        <if test="textx != null">`textX` = #{textx} , </if>
+		        <if test="texty != null">`textY` = #{texty} , </if>
+		        <if test="batchnumx != null">`batchnumX` = #{batchnumx} , </if>
+		        <if test="batchnumy != null">`batchnumY` = #{batchnumy} , </if>
+		        <if test="factoryNamex != null">`factory_nameX` = #{factoryNamex} , </if>
+		        <if test="factoryNamey != null">`factory_nameY` = #{factoryNamey} , </if>
+		        <if test="departnamex != null">`departnameX` = #{departnamex} , </if>
+		        <if test="departnamey != null">`departnameY` = #{departnamey} , </if>
+		        <if test="doctorx != null">`doctorX` = #{doctorx} , </if>
+		        <if test="doctory != null">`doctorY` = #{doctory} , </if>
+		        <if test="expirationDatex != null">`expiration_dateX` = #{expirationDatex} , </if>
+		        <if test="expirationDatey != null">`expiration_dateY` = #{expirationDatey} , </if>
+		        <if test="printtype != null and printtype  != ''">`printType` = #{printtype}, </if>
+		        <if test="status != null">`status` = #{status} , </if>
+		        <if test="deleteStatus != null">`delete_status` = #{deleteStatus} , </if>
+		        <if test="createTime != null">`create_time` = #{createTime} , </if>
+		        <if test="updateTime != null">`update_time` = #{updateTime} </if>
+			</set>
+		where id = #{id}
+	</update>-->
+
+	<!-- 修改接种证打印接种记录坐标 -->
+	<update id="update"  parameterType="java.util.HashMap">
+		update t_child_print_model_point
+		<set>
+			<!--<if test="bio_name != null and bio_name != ''" >
+				CNAME = #{CNAME},
+			</if>-->
+			<if test="inoculate_dateX != null and inoculate_dateX != ''">
+				inoculate_dateX = #{inoculate_dateX},
+			</if>
+			<if test="inoculate_dateY != null and inoculate_dateY != ''">
+				inoculate_dateY = #{inoculate_dateY},
+			</if>
+			<if test="textX != null and textX != ''">
+				textX = #{textX},
+			</if>
+			<if test="textY != null and textY != ''">
+				textY = #{textY},
+			</if>
+			<if test="batchnumX != null and batchnumX != ''">
+				batchnumX = #{batchnumX},
+			</if>
+			<if test="batchnumY != null and batchnumY != ''">
+				batchnumY = #{batchnumY},
+			</if>
+			<if test="factory_nameX != null and factory_nameX != ''">
+				factory_nameX = #{factory_nameX},
+			</if>
+			<if test="factory_nameY != null and factory_nameY != ''">
+				factory_nameY = #{factory_nameY},
+			</if>
+			<if test="departnameX != null and departnameX != ''">
+				departnameX = #{departnameX},
+			</if>
+			<if test="departnameY != null and departnameY != ''">
+				departnameY = #{departnameY},
+			</if>
+			<if test="doctorX != null and doctorX != ''">
+				doctorX = #{doctorX},
+			</if>
+			<if test="doctorY != null and doctorY != ''">
+				doctorY = #{doctorY},
+			</if>
+			<if test="expiration_dateX != null and expiration_dateX != ''">
+				expiration_dateX = #{expiration_dateX},
+			</if>
+			<if test="expiration_dateY != null and expiration_dateY != ''">
+				expiration_dateY = #{expiration_dateY}
+			</if>
+
+		</set>
+		where bio_name REGEXP  #{bio_name} and printType=#{printType}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_print_model_point where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_print_model_point where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

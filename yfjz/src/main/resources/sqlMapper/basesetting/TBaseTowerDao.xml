@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.yfjz.dao.basesetting.TBaseTowerDao">
+
+    <select id="queryListPage" parameterType="String" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity" >
+        select tower.*,sdep.name as orgName from t_base_tower tower
+        inner join sys_depart sdep on tower.org_id = sdep.id
+        <where>
+            <if test="towerName != null and towerName.trim() != ''">
+                and tower.tower_name like concat('%', #{towerName}, '%')
+            </if>
+            <if test="orgId != null and orgId != ''">
+              and  tower.org_id=#{orgId}
+            </if>
+            and tower.delete_status = 0
+        </where>
+    </select>
+    <select id="queryList" parameterType="String" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity" >
+        select tower.*,sdep.name as orgName from t_base_tower tower
+        inner join sys_depart sdep on tower.org_id = sdep.id
+        <where>
+            <if test="towerName != null and towerName.trim() != ''">
+                tower.tower_name like concat('%', #{towerName}, '%')
+            </if>
+            and tower.delete_status = 0
+        </where>
+        order by tower_nature_id
+    </select>
+
+    <select id="queryTotal" resultType="int">
+		select count(*) from t_base_tower
+	</select>
+
+    <select id="queryObject" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity">
+        select * from t_base_tower where id=#{value}
+    </select>
+    <select id="queryListByOrgId" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity">
+        select * from t_base_tower where  org_id=#{orgId}  and delete_status = 0
+
+    </select>
+
+    <!--根据工作台名称，机构名称查询-->
+    <select id="queryTotalByTowerNameAndOrgId" parameterType="HashMap" resultType="Integer">
+        select count(0) from t_base_tower where   `tower_name` = #{towerName} and `org_id` = #{orgId}  and `delete_status`= 0
+
+    </select>
+    <select id="queryListInoculateByOrgId" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity">
+          SELECT
+                *
+            FROM
+                t_base_tower
+            WHERE
+                org_id = #{orgId}
+                AND delete_status = 0
+                AND tower_nature_id = 2
+                AND id NOT IN
+               ( SELECT  pos_id FROM t_mgr_store where org_id=#{orgId} and  pos_id is not null )
+    </select>
+
+    <!--根据当前机构，当前剩余能选择的工作台ids列表查询工作台信息-->
+    <select id="getTowerListByTowerIds" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity">
+          select * from t_base_tower
+        where  org_id=#{orgId}  and delete_status = 0 and id in
+        <foreach item="item" collection="towerIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
+    <!--根据orgId,工作台类型，工作台集合获取可选工作台-->
+    <select id="getTowerListByMap" resultType="Map">
+          select id,tower_name,tower_nature_id from t_base_tower
+        where  org_id=#{orgId}  and delete_status = 0 and id in
+        <foreach item="item" collection="towerIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and tower_nature_id in
+        <foreach item="item" collection="towerTypes" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        order by tower_nature_id
+    </select>
+    <!--根据orgid及台类型集，获取不在id集内的工作台-->
+    <select id="getTowerListByNotIds" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity" parameterType="java.util.HashMap">
+          select id,tower_name,tower_nature_id from t_base_tower
+        where  org_id=#{orgId}  and delete_status = 0
+        <if test="towerIds!=null">
+            and id NOT in
+            <foreach item="item" collection="towerIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="towerTypes!=null">
+            and tower_nature_id in
+            <foreach item="item" collection="towerTypes" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <insert id="save" parameterType="io.yfjz.entity.basesetting.TBaseTowerEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into t_base_tower
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="orgId != null">
+                `org_id`,
+            </if>
+            <if test="towerName != null">
+                `tower_name`,
+            </if>
+            <if test="towerNatureId != null">
+                `tower_nature_id`,
+            </if>
+            <if test="createTime != null">
+                `create_time`,
+            </if>
+            <if test="createUserId != null">
+                `create_user_id`,
+            </if>
+            <if test="deleteStatus != null">
+                `delete_status`,
+            </if>
+            <if test="updateTime != null">
+                `update_time`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            uuid(),
+            <if test="orgId != null">
+                #{orgId},
+            </if>
+            <if test="towerName != null">
+                #{towerName},
+            </if>
+            <if test="towerNatureId != null">
+                #{towerNatureId},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.basesetting.TBaseTowerEntity">
+        update t_base_tower
+        <set>
+            <if test="orgId != null">org_id = #{orgId}, </if>
+            <if test="towerName != null">tower_name = #{towerName}, </if>
+            <if test="towerNatureId != null"> `tower_nature_id`=#{towerNatureId}, </if>
+            <if test="createTime != null">create_time = #{createTime}, </if>
+            <if test="createUserId != null">create_user_id = #{createUserId} </if>
+            <if test="deleteStatus != null">delete_status = #{deleteStatus}, </if>
+            <if test="updateTime != null">update_time = #{updateTime}, </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="deleteBatch">
+        update t_base_tower set delete_status = 1
+        where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <select id="getAllTowers" resultType="string">
+        select id from t_base_tower where delete_status = 0
+    </select>
+
+    <!--根据工作台的类型获取工作台-->
+    <select id="getTowerListByTowerType" resultType="Map">
+      select id,tower_name from t_base_tower where delete_status = 0 and tower_nature_id in
+        <foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="queryStoreIdByCode" resultType="map">
+        SELECT
+            fk_store_id as storeId
+        FROM
+            t_mgr_stock_info info
+            JOIN t_mgr_store store ON info.fk_store_id = store.id
+        WHERE
+            fk_base_info = #{baseId}
+            AND store.ttype =0
+
+    </select>
+    <select id="queryTowerOnline" resultType="io.yfjz.entity.basesetting.TBaseTowerEntity">
+        SELECT
+            tower.*,
+            sdep.NAME AS orgName
+        FROM
+            t_base_tower tower
+            INNER JOIN sys_depart sdep ON tower.org_id = sdep.id
+            <where>
+                <if test="towers!=null">
+                    AND tower.id not in
+                    <foreach collection="towers" item="tower" open="(" close=")" separator=",">
+                        #{tower}
+                    </foreach>
+                </if>
+                <if test="type!=null">
+                    and tower_nature_id=2
+                </if>
+            </where>
+
+    </select>
+
+</mapper>

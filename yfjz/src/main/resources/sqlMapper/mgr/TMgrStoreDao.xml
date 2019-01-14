@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrStoreDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrStoreEntity">
+		select * from t_mgr_store where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.mgr.TMgrStoreEntity">
+		select store.*,tower.tower_name as storeName from t_mgr_store store left join t_base_tower tower on store.pos_id=tower.id
+		where store.org_id=#{orgId} and store.delete_status=0
+		<if test="status!=null">
+			AND store.status=#{status}
+		</if>
+		<if test="type!=null">
+			and store.ttype=#{type}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_mgr_store store left join t_base_tower tower on store.pos_id=tower.id
+		where store.org_id=#{orgId} and store.delete_status=0
+		<if test="type!=null">
+			and ttype=#{type}
+		</if>
+	</select>
+	<select id="getAllStore" resultType="io.yfjz.entity.mgr.TMgrStoreEntity">
+		select id,`name` from t_mgr_store
+		where org_id=#{orgId} and delete_status=0 and `status`=0
+		<if test="ttype!=null">
+			and ttype=#{ttype}
+		</if>
+	</select>
+	<select id="getEquipmentById" resultType="map">
+		select id,name from t_mgr_equipment where fk_store_id=#{storeId} AND status=0
+	</select>
+	<select id="selectByTowerId" resultType="io.yfjz.entity.mgr.TMgrStoreEntity">
+		select * from t_mgr_store where pos_id=#{towerId}
+
+	</select>
+    <select id="selectByUserId" resultType="io.yfjz.entity.mgr.TMgrStoreEntity">
+      select * from t_mgr_store where mgr_user_id=#{userId} and ttype=2
+	</select>
+    <insert id="save" parameterType="io.yfjz.entity.mgr.TMgrStoreEntity">
+		insert into t_mgr_store
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			    id,
+				<if test="name != null">`name` , </if>
+				<if test="address != null">`address` , </if>
+				<if test="mgrUserId != null">`mgr_user_id` , </if>
+				<if test="mgrPhone != null">`mgr_phone` , </if>
+				<if test="mgrEmail != null">`mgr_email` , </if>
+				<if test="remark != null">`remark` , </if>
+				<if test="ttype != null">`ttype` , </if>
+				<if test="status != null">`status`, </if>
+				<if test="posId != null">`pos_id`, </if>
+				<if test="createTime != null">`create_time`, </if>
+				<if test="orgId != null">`org_id`, </if>
+				<if test="createUserId != null">`create_user_id` </if>
+
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			    uuid(),
+				<if test="name != null">#{name} , </if>
+				<if test="address != null">#{address} , </if>
+				<if test="mgrUserId != null">#{mgrUserId} , </if>
+				<if test="mgrPhone != null">#{mgrPhone} , </if>
+				<if test="mgrEmail != null">#{mgrEmail} , </if>
+				<if test="remark != null">#{remark} , </if>
+				<if test="ttype != null">#{ttype} , </if>
+				<if test="status != null">#{status}, </if>
+			    <if test="posId != null">#{posId}, </if>
+			    <if test="createTime != null">#{createTime}, </if>
+			    <if test="orgId != null">#{orgId}, </if>
+				<if test="createUserId != null">#{createUserId} </if>
+
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrStoreEntity">
+		update t_mgr_store 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="mgrUserId != null">`mgr_user_id` = #{mgrUserId}, </if>
+			<if test="mgrPhone != null">`mgr_phone` = #{mgrPhone}, </if>
+			<if test="mgrEmail != null">`mgr_email` = #{mgrEmail}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="posId != null">`pos_id` = #{posId} </if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mgr_store where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_store where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	<update id="updateStatus" parameterType="io.yfjz.entity.mgr.TMgrStoreEntity">
+		update t_mgr_store set `status` = status^1 where id = #{id}
+	</update>
+	<insert id="insertRelation" parameterType="list">
+		insert into t_mgr_store_equipment(id,store_id,equipment_id) VALUES
+		<foreach item="entity" collection="list" open="(" separator="," close=")">
+			uuid(),
+			#{entity.storeId},
+			#{entity.equipmentId}
+		</foreach>
+	</insert>
+	<delete id="deleteRelation">
+		delete from t_mgr_store_equipment where store_id=#{storeId}
+	</delete>
+</mapper>

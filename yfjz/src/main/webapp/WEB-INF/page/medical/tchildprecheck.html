@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童预检信息表</title>
+	#parse("sys/header.html")
+</head>
+<body>
+<input type="hidden" id="chilCode" value="${request.getParameter('chilCode')}">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+			<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+			<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+		</div>
+		<table id="jqGrid"></table>
+		<div id="jqGridPager"></div>
+	</div>
+
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="precheckForm" >
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童编号</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildPrecheck.chilCode" readonly placeholder=""/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童姓名</div>
+				<div class="col-sm-10">
+					<input type="text" id="chilName" class="form-control" value="${request.getParameter('chilName')}" readonly>
+					<!--<input type="text" class="form-control"  id="${request.getParameter('chilNames')}" readonly placeholder=""/>-->
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">体温℃<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildPrecheck.temp" placeholder="体温检测" name="temp" id="temp"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">体检结果<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+				<div class="col-sm-10">
+					<select v-model="tChildPrecheck.result" class="form-control" name="result" id="result">
+						<option value="0">合格</option>
+						<option value="1">不合格</option>
+					</select>
+
+					<!--<input type="text" class="form-control" v-model="tChildPrecheck.result" placeholder="体检结果 0合格，1不合格"/>-->
+				</div>
+			</div>
+			<!--<template>-->
+				<div v-if="$('#result option:selected').val()=='1'" >
+					<div class="form-group" >
+						<div class="col-sm-2 control-label">不合格原因<span  style="color:red;padding-left: 5px;float: right;font-size: 20px">*</span></div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tChildPrecheck.remark" placeholder="不合格原因" name="remark" id="remark"/>
+						</div>
+					</div>
+				</div>
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" id="yjbtn" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/medical/tchildprecheck.js?_${date.systemTime}"></script>
+</body>
+</html>

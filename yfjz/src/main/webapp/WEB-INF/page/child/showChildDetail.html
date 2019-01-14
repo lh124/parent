@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+	<title>接种录入</title>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/register.css" media="all" />
+    <link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+	#parse("sys/header.html")
+    <style>
+        .borderWrap {
+            height: 760px;
+            overflow: hidden;
+            border: 1px solid #e6e6e6;
+        }
+    </style>
+    <script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        console.log(orgId);
+        $(function () {
+            //加载省内接种单位
+        })
+
+    </script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+        <div class="layui-row layui-col-space10">
+
+            <!--左布局-->
+
+                <div style="width: 35%;position: absolute">
+                    <div class="borderWrap">
+                        <div class="section-title">
+                            <span style="font-weight: bold;">儿童基本信息</span>
+
+                        </div>
+                        <div class="layui-row pl15 pr15  mt5">
+                            <div class="layui-col-md6 space-between" style="color: red;"><span class="span1">儿童姓名<i
+                                    class="disib"></i></span><span class=" textset"> : {{childInfo.chilName}}</span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row"><span class="span1">儿童编号<i
+                                    class="disib"></i></span>
+                                <span class="textset">:{{childInfo.chilCode}}</span></div>
+                        </div>
+                        <div class="layui-row pl15 pr15 ">
+                            <div class="layui-col-md6 space-between layui-row"><span class="span1">性别<i
+                                    class="disib"></i></span>
+                                <span class="textset">:{{childInfo.chilSex}}</span>
+                            </div>
+                            <div class="layui-col-md6 space-between"><span class="span1">出生日期<i
+                                    class="disib"></i></span>
+                                <span class="textset">:{{childInfo.chilBirthday}}</span>
+                            </div>
+
+                        </div>
+
+                        <div class="layui-row pl15 pr15 " >
+                            <div class="layui-col-md6 space-between layui-row" style="color: red;"><span class="span1" >年龄<i
+                                    class="disib"></i></span>
+                                <span class="textset">:{{childInfo.age}}</span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row"><span class="span1">行政村<i
+                                    class="disib"></i></span>
+                                <span class="textset">:{{childInfo.chilCommittee}}</span>
+                            </div>
+
+                        </div>
+                        <div class="layui-row pl15 pr15 ">
+                            <div class="layui-col-md6 space-between layui-row" ><span class="span1">建档日期<i
+                                    class="disib"></i></span>
+                                <span class="textset">:{{childInfo.chilCreatedate}}</span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row"><span class="span1">现管单位<i
+                                    class="disib"></i></span>
+                                <span class="textset">:{{childInfo.chilCurdepartment}}</span>
+                            </div>
+
+
+                        </div>
+                    <div class="layui-row pl15 pr15 ">
+                        <div class="layui-col-md6 space-between"><span class="span1">居住属性<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilResidence}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between"><span class="span1">户籍属性<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilAccount}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 ">
+
+                        <div class="layui-col-md6 space-between layui-row" style="color: red;"><span class="span1">在册情况<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilHere}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">变更时间<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilLeavedate}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 ">
+
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">民族<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilNatiId}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between"><span class="span1">出生体重(kg)<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilBirthweight}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 ">
+                        <div class="layui-col-md6 space-between"><span class="span1">手机<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilMobile}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">家庭电话<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilTel}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 ">
+                        <div class="layui-col-md6 space-between"><span class="span1">母亲姓名<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilMother}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">母亲身份证<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilMotherno}}</span>
+                        </div>
+                    </div>
+                        <!--<div class="layui-row pl15 pr15 ">
+                        <div class="layui-col-md6 space-between"><span class="span1">母亲HB<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilMotherhb}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">母亲HIV<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilMotherhiv}}</span>
+                        </div>
+                    </div>-->
+                    <div class="layui-row pl15 pr15 ">
+
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">父亲姓名<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilFather}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between"><span class="span1">父亲身份证<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilFatherno}}</span>
+                        </div>
+                    </div>
+                    <div class="layui-row pl15 pr15 ">
+                        <div class="layui-col-md6 space-between layui-row"><span class="span1">出生证号<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilBirthno}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between"><span class="span1">儿童身份证<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilNo}}</span>
+                        </div>
+
+                    </div>
+                    <div class="layui-row pl15 pr15 ">
+
+                        <div class="layui-col-md6 space-between"><span class="span1">同步状态<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.syncstatus}}</span>
+                        </div>
+                        <div class="layui-col-md6 space-between"><span class="span1">出生医院<i
+                                class="disib"></i></span>
+                            <span class="textset">:{{childInfo.chilBirthhospitalname}}</span>
+                        </div>
+
+                    </div>
+
+
+                        <div class="layui-row pl15 pr15 " style="color: red;">
+                            <div class="layui-col-md12 space-between"><span class="span1" style="color: red;">备注<i
+                                    class="disib"></i></span>
+                                <span class=" textset">：{{childInfo.remark}}</span>
+                            </div>
+                        </div>
+                        <div class="layui-row pl15 pr15 ">
+                            <div class="layui-col-md12 space-between"><span class="span1">现居地址<i
+                                    class="disib"></i></span>
+                                <span class=" textset">：{{childInfo.chilAddress}}</span>
+                            </div>
+                        </div>
+                    <div class="layui-row pl15 pr15 ">
+                        <div class="layui-col-md12 space-between"><span class="span1">户籍地址<i
+                                class="disib"></i></span>
+                            <span class=" textset">：{{childInfo.chilHabiaddress}}</span>
+                        </div>
+                    </div>
+
+                    </div>
+                    <!--<div class="pravite-message-bottom ">
+                        <p class="space-between layui-row pl15 pr4 ">
+                            <span class="span1 red">异常反应史<i class="disib"></i></span>
+                            <span class="message-value" id="abnormalHistory"><i class="red pl5 pr5">:</i>{{childInfo.reactionHistory}}</span>
+                        </p>
+                        <p class="space-between layui-row pl15 pr4 ">
+                            <span class="span1 red">过敏史<i class="disib"></i></span>
+                            <span class="message-value" id="allergyHistory"><i class="red pl5 pr5">:</i>{{childInfo.reactionHistory}}</span>
+                        </p>
+                        <p class="space-between layui-row pl15 pr4 ">
+                            <span class="span1 red">接种禁忌<i class="disib"></i></span>
+                            <span class="message-value" id="taboo"><i class="red pl5 pr5">:</i>{{childInfo.taboo}}</span>
+                        </p>
+                        <p class="space-between layui-row pl15 pr4 ">
+                            <span class="span1 red">传染病史<i class="disib"></i></span>
+                            <span class="message-value" id="infectionHistory"><i class="red pl5 pr5">:</i>{{childInfo.contagionHistory}}</span>
+                        </p>
+                    </div>-->
+                </div>
+
+
+
+             <!--<div style="float: right;width: 65%">
+               &lt;!&ndash; <table id="historyRecord"></table>&ndash;&gt;
+                <p class="section-title" style="font-weight: bold">接种记录</p>
+                <iframe name="inoculation" style="width:100%;height:680px" frameborder="0"  id="inoculation_iframe" src="../child/tchildinoculate.html"></iframe>
+            </div>-->
+            <div style="float: right;width: 65%">
+                <ul class="nav nav-tabs mt20" >
+                    <li class="active"><a href="#inoculation" data-toggle="tab">接种记录</a></li>
+                    <li><a href="#abnormal" data-toggle="tab">异常反应</a></li>
+                    <li><a href="#taboo" data-toggle="tab">接种禁忌</a></li>
+                    <li><a href="#allergy" data-toggle="tab">过敏史</a></li>
+                    <li><a href="#infection" data-toggle="tab">传染病史</a></li>
+                    <li><a href="#move" id="moveTitle" data-toggle="tab">变更记录</a></li>
+                   <!-- <li><a href="#migrationChild" data-toggle="tab">异地接种儿童</a></li>-->
+                    <!--<li><a href="#serviceRecord" data-toggle="tab">服务记录</a></li>-->
+
+                </ul>
+
+                <!--以上类容展示-->
+                <div class="tab-content" style="margin-top: 5px">
+                    <!--接种记录-->
+                    <div class="tab-pane fade in active" id="inoculation">
+                        <div id="inoculation_tabs" v-cloak>
+                            <!--<p class="section-title" style="font-weight: bold">查询结果</p>-->
+                            <iframe name="inoculation" style="width:100%;height:680px" frameborder="0"  id="inoculation_iframe" src="../child/tchildinoculate.html"></iframe>
+
+                        </div>
+                    </div>
+
+                    <!--变更记录-->
+                    <div class="tab-pane fade in " id="move">
+                        <div id="move_tabs" v-cloak>
+                            <iframe name="" style="width:100%; height:450px" frameborder="0" id="move_iframe"   src="../child/tchildmove.html"></iframe>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade in " id="abnormal">
+                        <div id="abnormal_tabs" v-cloak>
+                            <iframe name="" style="width:100%; height:450px" frameborder="0" id="abnormal_iframe"   src="../child/tchildabnormal.html"></iframe>
+
+
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade in " id="taboo">
+                        <div id="taboo_tabs" v-cloak>
+                            <iframe name="" style="width:100%; height:450px" frameborder="0" id="taboo_iframe"   src="../child/tchildtaboo.html"></iframe>
+
+
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade in " id="allergy">
+                        <div id="allergy_tabs" v-cloak>
+                            <iframe name="" style="width:100%; height:450px" frameborder="0" id="allergy_iframe"  src="../child/tchildallergy.html"></iframe>
+
+
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade in " id="infection">
+                        <div id="infection_tabs" v-cloak>
+                            <iframe name="" style="width:100%; height:450px" frameborder="0" id="infection_iframe"   src="../child/tchildinfection.html"></iframe>
+                            <!--<div v-show="showList" class="panel panel-default">
+                                <table id="infectionGrid"></table>
+                                <div id="infectionGridPager"></div>
+                            </div>-->
+
+                        </div>
+
+                    </div>
+                   <!-- <div class="tab-pane fade in " id="newBorn">
+                        <div id="newBorn_tabs" v-cloak>
+                            <iframe name="" style="width:100%; height:450px" frameborder="0" id="newBorn_iframe"   src="../provinceplatform/tchilddownload.html"></iframe>
+
+                        </div>
+
+                    </div>-->
+                    <!--<div class="tab-pane fade in " id="migrationChild">
+                        <div id="migrationChild_tabs" v-cloak>
+                            <iframe name="" style="width:100%; height:450px" frameborder="0" id="migrationChild_iframe"   src="../provinceplatform/tchildelsewhere.html"></iframe>
+
+                        </div>
+
+                    </div>-->
+                </div>
+            </div>
+
+<script src="${rc.contextPath}/statics/js/child/showChildDetail.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/bus/mouseoverinocdata.js"></script>
+        </div>
+</div>
+</body>
+</html>

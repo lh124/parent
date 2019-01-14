@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.provinceplatform.TChildElsewhereDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.provinceplatform.TChildElsewhereEntity">
+		select * from t_child_elsewhere where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.provinceplatform.TChildElsewhereEntity">
+		select
+		elsewhere.id,
+		`migr_childcode`,
+		`migr_date`,
+		depart.name as `migr_depa_code`,
+		`migr_serverdate`,
+		case `migr_vacc_state` when  '1' then '异地迁入' when '2' then '临时接种' end as migr_vacc_state
+		from t_child_elsewhere  elsewhere
+		left join sys_depart depart on depart.id = elsewhere.migr_depa_code
+		<where>
+			1=1
+			<if test="changeDateStart!=null and changeDateEnd!=null">
+				and TO_DAYS(migr_date) >= TO_DAYS(#{changeDateStart})
+				and TO_DAYS(#{changeDateEnd}) >= TO_DAYS(migr_date)
+			</if>
+			<if test="changeDateStart!=null and changeDateEnd==null">
+				and TO_DAYS(migr_date) = TO_DAYS(#{changeDateStart})
+			</if>
+		</where>
+		order by migr_date desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_elsewhere
+		<where>
+			1=1
+			<if test="changeDateStart!=null and changeDateEnd!=null">
+				and TO_DAYS(migr_date) >= TO_DAYS(#{changeDateStart})
+				and TO_DAYS(#{changeDateEnd}) >= TO_DAYS(migr_date)
+			</if>
+			<if test="changeDateStart!=null and changeDateEnd==null">
+				and TO_DAYS(migr_date) = TO_DAYS(#{changeDateStart})
+			</if>
+		</where>
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.provinceplatform.TChildElsewhereEntity">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select uuid()
+        </selectKey>
+        insert into t_child_elsewhere
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+`id`,
+<if test="migrChildcode != null and migrChildcode  != ''">`migr_childcode` , </if>
+<if test="migrDate != null">`migr_date`  , </if>
+<if test="migrDepaCode != null and migrDepaCode  != ''">`migr_depa_code` , </if>
+<if test="migrServerdate != null">`migr_serverdate`  , </if>
+<if test="migrVaccState != null and migrVaccState  != ''">`migr_vacc_state` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#{id},
+<if test="migrChildcode != null and migrChildcode  != ''">#{migrChildcode} , </if>
+<if test="migrDate != null">#{migrDate} , </if>
+<if test="migrDepaCode != null and migrDepaCode  != ''">#{migrDepaCode} , </if>
+<if test="migrServerdate != null">#{migrServerdate} , </if>
+<if test="migrVaccState != null and migrVaccState  != ''">#{migrVaccState} </if>
+	</trim>
+    </insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.provinceplatform.TChildElsewhereEntity">
+		update t_child_elsewhere 
+		<set>
+	<if test="migrChildcode != null and migrChildcode  != ''">`migr_childcode` = #{migrChildcode}, </if>
+	<if test="migrDate != null">`migr_date` = #{migrDate} , </if>
+	<if test="migrDepaCode != null and migrDepaCode  != ''">`migr_depa_code` = #{migrDepaCode}, </if>
+	<if test="migrServerdate != null">`migr_serverdate` = #{migrServerdate} , </if>
+	<if test="migrVaccState != null and migrVaccState  != ''">`migr_vacc_state` = #{migrVaccState}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_elsewhere where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_elsewhere where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

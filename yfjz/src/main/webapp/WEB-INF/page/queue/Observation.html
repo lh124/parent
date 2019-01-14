@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head> 
+    <meta charset="utf-8">
+    <title> 留观</title> 
+    #parse("sys/header.html")
+    <script src="../statics/js/queue/observation.js"></script>
+
+    <style>
+        table tbody {
+            display:block;
+            height:350px;
+            overflow-y:scroll;
+        }
+
+        table thead, tbody tr {
+            display:table;
+            width:100%;
+            table-layout:fixed;
+        }
+
+        table thead {
+            width: calc( 100% - 1em )
+        }
+        table thead th{ background:#ccc;}
+
+
+    </style>
+</head>
+
+<script type="text/javascript">
+    //禁止滚动条
+    $(".body").css({
+        "overflow-x":"hidden",
+        "overflow-y":"hidden"
+    });
+
+    // //启用滚动条
+    // $(document.body).css({
+    //     "overflow-x":"auto",
+    //     "overflow-y":"auto"
+    // });
+
+</script> 
+<body >
+<div>
+    <div style="width:30%;height: 956px;float:left;padding-top: 250px;">
+        <div style="padding-left: 100px">
+            <input type="text" class="form-control" style="width: 300px;font-size: 20px" id="search"  >
+        </div>
+
+        <div style="padding-top: 20px;padding-left: 100px">
+            <input type="button" value="1" class="btn btn-primary" style="width: 80px;height: 50px;" id="one">
+            <input type="button" value="2" class="btn btn-primary" style="width: 80px;height: 50px;" id="two">
+            <input type="button" value="3" class="btn btn-primary" style="width: 80px;height: 50px;" id="three">
+        </div>
+        <div style="padding-top: 10px;padding-left: 100px">
+            <input type="button" value="4" class="btn btn-primary" style="width: 80px;height: 50px;" id="four">
+            <input type="button" value="5" class="btn btn-primary" style="width: 80px;height: 50px;" id="five">
+            <input type="button" value="6" class="btn btn-primary" style="width: 80px;height: 50px;" id="six">
+        </div>
+        <div style="padding-top: 10px;padding-left: 100px">
+            <input type="button" value="7" class="btn btn-primary" style="width: 80px;height: 50px;" id="seven">
+            <input type="button" value="8" class="btn btn-primary" style="width: 80px;height: 50px;" id="eight">
+            <input type="button" value="9" class="btn btn-primary" style="width: 80px;height: 50px;" id="nine">
+        </div>
+        <div style="padding-top: 10px;padding-left: 100px">
+            <input type="button" value="清除" class="btn btn-primary" style="width: 80px;height: 50px;" id="clear">
+            <input type="button" value="0" class="btn btn-primary" style="width: 80px;height: 50px;" id="zero">
+            <input type="button" value="查询" class="btn btn-primary" style="width: 80px;height: 50px;" id="query">
+        </div>
+<div style="padding-left: 100px;padding-top: 20px">
+    <h3>离开前请查询是否留观完成</h3>
+    <h3>请将接种证上资料页的条形</h3>
+    <h3> 码对准扫码枪进行扫码查询</h3>
+    <h3>（如若没有接种证请将号票</h3>
+    <h3> 对准扫码枪进行查询或者请</h3>
+    <h3>选择按键输入点击查询按钮查询）</h3>
+</div>
+
+    </div>
+    <div style="width:70%;height: 100%;float:right;" >
+        <div style="height: 200px">
+            <h6>今日接种记录</h6>
+            <table class="table table-bordered"  >
+                <thead>
+                <tr>
+                    <th>儿童编号</th>
+                    <th>姓名</th>
+                    <th>疫苗名称</th>
+                    <th>剂次</th>
+                    <th>接种部位</th>
+                    <th>接种时间</th>
+                    <th>留观是否完成</th>
+                </tr>
+                </thead>
+                <tbody id="content" style="overflow:scroll;height: 100px" >
+                </tbody>
+            </table>
+        </div>
+        <div id="tt">
+            <h1 style="text-align: center ;padding-bottom: 20px;color:red"  id="finsh"></h1>
+        </div>
+        <div>
+            <span style="font-size: 30px;padding-left: 300px"> <font color="red">预防接种</font></span>
+
+
+
+            <span style="font-size: 30px;padding-left: 300px"> <font color="red">保障健康</font></span>
+        </div>
+
+        <div style="font-size: 16px">注意事项</div>
+        <div style="height: 200px;">
+            <div style="width: 50%;height: 200px;float: left" id="attention">
+            </div>
+            <div style="width: 50%;height: 200px;float: right" >
+            </div>
+        </div>
+
+        <div style="padding-top: 20px">
+            <h6>历史接种记录</h6>
+            <table class="table table-bordered" >
+                <thead >
+                <tr>
+                   <th>儿童编号</th>
+                    <th>姓名</th>
+                    <th>疫苗名称</th>
+                    <th>剂次</th>
+                    <th>接种部位</th>
+                    <th>接种时间</th>
+                </tr>
+                </thead>
+                <tbody  id="contents" >
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

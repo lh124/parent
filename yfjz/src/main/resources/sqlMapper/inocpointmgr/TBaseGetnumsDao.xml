@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.inocpointmgr.TBaseGetnumsDao">
+
+	<select id="queryByOrgId" resultType="java.util.HashMap">
+		select * from t_base_getnums limit 1;
+	</select>
+
+	<insert id="save" parameterType="java.util.HashMap">
+        insert into t_base_getnums
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="mStime != null">`m_stime`  , </if>
+			<if test="mEtime != null">`m_etime`  , </if>
+			<if test="mAmount != null">`m_amount`  , </if>
+			<if test="aStime != null">`a_stime`  , </if>
+			<if test="aEtime != null">`a_etime`  , </if>
+			<if test="aAmount != null">`a_amount`  , </if>
+			<if test="orgid != null and orgid  != ''">`orgid` , </if>
+			<if test="status != null">`status`  , </if>
+			<if test="syncstatus != null">`syncstatus` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="mStime != null">#{mStime} , </if>
+			<if test="mEtime != null">#{mEtime} , </if>
+			<if test="mAmount != null">#{mAmount} , </if>
+			<if test="aStime != null">#{aStime} , </if>
+			<if test="aEtime != null">#{aEtime} , </if>
+			<if test="aAmount != null">#{aAmount} , </if>
+			<if test="orgid != null and orgid  != ''">#{orgid} , </if>
+			<if test="status != null">#{status} , </if>
+			<if test="syncstatus != null">#{syncstatus} </if>
+		</trim>
+    </insert>
+
+	<delete id="deleteByOrgId">
+		delete from t_base_getnums where orgid = #{orgId}
+	</delete>
+
+	<update id="updateStateByOrgId" parameterType="java.util.HashMap">
+		update t_base_getnums
+		<set>
+			<if test="status != null">`status` = #{status} , </if>
+		</set>
+		where orgid = #{orgid}
+
+	</update>
+
+	<select id="queryCheckDataByOrgId" resultType="java.util.HashMap">
+		SELECT
+		TIME_FORMAT(m_stime, '%H:%i') m_stime,
+		TIME_FORMAT(m_etime, '%H:%i') m_etime,
+		TIME_FORMAT(a_stime, '%H:%i') a_stime,
+		TIME_FORMAT(a_etime, '%H:%i') a_etime,
+		(
+		CURTIME() >= m_stime
+		AND CURTIME() <![CDATA[ <= ]]> m_etime
+		) morning,
+		(
+		CURTIME() >= a_stime
+		AND CURTIME() <![CDATA[ <= ]]> a_etime
+		) afternoon,
+		m_amount <![CDATA[ <= ]]> (
+		SELECT
+		count(1)
+		FROM
+		t_queue_no
+		WHERE
+		create_time
+		BETWEEN
+		CONCAT(DATE_FORMAT(CURRENT_DATE,'%y-%m-%d '),DATE_FORMAT(m_stime,'%H:%i:%s'))
+		AND
+		CONCAT(DATE_FORMAT(CURRENT_DATE,'%y-%m-%d '),DATE_FORMAT(m_etime,'%H:%i:%s'))
+		) m_num,
+		a_amount <![CDATA[ <= ]]> (
+		SELECT
+		count(1)
+		FROM
+		t_queue_no
+		WHERE
+		create_time
+		BETWEEN
+		CONCAT(DATE_FORMAT(CURRENT_DATE,'%y-%m-%d '),DATE_FORMAT(a_stime,'%H:%i:%s'))
+		AND
+		CONCAT(DATE_FORMAT(CURRENT_DATE,'%y-%m-%d '),DATE_FORMAT(a_etime,'%H:%i:%s'))
+		) a_num,
+		m_amount,
+		a_amount
+		FROM
+		t_base_getnums
+
+	</select>
+</mapper>

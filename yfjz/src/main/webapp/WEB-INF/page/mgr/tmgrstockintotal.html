@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>入库列表</title>
+#parse("sys/header.html")
+</head>
+<body class="myBody">
+<ul id="myTab" class="nav nav-tabs">
+	<li class="active">
+		<a href="#ret" data-toggle="tab">入库列表</a>
+	</li>
+	<li><a href="#record" data-toggle="tab">修改记录</a>
+	</li>
+</ul>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane fade in active" id="ret">
+		<div id="rrapp" v-cloak>
+			<div v-show="showList">
+				<div class="grid-btn">
+					<form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForm">
+						<div class="form-group">
+							<label >入库单号:</label>
+							<input type="text" class="form-control" style="width: 150px" id="searchOrder" placeholder="入库单号">
+						</div>
+						<div class="form-group">
+							<label >入库人员:</label>
+							<input type="text" class="form-control" style="width: 150px" id="searchUser" placeholder="入库人员">
+						</div>
+						<div class="form-group">
+							<label >入库时间:</label>
+							<input type="text" class="form-control" style="width: 150px"    id="startDate" placeholder="开始时间" data-date-format="yyyy-mm-dd">
+							-
+							<input type="text" class="form-control" style="width: 150px"    id="endDate" placeholder="结束时间" data-date-format="yyyy-mm-dd">
+						</div>
+						<a class="btn btn-warning" @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+						<a class="btn btn-primary" @click="reset"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						<a class="btn btn-default" @click="print"><i class="fa fa-print"></i>&nbsp;打印</a>
+					</form>
+				</div>
+				<div id="jgWidth" style="min-width: 1400px">
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tab-pane fade" id="record">
+		<div id="recordTable" v-cloak>
+			<div v-show="showList">
+				<div class="grid-btn">
+					<form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForms">
+						<div class="form-group">
+							<label >修改人员:</label>
+							<label style="width: 150px"><select type="text" class="form-control selectpicker"  id="inocDoctor" placeholder="修改人员"></select></label>
+						</div>
+						<div class="form-group" id="searchProductNameId">
+							<label >&nbsp;&nbsp;疫苗名称:</label>
+							<label style="width: 150px"><select  data-live-search="true"  class="form-control selectpicker"  id="searchProductName" placeholder="疫苗"></select></label>
+						</div>
+						<div class="form-group">
+							<label >&nbsp;&nbsp;修改时间:</label>
+							<label ><input type="text" class="form-control times" style="width: 150px"    id="startDates" placeholder="开始时间" data-date-format="yyyy-mm-dd">
+							-
+								<input type="text" class="form-control times" style="width: 150px"    id="endDates" placeholder="结束时间" data-date-format="yyyy-mm-dd"></label>
+						</div>
+						<div class="form-group">
+						<label><a class="btn btn-warning" @click="query"><i class="fa fa-search"></i>&nbsp;&nbsp;查询</a></label>
+						</div>
+					</form>
+				</div>
+				<div  style="width: 1400px">
+				<table id="recordGrid"></table>
+				<div id="recordGridPager"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    $(function () {
+        $('#startDate,#endDate').datetimepicker(
+            {
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayBtn: true,
+                startView: 'month',
+                minView:'month',
+                language:  'zh-CN'
+            }
+        );
+    });
+
+</script>
+<script src="${rc.contextPath}/statics/js/mgr/tmgrstockintotal.js?_${date.systemTime}"></script>
+</body>
+</html>

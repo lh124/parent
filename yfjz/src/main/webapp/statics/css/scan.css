@@ -1,0 +1,48 @@
+html,body {
+    height: 100%;
+}
+body {
+    background: transparent url("./images/scan-bg.png") center center no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+.scan-tips {
+    position: absolute;
+    left: 10px;
+    bottom: -100px;
+    width: 679px;
+    height: 1085px;
+    background: transparent url("./images/scan-tips.png") center center no-repeat;
+    background-size: 70% 70%;
+}
+.content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: -150px;
+    text-align: center;
+}
+.content h2 {
+    margin-bottom: 50px;
+    font-size: 60px;
+    letter-spacing: 10px;
+    word-spacing: 10px;
+    color: #118B34;
+}
+.content button {
+    padding: 10px 35px;
+    color: #fff;
+    font-size: 30px;
+    letter-spacing: 5px;
+    word-spacing: 5px;
+    border-radius: 5px 5px;
+    background: #118B34;
+    background: rgba(17,139,52,1);
+    border: none;
+    transition: all ease .2s;
+}
+.content button:hover {
+    cursor: pointer;
+    background: rgba(17,139,52,.8);
+
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.basesetting.TBaseDayHolidayDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.basesetting.TBaseDayHolidayEntity">
+		select * from t_base_day_holiday where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.basesetting.TBaseDayHolidayEntity">
+		select * from t_base_day_holiday
+		order by month
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<!--查询出国家节假日列表，计算给定推荐日期所在月份的国家节假日-->
+	<select id="queryNationalHolidays" resultType="io.yfjz.entity.basesetting.TBaseDayHolidayEntity">
+		select * from t_base_day_holiday
+		where month = #{month}
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_base_day_holiday 
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.basesetting.TBaseDayHolidayEntity">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select uuid()
+        </selectKey>
+        insert into t_base_day_holiday
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+`id`,
+<if test="holidayName != null and holidayName  != ''">`holiday_name` , </if>
+<if test="month != null and month  != ''">`month`  , </if>
+<if test="day != null and day  != ''">`day` , </if>
+<if test="orgId != null and orgId  != ''">`org_id` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#{id},
+<if test="holidayName != null and holidayName  != ''">#{holidayName} , </if>
+<if test="month != null and month  != ''">#{month} , </if>
+<if test="day != null and day  != ''">#{day} , </if>
+<if test="orgId != null and orgId  != ''">#{orgId} </if>
+	</trim>
+    </insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.basesetting.TBaseDayHolidayEntity">
+		update t_base_day_holiday 
+		<set>
+	<if test="holidayName != null and holidayName  != ''">`holiday_name` = #{holidayName}, </if>
+	<if test="month != null and month !=''">`month` = #{month} , </if>
+	<if test="day != null and day  != ''">`day` = #{day}, </if>
+	<if test="orgId != null and orgId  != ''">`org_id` = #{orgId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_base_day_holiday where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_base_day_holiday where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

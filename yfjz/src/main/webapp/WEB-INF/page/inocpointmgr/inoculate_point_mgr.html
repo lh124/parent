@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite">
+<head>
+	<title>接种点管理</title>
+	#parse("sys/header.html")
+	<style>
+		body {
+			padding: 0;
+		}
+		.monthSetting {
+			/*margin: 0 auto;*/
+			text-align: center;
+			border:0;
+			margin:0;
+			border-collapse:separate;
+			border-spacing:2px;
+		}
+
+		.monthSetting td {
+			width: 60px;
+			height: 60px;
+			padding:0;
+			border: 1px solid #95b8e7;
+		}
+
+		.setted {
+			background-color: #0e2d5f;
+			color: #fff;
+		}
+
+		.fontred{color:#F00}
+		.check-txt {
+			vertical-align: top;
+			display: inline-block;
+			margin-top: 10px;
+		}
+		#month1 .checkbox{
+			zoom: 200%;
+			display: inline-block;
+			vertical-align: top;
+			width: 12px;
+			height: 12px;
+		}
+		#selectItem {
+			width: 250px;
+			height: 300px;
+			padding: 0px;
+			min-height:300px;
+			background-color:#f5f5f5;
+			margin:20px;
+			display: block;
+			float: left;
+			border-radius: 5px;
+			border: 1px solid #bbb;
+		}
+		#target {
+			min-width: 800px;
+			width: auto;
+			height: 300px;
+			padding: 0px;
+			min-height:300px;
+			background-color:#f5f5f5;
+			margin:20px;
+			display: block;
+			float: left;
+			border-radius: 5px;
+			border: 1px solid #bbbbbb;
+		}
+		#target li{
+
+			width:150px;
+
+			height:150px;
+
+			margin: 30px ;
+
+			border: 2px solid #d9dbff;
+
+			text-align: center;
+
+			line-height: 150px;
+
+			font-weight: bold;
+			color: #6b6d6f;
+			float: left;
+
+			font-size: 24px;
+
+			background: #128d35;
+
+			border-radius: 50%;//圆角百分比
+
+		}
+		#selectItem li{
+			display: block;
+			float: left;
+			width: 200px;
+			height: 35px;
+			line-height: 35px;
+			border-radius: 4px;
+			margin: 10px;
+			padding: 0;
+			list-style: none;
+			background-color: #337ab7;
+			margin-bottom:10px;
+			-moz-user-select: none;
+			user-select: none;
+			text-indent: 10px;
+			text-align: center;
+			color: #800201;
+		}
+		.fontCol{
+			color: white;
+		}
+		.proTitle{
+			margin-left: 90px;
+			font-weight: bold;
+			color: #6b6d6f;
+			font-size: 20px;
+		}
+		.nowTitle{
+			margin-left: 450px;
+			font-weight: bold;
+			color: #6b6d6f;
+			font-size: 20px;
+		}
+	</style>
+	<link rel="stylesheet" href="${rc.contextPath}/statics/css/bootstrap-switch.min.css">
+	<script src="${rc.contextPath}/statics/libs/bootstrap-switch.min.js"></script>
+</head>
+<body>
+<ul id="setSysConfigTables" class="nav nav-tabs">
+	<li class="active"><a href="#offernumber" data-toggle="tab">取号设置管理</a></li>
+<!--	<li><a href="#vacccertificate" data-toggle="tab">接种证打印设置管理</a></li>
+	<li><a href="#inoculationcardprinting" data-toggle="tab">接种卡打印设置管理</a></li>-->
+	<li><a href="#printbarcode" data-toggle="tab">打印条形码IP设置管理</a></li>
+	<!--<li><a href="#voicereminding" data-toggle="tab">语音提醒设置管理</a></li>-->
+	<li><a href="#databackupreduction" data-toggle="tab">数据备份管理</a></li>
+	<li><a href="#departmentInfo" data-toggle="tab">门诊基本信息管理</a></li>
+	<li><a href="#process" data-toggle="tab">业务流程配置</a></li>
+	<li><a href="#setInoculation" data-toggle="tab">基础配置</a></li>
+</ul>
+
+<!--公共tabs-->
+<div class="tab-content" class="tab-content" style="margin-top: 5px">
+
+	<!--取号设置管理-->
+	<div class="tab-pane fade in active" id="offernumber">
+		<div id="offernumber_tab">
+			<div v-show="!showList2" class="panel panel-default" style="margin-left: 10px;margin-right: 50%">
+				<div class="panel-heading">
+					<input id="notification1" type="checkbox" />
+				</div>
+				<form id="offernumberForm" class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">上午取号数量</div>
+						<div class="col-sm-10">
+							<input id="mAmount" type="number" name="mAmount" class="form-control"  placeholder="上午最大取号数量"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">上午开始时间</div>
+						<div class="col-sm-10">
+							<input id="mStime" type="time" name="mStime" class="form-control"  placeholder="上午开始时间"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">上午结束时间</div>
+						<div class="col-sm-10">
+							<input id="mEtime" type="time" name="mEtime" class="form-control"  placeholder="上午结束时间"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">下午取号数量</div>
+						<div class="col-sm-10">
+							<input id="aAmount" type="number" name="aAmount" class="form-control"  placeholder="下午最大取号数量"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">下午开始时间</div>
+						<div class="col-sm-10">
+							<input id="aStime" type="time" name="aStime" class="form-control"  placeholder="下午开始时间"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">下午结束时间</div>
+						<div class="col-sm-10">
+							<input id="aEtime" type="time" name="aEtime" class="form-control"  placeholder="下午结束时间"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label"></div>
+						<input id="submitNumber" type="button" class="btn btn-primary" value="保存"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!--接种证打印设置管理-->
+	<div class="tab-pane fade " id="vacccertificate">
+		<div id="vacccertificate_tab" v-cloak>
+			<div v-show="showList2" >
+				<div class="grid-btn">
+					<a class="btn btn-primary" @click="add2"><i class="fa fa-plus"></i>&nbsp;新增</a>
+					<a class="btn btn-primary" @click="update2"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+					<a class="btn btn-primary" @click="stop2" ><i class="fa fa-pencil-square-o"></i>&nbsp;启用/停用</a>
+				</div>
+				<table id="vacccertificateGrid"></table>
+				<div id="vacccertificatejqGridPager"></div>
+			</div>
+			<div v-show="!showList2" class="panel panel-default">
+				<div class="panel-heading">{{title}}</div>
+				<form class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备名称</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tMgrEquipment.name" placeholder="设备名称"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备编码</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tMgrEquipment.code" placeholder="设备编码"/>
+						</div>
+					</div>
+					<div class="form-group">
+
+						<div class="col-sm-2 control-label">仓库名称</div>
+						<div class="col-sm-10">
+							<select class="col-lg-12 form-control"  v-model="tMgrEquipment.storeid">
+								<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">备注</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tMgrEquipment.remark" placeholder="备注"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label"></div>
+						<input type="button" class="btn btn-primary" @click="saveOrUpdate2" value="确定"/>
+						&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload2" value="返回"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!--接种卡打印设置管理-->
+	<div class="tab-pane fade " id="inoculationcardprinting">
+		<div id="inoculationcardprinting_tab" v-cloak>
+			<div v-show="showList2" >
+				<div class="grid-btn">
+					<a class="btn btn-primary" @click="add2"><i class="fa fa-plus"></i>&nbsp;新增</a>
+					<a class="btn btn-primary" @click="update2"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+					<a class="btn btn-primary" @click="stop2" ><i class="fa fa-pencil-square-o"></i>&nbsp;启用/停用</a>
+				</div>
+				<table id="inoculationcardprintingGrid"></table>
+				<div id="inoculationcardprintingjqGridPager"></div>
+			</div>
+			<div v-show="!showList2" class="panel panel-default">
+				<div class="panel-heading">{{title}}</div>
+				<form class="form-horizontal">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备名称</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tMgrEquipment.name" placeholder="设备名称"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">设备编码</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tMgrEquipment.code" placeholder="设备编码"/>
+						</div>
+					</div>
+					<div class="form-group">
+
+						<div class="col-sm-2 control-label">仓库名称</div>
+						<div class="col-sm-10">
+							<select class="col-lg-12 form-control"  v-model="tMgrEquipment.storeid">
+								<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">备注</div>
+						<div class="col-sm-10">
+							<input type="text" class="form-control" v-model="tMgrEquipment.remark" placeholder="备注"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label"></div>
+						<input type="button" class="btn btn-primary" @click="saveOrUpdate2" value="确定"/>
+						&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload2" value="返回"/>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!--打印条形码IP设置管理-->
+	<div class="tab-pane fade" id="printbarcode">
+		<div id="printbarcode_tab" >
+			<div class="panel panel-default" >
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						设置条码打印机IP
+					</h3>
+				</div>
+				<div class="panel-body"  style=" height: 400px;overflow-y:auto; width: 600px">
+					<form  id="ipForm" style="margin: 10px">
+						<div class="form-group">
+							<label>条码打印机链接的电脑IP地址：</label>
+							<input type="hidden" id="dictId">
+							<input type="text" id="barCodeIp" class="form-control" style="width: 250px" name="请输入IP地址" />
+						</div>
+						<div class="form-group">
+							<button type="submit" name="submit" class="btn btn-primary" onclick="saveIpAdress()">更新</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<!--语音提醒设置管理-->
+	<div class="tab-pane fade " id="voicereminding">
+	<div id="voicereminding_tab" v-cloak>
+		<div v-show="showList2" >
+			<div class="grid-btn">
+				<a class="btn btn-primary" @click="add2"><i class="fa fa-plus"></i>&nbsp;新增</a>
+				<a class="btn btn-primary" @click="update2"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+				<a class="btn btn-primary" @click="stop2" ><i class="fa fa-pencil-square-o"></i>&nbsp;启用/停用</a>
+			</div>
+			<table id="voiceremindingGrid"></table>
+			<div id="voiceremindingjqGridPager"></div>
+		</div>
+		<div v-show="!showList2" class="panel panel-default">
+			<div class="panel-heading">{{title}}</div>
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">设备名称</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" v-model="tMgrEquipment.name" placeholder="设备名称"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">设备编码</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" v-model="tMgrEquipment.code" placeholder="设备编码"/>
+					</div>
+				</div>
+				<div class="form-group">
+
+					<div class="col-sm-2 control-label">仓库名称</div>
+					<div class="col-sm-10">
+						<select class="col-lg-12 form-control"  v-model="tMgrEquipment.storeid">
+							<option v-for="item in items" v-bind:value="item.value">{{item.text}}</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">备注</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" v-model="tMgrEquipment.remark" placeholder="备注"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label"></div>
+					<input type="button" class="btn btn-primary" @click="saveOrUpdate2" value="确定"/>
+					&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload2" value="返回"/>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+	<!--数据备份还原管理-->
+	<div class="tab-pane fade" id="databackupreduction">
+		<div id="databackupreduction_tab" >
+			<ul id="myTab" class="nav nav-tabs">
+				<li class="active">
+					<a href="#backup" data-toggle="tab">
+						备份数据库
+					</a>
+				</li>
+				<!--<li><a href="#restore" data-toggle="tab">还原数据库</a></li>-->
+			</ul>
+			<div id="TabContent" class="tab-content">
+
+				<div class="tab-pane fade in active" id="backup" >
+					<div class="grid-btn" style="margin-left: 20px">
+
+						<a class="btn btn-primary" onclick="shellhandler('backup')"><i class="fa fa-plus"></i>&nbsp;备份数据库</a>
+						<a class="btn btn-primary" onclick="downloadFile()"><i class="fa fa-download"></i>&nbsp;下载备份文件</a>
+					</div>
+					<div class="row">
+						<div class=" col-sm-6" >
+                            <div style="height: 600px; width: 700px;">
+                                <table id="backupGird"></table>
+                                <div id="backupGirdPage"></div>
+                            </div>
+						</div>
+						<div class=" col-sm-6" >
+
+							<div class="panel panel-default" >
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										日志信息
+									</h3>
+								</div>
+								<div class="panel-body" id="console_output" style=" height: 445px;overflow-y:auto; width: 100%">
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+				<div class="tab-pane fade" id="restore">
+					<form class="form-inline" style="margin: 10px" id="ff">
+						<input type="file" name="RestoreFile" id="uploadFile"  style="display:none;display: inline"/>
+						<button type="button" class="btn btn-primary" style="display: inline" onclick="upload()">上传备份文件</button>
+						<button type="button" class="btn btn-warning" style="display: inline" onclick="restore()">还原备份</button>
+					</form>
+					<div class="row">
+						<div class=" col-sm-6" >
+							<div style="height: 600px; width: 600px;">
+								<table id="restoreGird"></table>
+							</div>
+						</div>
+						<div class=" col-sm-6" >
+
+							<div class="panel panel-default" >
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										日志信息
+									</h3>
+								</div>
+								<div class="panel-body" id="console" style=" height: 400px;overflow-y:auto; width: 100%">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <!--门诊基本信息管理-->
+	<div class="tab-pane fade in" id="departmentInfo">
+		<div id="departmentInfo_tabs">
+			<iframe name="" style="width:100%; height:550px" frameborder="0" id="departmentInfo_iframe"  src="../inocpointmgr/tbaseorginfo.html"></iframe>
+		</div>
+	</div>
+	<!-- 业务流程配置-->
+	<div class="tab-pane fade" id="process">
+		<div id="processVm" v-cloak>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						流程配置
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div class="grid-btn" style="margin-top: 10px;">
+						<!--<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;启用</a>
+                        <a class="btn btn-primary" @click="stop"><i class="fa fa-trash-o"></i>&nbsp;禁用</a>-->
+						<!--<a class="btn btn-primary" @click="defaultProcess"><i class="fa fa-trash-o"></i>&nbsp;默认流程</a>
+						<a class="btn btn-primary" @click="saveProcess"><i class="fa fa-pencil-square-o"></i>&nbsp;保存流程</a>-->
+					</div>
+					<div><span class="proTitle">可选配置流程</span> <span class="nowTitle">已配置流程</span></div>
+					<div class="processSelector" >
+						<ol id="selectItem">
+							<li tag="check"><i class="fontCol">预检</i></li>
+							<li tag="childProject">儿保</li>
+							<li tag="register">登记</li>
+							<li tag="inoculate">接种</li>
+							<li tag="look">留观</li>
+						</ol>
+						<ol id="target"></ol>
+
+					</div>
+
+				</div>
+			</div>
+			<div id="selectProcess"  style="display: none">
+				<select class="form-control" size="3" multiple="true" class="" >
+					<option value="check">预检</option>
+					<option value="childProject">儿保</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<!--取号设置管理-->
+	<div class="tab-pane fade in" id="setInoculation">
+		<div id="setInoculation_tab">
+			<div v-show="!showList2" class="panel panel-default" style="margin-left: 10px;margin-right: 50%">
+				<div class="panel-heading">
+
+				</div>
+				<div style="padding: 10px">
+					<table>
+						<tr>
+							<td>排队叫号：</td>
+							<td><input id="queue_type" type="checkbox" /></td>
+						</tr>
+						<tr>
+							<td>接种台分队列：</td>
+							<td><input id="queue_distinction" type="checkbox" /></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/inocpointmgr/databackupreduction_tabs.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/inocpointmgr/inoculationcardprinting_tabs.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/inocpointmgr/offernumber_tabs.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/inocpointmgr/printbarcode_tabs.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/inocpointmgr/vacccertificate_tabs.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/inocpointmgr/voicereminding_tabs.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/inocpointmgr/process.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/inocpointmgr/setInoculation_tab.js?_${date.systemTime}"></script>
+
+
+</body>
+</html>

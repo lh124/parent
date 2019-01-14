@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>儿童过敏表</title>
+	#parse("sys/header.html")
+	<link href="../statics/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+	<script src="../statics/libs/moment-with-locales.js"></script>
+	<script src="../statics/libs/bootstrap-datetimepicker.min.js"></script>
+	<script src="../statics/libs/bootstrap-datetimepicker.zh-CN.js"></script>
+</head>
+<body>
+<input type="hidden" id="chilCode" value="${request.getParameter('chilCode')}">
+<div id="rrapp" v-cloak>
+	<div v-show="showList">
+		<div class="grid-btn">
+			<!--<div class="form-group col-sm-2">-->
+				<!--<input type="text" class="form-control" v-model="q.chilCode"  @keyup.enter="query" placeholder="按姓名搜索">-->
+			<!--</div>-->
+			<!--<a class="btn btn-info" @click="query"><i class="fa fa-search"></i>&nbsp; 查询</a>-->
+			<!--#if($shiro.hasPermission("tchildallergy:save"))-->
+			<!--<a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>-->
+			<!--#end-->
+			<!--#if($shiro.hasPermission("tchildallergy:update"))-->
+			<!--<a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>-->
+			<!--#end-->
+			<!--#if($shiro.hasPermission("tchildallergy:delete"))-->
+			<!--<a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>-->
+			<!--#end-->
+			<!--<a class="btn btn-primary" href="javascript:history.go(-1)">返回上一级</a>-->
+		</div>
+		<table id="jqGrid"></table>
+		<div id="jqGridPager"></div>
+	</div>
+
+	<div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal" id="dallergyForm">
+
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童编码</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildAllergy.chilCode" readonly placeholder=""/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label">儿童姓名</div>
+				<div class="col-sm-10">
+					<input type="text" id="chilName" class="form-control" value="${request.getParameter('chilName')}" readonly>
+					<!--<input type="text" class="form-control"  id="${request.getParameter('chilNames')}" readonly placeholder=""/>-->
+				</div>
+			</div>
+
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">儿童表ID</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.childCode" placeholder="儿童表ID"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+				<!--<div class="col-sm-2 control-label">过敏疫苗</div>-->
+				<!--<div class="col-sm-10">-->
+					<!--&lt;!&ndash;<input type="text" class="form-control" v-model="tChildAllergy.bioCode" placeholder="过敏疫苗"/>&ndash;&gt;-->
+					<!--&lt;!&ndash;<select v-model="tChildAllergy.bioCode" class="form-control"  id="BioCode" name="BioCode" >&ndash;&gt;-->
+						<!--&lt;!&ndash;&ndash;&gt;-->
+					<!--&lt;!&ndash;</select>&ndash;&gt;-->
+					<!--<input type="hidden" id="fkVaccineCode" v-model="tChildAllergy.bioCode">-->
+					<!--<input type="text" class="form-control" id="fkVaccineName" name="productName" v-model="tChildAllergy.bioCode" placeholder="请选择疫苗" data-toggle="modal" data-target="#myModal"/>-->
+
+
+				<!--</div>-->
+			<!--</div>-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label">过敏原因</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildAllergy.describes"  name="describes" placeholder="过敏原因"/>
+				</div>
+			</div>
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">登记人</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.registrant" placeholder="登记人"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+				<!--<div class="col-sm-2 control-label">检测日期</div>-->
+				<!--<div class="col-sm-10">-->
+					<!--&lt;!&ndash;<input type="text" class="form-control" v-model="tChildAllergy.checkDate" placeholder="检测日期"/>&ndash;&gt;-->
+					<!--<a class="input-group date" id="datetimepicker1" style="float: left; " >-->
+						<!--<input type="text" class="form-control" v-model="tChildAllergy.checkDate" placeholder="检测日期" id='checkDate' name="checkDate" style="width: 320px; height: 35px;" />-->
+						<!--<span class="input-group-addon" style="float: left; width: 50px; height: 35px;">-->
+                    <!--<span class="glyphicon glyphicon-calendar"></span>-->
+                <!--</span>-->
+					<!--</a>-->
+				<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">type,0本地,1平台</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.type" placeholder="type,0本地,1平台"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">同步状态,0未同步;1同步</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.syncstatus" placeholder="同步状态,0未同步;1同步"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">状态,0正常,-1删除</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.status" placeholder="状态,0正常,-1删除"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">创建人id</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.createUserId" placeholder="创建人id"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">创建人名字</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.createUserName" placeholder="创建人名字"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">-->
+			<!--<div class="col-sm-2 control-label">创建时间</div>-->
+			<!--<div class="col-sm-10">-->
+			<!--<input type="text" class="form-control" v-model="tChildAllergy.createTime" placeholder="创建时间"/>-->
+			<!--</div>-->
+			<!--</div>-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label">检测日期</div>
+				<div class="col-sm-10">
+					<input type="text" class="form-control" v-model="tChildAllergy.checkDate" id="checkDate" placeholder=""/>
+				</div>
+			</div>
+
+			<!--<div class="form-group">-->
+				<!--<div class="col-sm-2 control-label">备注</div>-->
+				<!--<div class="col-sm-10">-->
+					<!--<input type="text" class="form-control" v-model="tChildAllergy.remark" placeholder="备注"/>-->
+				<!--</div>-->
+			<!--</div>-->
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div>
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: 650px;">
+			<div class="modal-header">
+				疫苗信息
+			</div>
+			<div class="modal-body">
+				<input type="text" class="form-control" id="searchName"  placeholder="请输入关键字查询" style="width: 200px" oninput="searchName()"/>
+				<table id="vaccine"></table>
+				<div id="vaccinePager"></div>
+			</div>
+			<div class="modal-footer">
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+<script src="${rc.contextPath}/statics/js/medical/tchildallergy.js?_${date.systemTime}"></script>
+</body>
+</html>

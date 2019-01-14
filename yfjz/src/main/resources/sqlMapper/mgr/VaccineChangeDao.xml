@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.VaccineChangeDao">
+
+
+    <select id="queryInputList" resultType="map">
+        SELECT
+        SUM(amount) as amount,
+        item.fk_stock_info_id as baseId
+        FROM
+        t_mgr_stock_in_total total
+        JOIN t_mgr_stock_in_item item ON total.id = item.total_id
+        WHERE
+        <![CDATA[ TO_DAYS( total.storage_time ) >= TO_DAYS( #{startDate} )
+        AND TO_DAYS( total.storage_time ) <= TO_DAYS( #{endDate} ) ]]>
+        AND total.in_type = 0
+
+        GROUP BY item.fk_stock_info_id
+    </select>
+    <select id="queryDamageList" resultType="map">
+        SELECT
+        SUM( amount ) AS amount,
+        item.stock_info_id AS infoId
+        FROM
+        t_mgr_stock_out_total total
+        JOIN t_mgr_stock_out_item item ON total.id = item.total_id
+        WHERE
+        total.out_type = 2
+        <![CDATA[ AND TO_DAYS( total.create_time ) >= TO_DAYS( #{startDate} )
+        AND TO_DAYS( total.create_time ) <= TO_DAYS( #{endDate} ) ]]>
+        GROUP BY
+        item.stock_info_id
+    </select>
+    <select id="queryReturnList" resultType="map">
+        SELECT
+        SUM( amount ) AS amount,
+        item.stock_info_id AS infoId
+        FROM
+        t_mgr_stock_out_total total
+        JOIN t_mgr_stock_out_item item ON total.id = item.total_id
+        WHERE
+        total.out_type = 3
+        <![CDATA[ AND TO_DAYS( total.create_time ) >= TO_DAYS( #{startDate} )
+        AND TO_DAYS( total.create_time ) <= TO_DAYS( #{endDate} ) ]]>
+        GROUP BY
+        item.stock_info_id
+    </select>
+    <select id="queryUseAndDestroyList" resultType="map">
+        SELECT
+        sum( item.use_amount ) as useAmount,
+        sum( item.destory_amount ) as destroyAmount,
+        item.fk_stock_info_id AS baseId
+        FROM
+        t_mgr_stock_in_total total
+        JOIN t_mgr_stock_in_item item ON total.id = item.total_id
+        WHERE
+        total.in_type = 1
+         <![CDATA[
+        AND TO_DAYS( total.storage_time ) >= TO_DAYS( #{startDate} )
+        AND TO_DAYS( total.storage_time ) <= TO_DAYS( #{endDate} )
+         ]]>
+        GROUP BY
+        item.fk_stock_info_id
+    </select>
+
+
+    <select id="queryInfoListMap" resultType="hashmap">
+        SELECT
+        info.id,
+        store.id AS storeId,
+        equip.id AS equipId,
+        base.id AS baseId,
+        base.product_name AS productName,
+        base.batchnum,
+        base.factory_name AS factoryName,
+         sum(info.amount) amount,
+        base.price,
+        DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+        info.person_amount AS personAmount,
+        base.conversion,
+        base.type,
+        equip.`name` AS equipmentName,
+         0 as initAmount,
+         0 as inputAmount,
+         0 as damageAmount,
+         0 as returnAmount,
+         0 as usePersonAmount,
+         0 as damagePersonAmount,
+         0 as useAmount
+        FROM
+        t_mgr_stock_info info
+        LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+        LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+        LEFT JOIN t_mgr_equipment equip ON info.fk_equipment_id = equip.id
+        where store.ttype=0
+        GROUP BY
+        base.id
+        ORDER BY base.type
+    </select>
+    <select id="getCheckTimeList" resultType="map">
+        SELECT (@row_number:=@row_number + 1) AS num,DATE_FORMAT(check_time, '%Y-%m-%d' ) AS time FROM t_mgr_check,(SELECT @row_number:=0) AS t order by create_time DESC
+    </select>
+    <select id="queryBeforeMonth" resultType="hashmap">
+        SELECT
+        info.id,
+        store.id AS storeId,
+        equip.id AS equipId,
+        base.id AS baseId,
+        base.product_name AS productName,
+        base.batchnum,
+        base.factory_name AS factoryName,
+        sum(info.amount) amount,
+        base.price,
+        DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+        info.person_amount AS personAmount,
+        base.conversion,
+        base.type,
+        equip.`name` AS equipmentName,
+        0 as initAmount,
+        0 as inputAmount,
+        0 as damageAmount,
+        0 as returnAmount,
+        0 as usePersonAmount,
+        0 as damagePersonAmount,
+        0 as useAmount
+        FROM
+        t_mgr_stock_info_init info
+        LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+        LEFT JOIN t_mgr_store store ON info.fk_store_id = store.id
+        LEFT JOIN t_mgr_equipment equip ON info.fk_equipment_id = equip.id
+        <include refid="whereBase"/>
+        GROUP BY
+        base.id
+        ORDER BY base.type
+    </select>
+    <sql id="whereBase">
+        <where>
+            to_days(info.create_time) = to_days(#{startDate}) AND  store.ttype=0
+        </where>
+    </sql>
+</mapper>

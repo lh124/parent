@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>表6-1</title>
+    #parse("sys/header.html")
+    <link rel="stylesheet" href="../statics/plugins/layui/css/layui.css" media="all"/>
+    <script type="text/javascript" src="../statics/plugins/layui/layui.js"></script>
+    <script type="application/javascript">
+        var orgId = "$shiro.getBaseInfo('orgId')";
+    </script>
+    <style>
+        .basic-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .basic-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        #printSytle p {
+            margin-top: 10px;
+        }
+
+        .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+            border-bottom-width: 1px;
+        }
+
+        table {
+            border: 1px solid #000;
+            border-collapse: collapse
+        }
+
+        table td {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+<div id="exportNiprvsr">
+    <div class="row" id="unprintdiv" style="padding: 15px 0 0 15px;">
+        <form class="form-inline">
+            <!--<div class="form-group">
+                &lt;!&ndash;<label class="col-sm-4 control-label" for="queryNian">查询年份:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="layui-input" id="queryNian" placeholder="请选择年">
+                </div>&ndash;&gt;
+                查询年份:
+                <input type="text" class="form-control" id="yearDate" placeholder="请选择年">
+            </div>
+            <div class="form-group">
+                月份:
+                <select class="selectpicker" id="monthDate" name="month">
+                    <option value="01">一月</option>
+                    <option value="02">二月</option>
+                    <option value="03">三月</option>
+                    <option value="04">四月</option>
+                    <option value="05">五月</option>
+                    <option value="06">六月</option>
+                    <option value="07">七月</option>
+                    <option value="08">八月</option>
+                    <option value="09">九月</option>
+                    <option value="10">十月</option>
+                    <option value="11">十一月</option>
+                    <option value="12">十二月</option>
+                </select>
+            </div>-->
+
+            <div class="form-group">
+                <label>开始时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="yearDate">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;&nbsp;结束时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="monthDate">
+            </div>
+            <button type="button" class="btn btn-warning" @click="query">
+                <span class="glyphicon glyphicon-search"></span>查询
+            </button>
+            <button type="button" class="btn btn-primary" @click="excel">
+                <span class="glyphicon glyphicon-log-out"></span>导出
+            </button>
+            <button type="button" class="btn btn-info" @click="print">
+                <span class="glyphicon glyphicon-print"></span>打印
+            </button>
+            <button type="button" class="btn btn-info" @click="upload">
+                <span class="glyphicon glyphicon-upload"></span>上传平台
+            </button>
+        </form>
+    </div>
+    <div id="printSytle" style="display: none;">
+        <h4>表6-1</h4>
+        <p style="text-align: center;font-size: 16px;">_______年_____月国家免疫规划疫苗常规接种情况报表</p>
+        <p><u>贵州&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>省________市（州、地区）__________县（市、区）___________________（镇、街道）</p>
+        <p> 接种单位名称：_______________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;填表日期：________月______日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;填表人：_______________</p>
+
+    </div>
+    <div id="setPrintTableStyle" style="margin-top:20px;padding-left: 20px;padding-right: 20px;">
+        <table class="table table-bordered basic-table" style="border-bottom: none;margin-bottom: 0px;border-collapse: collapse;">
+            <thead>
+            <tr>
+                <th colspan="2" rowspan="2" style="vertical-align: middle;">疫苗</th>
+                <th colspan="2">本地</th>
+                <th colspan="2">流动</th>
+            </tr>
+            <tr>
+                <th width="132">应种剂次数</th>
+                <th width="132">实种剂次数</th>
+                <th width="132">应种剂次数</th>
+                <th width="134">实种剂次数</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td width="70" rowspan="4" style="vertical-align: middle;text-align: left;">乙肝疫苗</td>
+                <td width="182" align="center">1</td>
+                <td><span v-if="listData[0] != null">{{listData[0].localShould}}</span></td>
+                <td><span v-if="listData[0] != null">{{listData[0].localReal}}</span></td>
+                <td><span v-if="listData[0] != null">{{listData[0].moveShould}}</span></td>
+                <td><span v-if="listData[0] != null">{{listData[0].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">1（及时）</td>
+                <td><span v-if="listData[1] != null">{{listData[1].localShould}}</span></td>
+                <td><span v-if="listData[1] != null">{{listData[1].localReal}}</span></td>
+                <td><span v-if="listData[1] != null">{{listData[1].moveShould}}</span></td>
+                <td><span v-if="listData[1] != null">{{listData[1].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[2] != null">{{listData[2].localShould}}</span></td>
+                <td><span v-if="listData[2] != null">{{listData[2].localReal}}</span></td>
+                <td><span v-if="listData[2] != null">{{listData[2].moveShould}}</span></td>
+                <td><span v-if="listData[2] != null">{{listData[2].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">3</td>
+                <td><span v-if="listData[3] != null">{{listData[3].localShould}}</span></td>
+                <td><span v-if="listData[3] != null">{{listData[3].localReal}}</span></td>
+                <td><span v-if="listData[3] != null">{{listData[3].moveShould}}</span></td>
+                <td><span v-if="listData[3] != null">{{listData[3].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: left;">卡介苗</td>
+                <td><span v-if="listData[4] != null">{{listData[4].localShould}}</span></td>
+                <td><span v-if="listData[4] != null">{{listData[4].localReal}}</span></td>
+                <td><span v-if="listData[4] != null">{{listData[4].moveShould}}</span></td>
+                <td><span v-if="listData[4] != null">{{listData[4].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td width="70" rowspan="4" style="vertical-align: middle;text-align: left;">脊灰疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[5] != null">{{listData[5].localShould}}</span></td>
+                <td><span v-if="listData[5] != null">{{listData[5].localReal}}</span></td>
+                <td><span v-if="listData[5] != null">{{listData[5].moveShould}}</span></td>
+                <td><span v-if="listData[5] != null">{{listData[5].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[6] != null">{{listData[6].localShould}}</span></td>
+                <td><span v-if="listData[6] != null">{{listData[6].localReal}}</span></td>
+                <td><span v-if="listData[6] != null">{{listData[6].moveShould}}</span></td>
+                <td><span v-if="listData[6] != null">{{listData[6].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">3</td>
+                <td><span v-if="listData[7] != null">{{listData[7].localShould}}</span></td>
+                <td><span v-if="listData[7] != null">{{listData[7].localReal}}</span></td>
+                <td><span v-if="listData[7] != null">{{listData[7].moveShould}}</span></td>
+                <td><span v-if="listData[7] != null">{{listData[7].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">4</td>
+                <td><span v-if="listData[8] != null">{{listData[8].localShould}}</span></td>
+                <td><span v-if="listData[8] != null">{{listData[8].localReal}}</span></td>
+                <td><span v-if="listData[8] != null">{{listData[8].moveShould}}</span></td>
+                <td><span v-if="listData[8] != null">{{listData[8].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td width="70" rowspan="4" style="vertical-align: middle;text-align: left;">百白破疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[9] != null">{{listData[9].localShould}}</span></td>
+                <td><span v-if="listData[9] != null">{{listData[9].localReal}}</span></td>
+                <td><span v-if="listData[9] != null">{{listData[9].moveShould}}</span></td>
+                <td><span v-if="listData[9] != null">{{listData[9].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[10] != null">{{listData[10].localShould}}</span></td>
+                <td><span v-if="listData[10] != null">{{listData[10].localReal}}</span></td>
+                <td><span v-if="listData[10] != null">{{listData[10].moveShould}}</span></td>
+                <td><span v-if="listData[10] != null">{{listData[10].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">3</td>
+                <td><span v-if="listData[11] != null">{{listData[11].localShould}}</span></td>
+                <td><span v-if="listData[11] != null">{{listData[11].localReal}}</span></td>
+                <td><span v-if="listData[11] != null">{{listData[11].moveShould}}</span></td>
+                <td><span v-if="listData[11] != null">{{listData[11].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">4</td>
+                <td><span v-if="listData[12] != null">{{listData[12].localShould}}</span></td>
+                <td><span v-if="listData[12] != null">{{listData[12].localReal}}</span></td>
+                <td><span v-if="listData[12] != null">{{listData[12].moveShould}}</span></td>
+                <td><span v-if="listData[12] != null">{{listData[12].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td style="border-bottom: none;text-align: left;" colspan="2">白破疫苗</td>
+                <td style="border-bottom: none;"><span v-if="listData[13] != null">{{listData[13].localShould}}</span></td>
+                <td style="border-bottom: none;"><span v-if="listData[13] != null">{{listData[13].localReal}}</span></td>
+                <td style="border-bottom: none;"><span v-if="listData[13] != null">{{listData[13].moveShould}}</span></td>
+                <td style="border-bottom: none;"><span v-if="listData[13] != null">{{listData[13].moveReal}}</span></td>
+            </tr>
+        </table>
+        <table class="table table-bordered basic-table" style="border-top:none;margin-top: -1px;border-collapse: collapse;" width="796" border="1"
+               cellpadding="0"
+               cellspacing="0">
+            <tr>
+                <td width="155" rowspan="2" style="vertical-align: middle;text-align: left;">麻风疫苗</td>
+                <td width="97" align="center">1</td>
+                <td width="132"><span v-if="listData[14] != null">{{listData[14].localShould}}</span></td>
+                <td width="132"><span v-if="listData[14] != null">{{listData[14].localReal}}</span></td>
+                <td width="132"><span v-if="listData[14] != null">{{listData[14].moveShould}}</span></td>
+                <td width="134"><span v-if="listData[14] != null">{{listData[14].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[15] != null">{{listData[15].localShould}}</span></td>
+                <td><span v-if="listData[15] != null">{{listData[15].localReal}}</span></td>
+                <td><span v-if="listData[15] != null">{{listData[15].moveShould}}</span></td>
+                <td><span v-if="listData[15] != null">{{listData[15].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;text-align: left;">麻腮风疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[16] != null">{{listData[16].localShould}}</span></td>
+                <td><span v-if="listData[16] != null">{{listData[16].localReal}}</span></td>
+                <td><span v-if="listData[16] != null">{{listData[16].moveShould}}</span></td>
+                <td><span v-if="listData[16] != null">{{listData[16].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[17] != null">{{listData[17].localShould}}</span></td>
+                <td><span v-if="listData[17] != null">{{listData[17].localReal}}</span></td>
+                <td><span v-if="listData[17] != null">{{listData[17].moveShould}}</span></td>
+                <td><span v-if="listData[17] != null">{{listData[17].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;text-align: left;">麻腮疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[18] != null">{{listData[18].localShould}}</span></td>
+                <td><span v-if="listData[18] != null">{{listData[18].localReal}}</span></td>
+                <td><span v-if="listData[18] != null">{{listData[18].moveShould}}</span></td>
+                <td><span v-if="listData[18] != null">{{listData[18].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[19] != null">{{listData[19].localShould}}</span></td>
+                <td><span v-if="listData[19] != null">{{listData[19].localReal}}</span></td>
+                <td><span v-if="listData[19] != null">{{listData[19].moveShould}}</span></td>
+                <td><span v-if="listData[19] != null">{{listData[19].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;text-align: left;">麻疹疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[20] != null">{{listData[20].localShould}}</span></td>
+                <td><span v-if="listData[20] != null">{{listData[20].localReal}}</span></td>
+                <td><span v-if="listData[20] != null">{{listData[20].moveShould}}</span></td>
+                <td><span v-if="listData[20] != null">{{listData[20].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[21] != null">{{listData[21].localShould}}</span></td>
+                <td><span v-if="listData[21] != null">{{listData[21].localReal}}</span></td>
+                <td><span v-if="listData[21] != null">{{listData[21].moveShould}}</span></td>
+                <td><span v-if="listData[21] != null">{{listData[21].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;text-align: left;">A群流脑疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[22] != null">{{listData[22].localShould}}</span></td>
+                <td><span v-if="listData[22] != null">{{listData[22].localReal}}</span></td>
+                <td><span v-if="listData[22] != null">{{listData[22].moveShould}}</span></td>
+                <td><span v-if="listData[22] != null">{{listData[22].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[23] != null">{{listData[23].localShould}}</span></td>
+                <td><span v-if="listData[23] != null">{{listData[23].localReal}}</span></td>
+                <td><span v-if="listData[23] != null">{{listData[23].moveShould}}</span></td>
+                <td><span v-if="listData[23] != null">{{listData[23].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;text-align: left;">A+C群流脑疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[24] != null">{{listData[24].localShould}}</span></td>
+                <td><span v-if="listData[24] != null">{{listData[24].localReal}}</span></td>
+                <td><span v-if="listData[24] != null">{{listData[24].moveShould}}</span></td>
+                <td><span v-if="listData[24] != null">{{listData[24].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[25] != null">{{listData[25].localShould}}</span></td>
+                <td><span v-if="listData[25] != null">{{listData[25].localReal}}</span></td>
+                <td><span v-if="listData[25] != null">{{listData[25].moveShould}}</span></td>
+                <td><span v-if="listData[25] != null">{{listData[25].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;text-align: left;">乙脑减毒活疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[26] != null">{{listData[26].localShould}}</span></td>
+                <td><span v-if="listData[26] != null">{{listData[26].localReal}}</span></td>
+                <td><span v-if="listData[26] != null">{{listData[26].moveShould}}</span></td>
+                <td><span v-if="listData[26] != null">{{listData[26].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[27] != null">{{listData[27].localShould}}</span></td>
+                <td><span v-if="listData[27] != null">{{listData[27].localReal}}</span></td>
+                <td><span v-if="listData[27] != null">{{listData[27].moveShould}}</span></td>
+                <td><span v-if="listData[27] != null">{{listData[27].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="4" style="vertical-align: middle;text-align: left;">乙脑灭活疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[28] != null">{{listData[28].localShould}}</span></td>
+                <td><span v-if="listData[28] != null">{{listData[28].localReal}}</span></td>
+                <td><span v-if="listData[28] != null">{{listData[28].moveShould}}</span></td>
+                <td><span v-if="listData[28] != null">{{listData[28].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[29] != null">{{listData[29].localShould}}</span></td>
+                <td><span v-if="listData[29] != null">{{listData[29].localReal}}</span></td>
+                <td><span v-if="listData[29] != null">{{listData[29].moveShould}}</span></td>
+                <td><span v-if="listData[29] != null">{{listData[29].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">3</td>
+                <td><span v-if="listData[30] != null">{{listData[30].localShould}}</span></td>
+                <td><span v-if="listData[30] != null">{{listData[30].localReal}}</span></td>
+                <td><span v-if="listData[30] != null">{{listData[30].moveShould}}</span></td>
+                <td><span v-if="listData[30] != null">{{listData[30].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">4</td>
+                <td><span v-if="listData[31] != null">{{listData[31].localShould}}</span></td>
+                <td><span v-if="listData[31] != null">{{listData[31].localReal}}</span></td>
+                <td><span v-if="listData[31] != null">{{listData[31].moveShould}}</span></td>
+                <td><span v-if="listData[31] != null">{{listData[31].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="vertical-align: middle;text-align: left;">甲肝减毒活疫苗</td>
+                <td><span v-if="listData[32] != null">{{listData[32].localShould}}</span></td>
+                <td><span v-if="listData[32] != null">{{listData[32].localReal}}</span></td>
+                <td><span v-if="listData[32] != null">{{listData[32].moveShould}}</span></td>
+                <td><span v-if="listData[32] != null">{{listData[32].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td rowspan="2" style="vertical-align: middle;text-align: left;">甲肝灭活疫苗</td>
+                <td align="center">1</td>
+                <td><span v-if="listData[33] != null">{{listData[33].localShould}}</span></td>
+                <td><span v-if="listData[33] != null">{{listData[33].localReal}}</span></td>
+                <td><span v-if="listData[33] != null">{{listData[33].moveShould}}</span></td>
+                <td><span v-if="listData[33] != null">{{listData[33].moveReal}}</span></td>
+            </tr>
+            <tr>
+                <td align="center">2</td>
+                <td><span v-if="listData[34] != null">{{listData[34].localShould}}</span></td>
+                <td><span v-if="listData[34] != null">{{listData[34].localReal}}</span></td>
+                <td><span v-if="listData[34] != null">{{listData[34].moveShould}}</span></td>
+                <td><span v-if="listData[34] != null">{{listData[34].moveReal}}</span></td>
+            </tr>
+            </tbody>
+        </table>
+        <p></p>
+    </div>
+    <div id="tableBelow">
+        <p>
+            填写说明：
+        </p>
+        <p>
+            1.乡级防保组织每月5日前收集辖区内接种单位接种数据，汇总后上级县级疾控机构：县级疾控
+            机构每月10日前将分乡或接种单位的接种数据录入或导入《中国免疫规划监测信息管理系统》4.0 以上版本。
+            2、麻疹类疫苗应和人数：第一剂填在麻风疫苗第一剂栏：第二剂次填出麻腮风疫苗 第二剂栏。
+        </p>
+    </div>
+</div>
+</body>
+<script>
+    $(function () {
+        var myDate = new Date();
+        var day = myDate.getMonth() + 1; //获取当前月份(0-11,0代表1月)
+        if (day.length == 1) {
+            day = "0" + day;
+        }
+        $('#monthDate').val(day);
+
+        //layui加载时间组件
+        /*layui.use('laydate', function () {
+            var laydate = layui.laydate;
+
+            //年选择器
+            laydate.render({
+                elem: '#yearDate',
+                type: 'year',
+                value: new Date(),
+                format: 'yyyy',
+                isInitValue: true
+            });
+
+        });*/
+
+        //开始时间
+        $("#yearDate").datetimepicker({
+            language: 'zh-CN',//显示中文
+            format: 'yyyy-mm-dd',//显示格式
+            minView: 2,//设置只显示到月份
+            maxView: 4,//设置只显示到月份
+            startView: 2,
+            autoclose: true, //选择完时间后自动关闭，默认false（不关闭）
+            forceParse: true,
+            autoclose: true,//选中自动关闭
+            todayBtn: true,//显示今日按钮
+            locale: moment.locale('zh-cn')
+        });
+        //结束时间
+        $("#monthDate").datetimepicker({
+            language: 'zh-CN',//显示中文
+            format: 'yyyy-mm-dd',//显示格式
+            minView: 2,//设置只显示到月份
+            maxView: 4,//设置只显示到月份
+            startView: 2,
+            autoclose: true, //选择完时间后自动关闭，默认false（不关闭）
+            forceParse: true,
+            autoclose: true,//选中自动关闭
+            todayBtn: true,//显示今日按钮
+            locale: moment.locale('zh-cn')
+        });
+        //设置本年 当月 当天
+        var now= formatDateTime(new Date());
+        var date1 = formatDateTime(new Date().setDate(1));
+        $("#yearDate").val(date1.substring(0,10));
+        $("#monthDate").val(now.substring(0,10));
+    });
+    var dynamicChildren = new Vue({
+        el: '#exportNiprvsr',
+        data: {
+            listData:[]
+        },
+        methods: {
+            query: function () {
+                layer.msg('加载数据中...', {icon: 16,shade: [0.5, '#f5f5f5'],scrollbar: false, time:100000000}) ;
+                var year= $("#yearDate").val();
+                var month=$("#monthDate").val();
+                var res=$("#residence option:selected").val();
+                $.ajax({
+                     url:"../sixToOne/totalList",
+                     type:"get",
+                     data:{"year":year,"month":month,"residence":res},
+                     success:function (data) {
+                         dynamicChildren.listData=data.page.list;
+                         console.info(data.page.list);
+                         layer.msg("加载完成！") ;
+                     }
+                 })
+            },
+            excel: function () {
+                //alert("导出");
+                var yearDate = $("#yearDate").val();
+                var monthDate = $("#monthDate").val();
+                //window.location.href = "../ExcelController/exportNiprvsr?year=" + yearDate + "&month=" + monthDate;
+                window.open("../ExcelController/exportNiprvsr?year=" + yearDate + "&month=" + monthDate,"_blank");
+            },
+            print: function () {
+                //设置打印时样式
+                var $table = $(".table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th");
+                $table.css({"padding": "0px","padding-left": "5px", "border-top": " 1px solid #0c0c0c"});
+
+                var $tableColor = $(".table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th");
+                $tableColor.css({"border": "1px solid #000"});
+
+                $("#setPrintTableStyle").css({"margin-top": "10px", "padding": "0"});
+                $("#unprintdiv").hide();
+                $("#printSytle").show();
+                $("#tableBelow").show();
+                window.print.portrait = true;//横向打印
+                window.focus();
+                window.print();
+                $("#printSytle").hide();
+                $("#tableBelow").hide();
+                $("#unprintdiv").show();
+                //$("#setPrintTableStyle").toggleClass("printTableStyle");
+                $("#setPrintTableStyle").css({"margin-top": "20px", "padding-left": " 20px", "padding-right": "20px"});
+                $table.css({"padding": "8px", "border-top": " 1px solid #ddd"});
+                $tableColor.css({"border": "1px solid #ddd"});
+            },
+            upload:function () {
+                layer.confirm("你确定要上传该报表吗？",function (index) {
+                    layer.msg('上传数据中...', {icon: 16,shade: [0.5, '#f5f5f5'],scrollbar: false, time:100000}) ;
+                    var year= $("#yearDate").val();
+                    var month=$("#monthDate").val();
+                    $.ajax({
+                        url:'../sixToOne/upload',
+                        dataType:'json',
+                        type:'get',
+                        data:{"year":year,"month":month},
+                        success:function (data) {
+                            layer.msg(data.msg) ;
+                            layer.close(index);
+                        }
+                    });
+                })
+            }
+        }
+    });
+</script>
+</html>

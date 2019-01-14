@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.TChildMoveDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildMoveEntity">
+		select move.id,
+		chil_code,chhe_here,dict.text as chhe_prehere,chhe_chil_provinceremark,chhe_changedate,org.name as chhe_depa_id,syncstatus
+		from t_child_move move
+		left join sys_depart org on move.chhe_depa_id = org.id
+		left join sys_dict dict on dict.ttype='child_info_status' and move.chhe_prehere = dict.value
+	   where move.id = #{value} and move.delete_status = 0
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildMoveEntity">
+		SELECT
+		move.id,
+		chil_code,
+		dict.text AS chhe_here,
+		dict1.text AS chhe_prehere,
+		case (select `text` from sys_dict where `value` = chhe_chil_provinceremark and ttype='chil_leaveremark_code')  is null when true then chhe_chil_provinceremark else  (select `text` from sys_dict where `value` = chhe_chil_provinceremark and ttype='chil_leaveremark_code') end as chhe_chil_provinceremark,
+		chhe_changedate,
+		move.syncstatus ,
+		move.create_user_name,
+		org.name as chhe_depa_id,
+		move.type,
+		org_id,
+		move.status,
+		move.delete_status,
+		move.create_time,
+		move.update_time,
+		move.create_user_id,
+		chhe_chil_province
+		FROM
+		t_child_move move
+		LEFT JOIN sys_depart org ON move.chhe_depa_id = org.id
+		LEFT JOIN sys_dict dict ON dict.ttype = 'child_info_status'
+		AND dict.value
+		= move.chhe_here
+		LEFT JOIN sys_dict dict1 ON dict1.ttype = 'child_info_status'
+		AND dict1.value
+		= move.chhe_prehere
+		<where>
+			<if test="chilCode != null and chilCode != ''">
+				 move.chil_code=#{chilCode} and 	move.delete_status = 0
+			</if>
+		</where>
+		ORDER BY chhe_changedate desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+
+	<select id="querychilcode" resultType="io.yfjz.entity.child.TChildMoveEntity">
+		select * from t_child_move where chil_code=#{chilCode} ORDER BY chhe_changedate desc
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_move
+		<where>
+			<if test="chilCode != null and chilCode != ''">
+				chil_code=#{chilCode} and 	delete_status = 0
+			</if>
+
+		</where>
+	</select>
+
+	<!--在册情况For上传-->
+	<select id="findChildheres" parameterType="string" resultType="java.util.HashMap">
+		SELECT id,chhe_changedate,
+		chhe_chil_province,
+		chhe_chil_provinceremark,
+		CASE WHEN chhe_depa_id is null THEN '' else chhe_depa_id END as chhe_depa_id,
+		CASE WHEN chhe_here is null THEN '' else chhe_here END as chhe_here,
+		CASE WHEN chhe_prehere is null THEN '' else chhe_prehere END as chhe_prehere,
+		CASE WHEN chhe_chil_id is null THEN '' else chhe_chil_id END as chhe_chil_id
+		from t_child_move
+		WHERE chil_code = #{childCode} and type = 0 and syncstatus = 0 and delete_status = 0
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildMoveEntity">
+		insert into t_child_move
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+						<if test="chheChilId != null">`chhe_chil_id` , </if>
+					<if test="chilCode != null">`chil_code` , </if>
+					<if test="chheHere != null">`chhe_here` , </if>
+					<if test="chhePrehere != null">`chhe_prehere` , </if>
+					<if test="chheChilProvince != null">`chhe_chil_province` , </if>
+					<if test="chheChilProvinceremark != null">`chhe_chil_provinceremark` , </if>
+					`chhe_changedate` ,
+					<if test="chheDepaId != null">`chhe_depa_id` , </if>
+					`type` ,
+					`syncstatus` ,
+					<if test="status != null">`status` , </if>
+					<if test="createUserId != null">`create_user_id` , </if>
+					<if test="createUserName != null">`create_user_name` , </if>
+					<if test="createTime != null">`create_time` , </if>
+					<if test="orgId != null">`org_id` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						<if test="chheChilId != null">#{chheChilId} , </if>
+					<if test="chilCode != null">#{chilCode} , </if>
+					<if test="chheHere != null">#{chheHere} , </if>
+					<if test="chhePrehere != null">#{chhePrehere} , </if>
+					<if test="chheChilProvince != null">#{chheChilProvince} , </if>
+					<if test="chheChilProvinceremark != null">#{chheChilProvinceremark} , </if>
+					now(),
+					<if test="chheDepaId != null">#{chheDepaId} , </if>
+					0,
+					0,
+					<if test="status != null">#{status} , </if>
+					<if test="createUserId != null">#{createUserId} , </if>
+					<if test="createUserName != null">#{createUserName} , </if>
+					<if test="createTime != null">#{createTime} , </if>
+					<if test="orgId != null">#{orgId} </if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.child.TChildMoveEntity">
+		update t_child_move 
+		<set>
+			<if test="chheChilId != null">`chhe_chil_id` = #{chheChilId}, </if>
+			<if test="chilCode != null">`chil_code` = #{chilCode}, </if>
+			<if test="chheHere != null">`chhe_here` = #{chheHere}, </if>
+			<if test="chhePrehere != null">`chhe_prehere` = #{chhePrehere}, </if>
+			<if test="chheChilProvince != null">`chhe_chil_province` = #{chheChilProvince}, </if>
+			<if test="chheChilProvinceremark != null">`chhe_chil_provinceremark` = #{chheChilProvinceremark}, </if>
+			<if test="chheChangedate != null">`chhe_changedate` = #{chheChangedate}, </if>
+			<if test="chheDepaId != null">`chhe_depa_id` = #{chheDepaId}, </if>
+			`type` = 0,
+			`syncstatus` = 0,
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserName != null">`create_user_name` = #{createUserName}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_move where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_move where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

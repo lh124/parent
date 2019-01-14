@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.AbnormalStatisticsDao">
+
+    <select id="queryList" resultType="map">
+        SELECT
+            queue.id,
+            queue.child_code AS childCode,
+            queue.child_name AS childName,
+            DATE_FORMAT(queue.create_time,'%Y-%m-%d') AS createTime ,
+            queue.step,
+            IF(chil_sex=1,'男','女') as sex,
+            chil_cardno as cardNumber,
+            ( SELECT NAME FROM t_base_committee WHERE CODE = chil_committee ) AS committee,
+            chil_habiaddress AS residenceAddress ,
+            chil_address AS currentAddress,
+            chil_school as school,
+            chil_mobile AS chilMobile,
+            DATE_FORMAT(chil_birthday,'%Y-%m-%d %H:%i:%s') AS birthTime,
+            (select text from sys_dict where ttype='child_residence_code' and value=child.chil_residence) as residenceStatus
+        FROM
+            t_queue_no queue
+            JOIN t_child_info child ON queue.child_code = child.chil_code
+        <include refid="baseWhere"/>
+    </select>
+    <select id="queryTotal" resultType="int">
+        select COUNT(queue.id)
+        FROM
+            t_queue_no queue
+            JOIN t_child_info child ON queue.child_code = child.chil_code
+        <include refid="baseWhere"/>
+    </select>
+    <select id="queryCancelReason" resultType="map">
+    SELECT
+        fk_queue_no_id queueId,
+        remark
+    FROM
+        t_queue_no_operate
+    WHERE
+             fk_queue_no_id  in
+            <foreach collection="list" item="item" index="index"   open="(" close=")" separator=",">
+                #{item.id}
+            </foreach>
+        AND operate_type = 'CANCEL'
+    </select>
+    <select id="queryLeaveTime" resultType="map">
+        SELECT
+            chil_code,
+          	TIMESTAMPDIFF(MINUTE,inoc_date,leave_time) AS diffTime
+        FROM
+            t_child_inoculate
+        WHERE
+            chil_code = #{childCode}
+            AND TO_DAYS( inoc_date ) = TO_DAYS( #{createTime} )
+        ORDER BY
+            inoc_date DESC
+    </select>
+    <sql id="baseWhere">
+        <where>
+            child_code IS  NOT NULL
+            <if test="abnormalStatus!=null">
+              <choose>
+                  <when test="abnormalStatus=='register' or abnormalStatus=='inoculate'">
+                      AND  step=#{abnormalStatus}  AND  queue.status=-1
+                  </when>
+                  <otherwise>
+                      AND  step=#{abnormalStatus}
+                  </otherwise>
+              </choose>
+            </if>
+            <if test="inoculateStart!=null">
+                AND <![CDATA[  TO_DAYS(queue.create_time)>=TO_DAYS(#{inoculateStart})]]>
+            </if>
+            <if test="inoculateEnd!=null">
+                AND <![CDATA[   TO_DAYS(queue.create_time)<=TO_DAYS(#{inoculateEnd}) ]]>
+            </if>
+            <if test="birthStart!=null">
+                AND <![CDATA[  TO_DAYS(child.chil_birthday)>=TO_DAYS(#{birthStart})]]>
+            </if>
+            <if test="birthEnd!=null">
+                AND <![CDATA[   TO_DAYS(child.chil_birthday)<=TO_DAYS(#{birthEnd}) ]]>
+            </if>
+            <if test="chilCommittees != null ">
+                and child.chil_committee in
+                <foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="chilResidences != null ">
+                and child.chil_residence  in
+                <foreach collection="chilResidences" item="item" index="index"   open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="infostatus != null">
+                and child.chil_here in
+                <foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="school != null">
+                and child.chil_school in
+                <foreach collection="school" item="item" index="index"   open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </sql>
+</mapper>

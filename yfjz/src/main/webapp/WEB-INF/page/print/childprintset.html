@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>rel.htm</title>
+	
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+<link rel="stylesheet" type="text/css"	href="$webPath/resource/easyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css"	href="$webPath/resource/easyui/themes/icon.css">
+<link rel="stylesheet" type="text/css"	href="$webPath/resource/easyui/themes/demo.css">
+<script type="text/javascript"	src="$webPath/resource/jquery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"	src="$webPath/resource/easyui/jquery.easyui.min.js"></script>
+<script type="text/javascript"	src="$webPath/resource/easyui/jquery.edatagrid.js"></script>
+<script type="text/javascript"	src="$webPath/resource/plus-in/layer/layer.js"></script>
+<script type="text/javascript"	src="$webPath/resource/jjxx/list.js"></script>
+<script type="text/javascript" src="$webPath/resource/easyui/columns-ext.js"></script>
+<script type="text/javascript" src="$webPath/resource/easyui/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript"	src="$webPath/resource/jjxx/jquery.submit.js"></script>
+
+<script type="text/javascript">
+var webpath="$webPath";
+$(function(){
+	$.ajax({
+		type:"post",
+		url:webpath+"/SetPrintForm/selectChildInfoPrintSet.jhtml",
+		success:function (data) {
+
+			var json = eval('(' + data + ')');
+			$.each(json.listmap,function(i,item){
+				if(item.child_properties =='childcode'){
+					$("input[name='childCode_X']").val(item.properties_X);
+					$("input[name='childCode_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='cname'){
+					$("input[name='cname_X']").val(item.properties_X);
+					$("input[name='cname_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='guardianname'){
+					$("input[name='guardianName_X']").val(item.properties_X);
+					$("input[name='guardianName_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='identitycard'){
+					$("input[name='identityCard_X']").val(item.properties_X);
+					$("input[name='identityCard_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='birthcard'){
+					$("input[name='birthCard_X']").val(item.properties_X);
+					$("input[name='birthCard_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='year'){
+					$("input[name='year_X']").val(item.properties_X);
+					$("input[name='year_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='birthweight'){
+					$("input[name='birthWeight_X']").val(item.properties_X);
+					$("input[name='birthWeight_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='contraindication'){
+					$("input[name='avoid_X']").val(item.properties_X);
+					$("input[name='avoid_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='allergichistory'){
+					$("input[name='allergy_X']").val(item.properties_X);
+					$("input[name='allergy_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='unittel'){
+					$("input[name='telephone_X']").val(item.properties_X);
+					$("input[name='telephone_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='hos_name'){
+					$("input[name='hospital_X']").val(item.properties_X);
+					$("input[name='hospital_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='sexcode'){
+					$("input[name='sex_X']").val(item.properties_X);
+					$("input[name='sex_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='text'){
+					$("input[name='relationShip_X']").val(item.properties_X);
+					$("input[name='relationShip_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='province_name'){
+					$("input[name='province_name_X']").val(item.properties_X);
+					$("input[name='province_name_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='city_name'){
+					$("input[name='city_name_X']").val(item.properties_X);
+					$("input[name='city_name_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='county_name'){
+					$("input[name='county_name_X']").val(item.properties_X);
+					$("input[name='county_name_Y']").val(item.properties_Y);
+
+				}if(item.child_properties =='town_name'){
+					$("input[name='town_name_X']").val(item.properties_X);
+					$("input[name='town_name_Y']").val(item.properties_Y);
+
+				}if(item.child_properties =='dateiled'){
+					$("input[name='dateiled_X']").val(item.properties_X);
+					$("input[name='dateiled_Y']").val(item.properties_Y);
+
+				}if(item.child_properties =='province_name_h'){
+					$("input[name='province_name_h_X']").val(item.properties_X);
+					$("input[name='province_name_h_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='city_name_h'){
+					$("input[name='city_name_h_X']").val(item.properties_X);
+					$("input[name='city_name_h_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='county_name_h'){
+					$("input[name='county_name_h_X']").val(item.properties_X);
+					$("input[name='county_name_h_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='town_name_h'){
+					$("input[name='town_name_h_X']").val(item.properties_X);
+					$("input[name='town_name_h_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='orgname'){
+					$("input[name='govement_X']").val(item.properties_X);
+					$("input[name='govement_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='printYear'){
+					$("input[name='printYear_X']").val(item.properties_X);
+					$("input[name='printYear_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='printMonth'){
+					$("input[name='printMonth_X']").val(item.properties_X);
+					$("input[name='printMonth_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='printDay'){
+					$("input[name='printDay_X']").val(item.properties_X);
+					$("input[name='printDay_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='month'){
+					$("input[name='month_X']").val(item.properties_X);
+					$("input[name='month_Y']").val(item.properties_Y);
+
+				}
+				if(item.child_properties =='day'){
+					$("input[name='day_X']").val(item.properties_X);
+					$("input[name='day_Y']").val(item.properties_Y);
+
+				}
+
+
+
+			})
+			//console.info(obj);
+		}
+	});
+
+})
+function saveSet() {
+
+	var data= $("#ff").serializeArray();
+	var childCocde = [];
+	var birthCard = [];
+	var identityCard = [];
+	var cname = [];
+	var sex = [];
+	var year = [];
+	var month = [];
+	var day = [];
+	var hospital = [];
+	var birthWeight = [];
+	var guardianName = [];
+	var relationShip = [];
+	/*var familyAddress = [];
+	 var hukouregioncode = [];*/
+	var province_name = [];
+	var city_name = [];
+	var county_name = [];
+	var town_name = [];
+	var dateiled = [];
+
+	var province_name_h = [];
+	var city_name_h = [];
+	var county_name_h = [];
+	var town_name_h = [];
+	var allergy = [];
+	var avoid = [];
+	var telephone = [];
+	var govement = [];
+	var printYear = [];
+	var printMonth = [];
+	var printDay = [];
+	for(var i = 0; i<data.length;i++){
+		if(i%28==0){
+			childCocde.push(data[i]);
+		}
+		if(i%28==1){
+			birthCard.push(data[i]);
+		}
+		if(i%28==2){
+			identityCard.push(data[i]);
+		}
+		if(i%28==3){
+			cname.push(data[i]);
+		}
+		if(i%28==4){
+			sex.push(data[i]);
+		}
+		if(i%28==5){
+			year.push(data[i]);
+		}
+		if(i%28==6){
+			month.push(data[i]);
+		}
+		if(i%28==7){
+			day.push(data[i]);
+		}
+		if(i%28==8){
+			hospital.push(data[i]);
+		}
+		if(i%28==9){
+			birthWeight.push(data[i]);
+		}
+		if(i%28==10){
+			guardianName.push(data[i]);
+		}
+		if(i%28==11){
+			relationShip.push(data[i]);
+		}
+		if(i%28==12){
+			province_name.push(data[i]);
+		}
+		if(i%28==13){
+			city_name.push(data[i]);
+		}
+		if(i%28==14){
+			county_name.push(data[i]);
+		}
+		if(i%28==15){
+			town_name.push(data[i]);
+		}
+		if(i%28==16){
+			dateiled.push(data[i]);
+		}
+		if(i%28==17){
+			province_name_h.push(data[i]);
+		}
+		if(i%28==18){
+			city_name_h.push(data[i]);
+		}
+		if(i%28==19){
+			county_name_h.push(data[i]);
+		}
+		if(i%28==20){
+			town_name_h.push(data[i]);
+		}
+		if(i%28==21){
+			allergy.push(data[i]);
+		}
+		if(i%28==22){
+			avoid.push(data[i]);
+		}
+		if(i%28==23){
+			telephone.push(data[i]);
+		}
+		if(i%28==24){
+			govement.push(data[i]);
+		}
+		if(i%28==25){
+			printYear.push(data[i]);
+		}
+		if(i%28==26){
+			printMonth.push(data[i]);
+		}
+		if(i%28==27){
+			printDay.push(data[i]);
+		}
+	}
+	var datas = [];
+	datas.push(childCocde) ;
+	datas.push(birthCard);
+	datas.push(identityCard);
+	datas.push(cname);
+	datas.push(sex);
+	datas.push(year);
+	datas.push(month);
+	datas.push(day);
+	datas.push(hospital);
+	datas.push(birthWeight);
+	datas.push(guardianName);
+	datas.push(relationShip);
+	datas.push(province_name);
+	datas.push(city_name);
+	datas.push(county_name);
+	datas.push(town_name);
+	datas.push(dateiled);
+	datas.push(province_name_h);
+	datas.push(city_name_h);
+	datas.push(county_name_h);
+	datas.push(town_name_h);
+	datas.push(allergy);
+	datas.push(avoid);
+	datas.push(telephone);
+	datas.push(govement);
+	datas.push(printYear);
+	datas.push(printMonth);
+	datas.push(printDay);
+	var datass = JSON.stringify(datas);
+
+
+	$.ajax({
+			type: "post",
+			url: webpath+'/SetPrintForm/ChildInfoPrintSet.jhtml',
+			dataType: "json",
+			data:{"datass":datass},
+			success: function (data) {
+				if(data.message=='true'){
+						$.ajax({
+							type: "post",
+							url: webpath+'/SetPrintForm/ChildInfoSetIntoTable.jhtml',
+							dataType: "json",
+							data: {"datass":datass},
+							success: function (data) {
+								if(data.message=='true'){
+									layer.msg("保存成功",{icon: 1});
+								}else{
+									layer.msg("保存失败",{icon: 5});
+								}
+
+							},
+							error: function (response, err) {
+								layer.msg("保存失败",{icon: 5});
+							}
+						});
+						/*layer.msg("保存成功",{icon: 1});*/
+
+				}else{
+					layer.msg("修改失败",{icon: 5});
+				}
+
+			},
+			error: function (response, err) {
+				layer.msg("修改失败",{icon: 5});
+			}
+		});
+	}
+
+
+ </script>
+  </head>
+  <body>
+  
+  <div style="height:800px;"align="center" >
+  </br>
+	  <form id="ff" method="post" style="text-align: center">
+		  <table id="tt" border="1px" cellspacing="0px">
+			  <thead frozen="true">
+
+			  <tr >
+				  <th rowspan="2"  style="width: 30px">坐标位置</th>
+				  <td rowspan="2"><input typ="text" name="childCode" readonly="true" hidden value="childcode" style="width: 30px"/>儿童编号</td>
+				  <td rowspan="2"> <input typ="text" name="birthCard" readonly="true" hidden value="birthcard" style="width: 30px"/>出生证号</td>
+				  <td rowspan="2"> <input typ="text" name="identityCard" readonly="true" hidden value="identitycard" style="width: 30px"/>身份证号</td>
+				  <td rowspan="2"> <input typ="text" name="cname" readonly="true" hidden value="cname" style="width: 30px"/>儿童姓名</td>
+				  <td rowspan="2"> <input typ="text" name="sex" readonly="true" hidden value="sexcode" style="width: 30px"/>性别</td>
+				  <td colspan="3"> <input typ="text" name="year"  readonly="true" hidden value="year" style="width: 30px;"/>
+					  <input typ="text" name="month"  readonly="true" hidden value="month"  style="width: 30px;"/>
+					  <input typ="text" name="day" readonly="true" hidden  value="day" style="width: 30px;"/>
+					  出生日期</td>
+				  <td rowspan="2"> <input typ="text" name="hospital" readonly="true" hidden value="hos_name" style="width: 30px"/>出生医院</td>
+				  <td rowspan="2"> <input typ="text" name="birthWeight" readonly="true" hidden value="birthweight" style="width: 30px"/>出生体重</td>
+				  <td rowspan="2"> <input typ="text" name="guardianName" readonly="true" hidden  value="guardianname" style="width: 70px"/>监护人姓名</td>
+				  <td rowspan="2"> <input typ="text" name="relationShip" readonly="true" hidden value="text" style="width: 70px"/>与儿童关系</td>
+				  <td colspan="5"> <input typ="text" name="province_name" readonly="true" hidden value="province_name" style="width: 30px;"/>
+					  <input typ="text" name="city_name" readonly="true" hidden value="city_name" style="width: 30px;"/>
+					  <input typ="text" name="county_name" readonly="true" hidden value="county_name" style="width: 30px;"/>
+					  <input typ="text" name="town_name" readonly="true" hidden value="town_name" style="width: 30px;"/>
+					  <input typ="text" name="dateiled" readonly="true" hidden value="dateiled" style="width: 30px;"/>
+					  现居地址</td>
+				  <td colspan="4"> <input typ="text" name="province_name_h" readonly="true" hidden value="province_name_h" style="width: 30px;"/>
+					  <input typ="text" name="city_name_h" readonly="true" hidden value="city_name_h" style="width: 30px;"/>
+					  <input typ="text" name="county_name_h" readonly="true" hidden value="county_name_h" style="width: 30px;"/>
+					  <input typ="text" name="town_name_h" readonly="true" hidden value="town_name_h" style="width: 30px;"/>
+					  户籍地址</td>
+				  <td rowspan="2"><input typ="text" name="allergy" readonly="true" hidden value="allergichistory" style="width: 30px"/>过敏史</td>
+				  <td rowspan="2"><input typ="text" name="avoid" readonly="true" hidden value="contraindication" style="width: 30px"/>接种禁忌</td>
+				  <td rowspan="2"><input typ="text" name="telephone" readonly="true" hidden value="unittel" style="width: 80px"/>接种单位联系电话</td>
+				  <td rowspan="2"><input typ="text" name="govement" readonly="true" hidden value="orgname" style="width: 30px"/>发证单位</td>
+				  <td colspan="3"><input typ="text" name="printYear" readonly="true" hidden value="printYear" style="width: 30px;"/>
+					  <input typ="text" name="printMonth" readonly="true" hidden value="printMonth" style="width: 30px;"/>
+					  <input typ="text" name="printDay" readonly="true" hidden value="printDay" style="width: 30px;"/>
+					  发证日期</td>
+				  <!--<input typ="text" name="printMonth" readonly="true" hidden value="printMonth" style="width: 30px"/>
+				  <input typ="text" name="printDay" readonly="true" hidden value="printDay" style="width: 30px"/>-->
+				  <!-- <td><input typ="text" name="HepB" size="6" value="30"/></td>
+                   <td><input typ="text" name="HepB" size="6" value="30"/></td>-->
+
+
+				  </tr>
+			  <tr >
+
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>年</td>
+				  <td > <input typ="text"  readonly="true" hidden  style="width: 30px;"/>月</td>
+				  <td > <input typ="text"  readonly="true" hidden  style="width: 30px;"/>日</td>
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>省</td>
+				  <td > <input typ="text"  readonly="true" hidden  style="width: 30px;"/>市</td>
+				  <td > <input typ="text"  readonly="true" hidden  style="width: 30px;"/>县</td>
+				  <td > <input typ="text"  readonly="true" hidden  style="width: 30px;"/>乡(镇、街道)</td>
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>村（居委会）</td>
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>省</td>
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>市</td>
+				  <td > <input typ="text"  readonly="true" hidden  style="width: 30px;"/>县</td>
+				  <td > <input typ="text"  readonly="true" hidden  style="width: 30px;"/>乡(镇、街道)</td>
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>年</td>
+
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>月</td>
+				  <td ><input typ="text"  readonly="true" hidden  style="width: 30px;"/>日</td>
+
+
+			  </tr>
+			  <tr>
+				  <th >X
+
+				  </th>
+				  <td><input type="text" name="childCode_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="birthCard_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="identityCard_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="cname_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="sex_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="year_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="month_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="day_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="hospital_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="birthWeight_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="guardianName_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="relationShip_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="province_name_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="city_name_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="county_name_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="town_name_X" value="30" style="width: 50px"/></td>
+				  <td><input type="text" name="dateiled_X" value="30" style="width: 50px"/></td>
+				  <td><input type="text" name="province_name_h_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="city_name_h_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="county_name_h_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="town_name_h_X" value="30" style="width: 50px"/></td>
+				  <td><input type="text" name="allergy_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="avoid_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="telephone_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="govement_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="printYear_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="printMonth_X" value="30" style="width: 30px"/></td>
+				  <td><input type="text" name="printDay_X" value="30" style="width: 30px"/></td>
+
+
+
+				  <!--<input type="text" name="printMonth_X" value="30" style="width: 30px"/>
+				  <input type="text" name="printDay_X" value="30" style="width: 30px"/>-->
+
+
+				  </tr>
+			  	<tr>
+				  <th  >Y
+
+				  </th>
+					<td><input type="text" name="childCode_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="birthCard_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="identityCard_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="cname_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="sex_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="year_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="month_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="day_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="hospital_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="birthWeight_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="guardianName_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="relationShip_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="province_name_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="city_name_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="county_name_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="town_name_Y" value="30" style="width: 50px"/></td>
+					<td><input type="text" name="dateiled_Y" value="30" style="width: 50px"/></td>
+					<td><input type="text" name="province_name_h_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="city_name_h_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="county_name_h_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="town_name_h_Y" value="30" style="width: 50px"/></td>
+					<td><input type="text" name="allergy_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="avoid_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="telephone_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="govement_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="printYear_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="printMonth_Y" value="30" style="width: 30px"/></td>
+					<td><input type="text" name="printDay_Y" value="30" style="width: 30px"/></td>
+
+
+
+					<!--<input type="text" name="printMonth_Y" value="30" style="width: 30px"/>
+					<input type="text" name="printDay_Y" value="30" style="width: 30px"/>-->
+
+			  </tr>
+			  </thead>
+			  <tbody>
+
+			  </tbody>
+		  </table>
+		  <input type="button" style="margin-top: 60px; margin-left: 400px" value="保存" onclick="saveSet()"/>
+	  </form>
+  </div>
+  </body>
+</html>

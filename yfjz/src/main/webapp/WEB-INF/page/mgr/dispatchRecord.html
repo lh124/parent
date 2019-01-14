@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite" xmlns:v-validate="http://java.sun.com/jsf/core">
+<head>
+<title>仓库表</title>
+#parse("sys/header.html")
+	<style>
+		.st{
+			margin-left: 50px;
+		}
+		#title>span{
+			width: 250px;
+		}
+	</style>
+</head>
+<body class="myBody">
+<div id="dispatch" v-cloak>
+	<div id="title">
+		<label>疫苗名称：</label><span>{{rowData.productName}}</span>
+		<label class="st">规格：</label><span>{{rowData.dosenorm}}</span>
+		<label class="st">剂型：</label><span>{{rowData.drug}}</span>
+		<label class="st">单位：</label><span>{{rowData.doseminUnitCode}}</span>
+		<span style="margin-left: 100px">
+		<a class="btn btn-warning" @click="excel"><i class="fa fa-share"></i>&nbsp;导出</a>
+
+		<a class="btn btn-primary" @click="print"><i class="fa fa-print"></i>&nbsp;打印</a>
+			</span>
+	</div>
+	<table id="dispatchTable"></table>
+	<div id="dispatchPager"></div>
+</div>
+
+<script src="${rc.contextPath}/statics/js/mgr/dispatchRecord.js?_${date.systemTime}"></script>
+</body>
+</html>

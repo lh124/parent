@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.yfjz.dao.basesetting.TVacClassDao">
+
+    <select id="queryListPage" parameterType="String" resultType="io.yfjz.entity.basesetting.TVacClassEntity" >
+        select * from t_vac_class
+        <where>
+            <if test="name != null and name.trim() != ''">
+                class_name like concat('%', #{name}, '%')
+            </if>
+            and delete_status = 0 order by sort_order
+        </where>
+    </select>
+
+    <select id="queryAllVaccClassList" resultType="io.yfjz.entity.basesetting.TVacClassEntity">
+        select * from t_vac_class
+        order by sort_order
+    </select>
+
+    <insert id="save" parameterType="io.yfjz.entity.basesetting.TVacClassEntity" useGeneratedKeys="true" keyProperty="classCode">
+        insert into t_vac_class
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="classCode != null">
+                `class_code`,
+            </if>
+            <if test="className != null">
+                `class_name`,
+            </if>
+            <if test="classCnName != null">
+                `class_cn_name`,
+            </if>
+            <if test="classEnName != null">
+                `class_en_name`,
+            </if>
+            <if test="fkCreateUserId != null">
+                `fk_create_user_id`,
+            </if>
+            <if test="sortOrder != null">
+                `sort_order`,
+            </if>
+            <if test="attention != null">
+                `attention`,
+            </if>
+            <if test="createTime != null">
+                `create_time`,
+            </if>
+            <if test="deleteStatus != null">
+                `delete_status`,
+            </if>
+            <if test="updateTime != null">
+                `update_time`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="classCode != null">
+                #{classCode},
+            </if>
+            <if test="className != null">
+               #{className},
+            </if>
+            <if test="classCnName != null">
+                #{classCnName},
+            </if>
+            <if test="classEnName != null">
+                #{classEnName},
+            </if>
+            <if test="fkCreateUserId != null">
+               #{fkCreateUserId},
+            </if>
+            <if test="sortOrder != null">
+                #{sortOrder},
+            </if>
+            <if test="attention != null">
+                #{attention},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="deleteStatus != null">
+                #{deleteStatus},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="io.yfjz.entity.basesetting.TVacClassEntity">
+        update t_vac_class
+        <set>
+            <if test="className != null">class_name = #{className}, </if>
+            <if test="classCnName != null">class_cn_name = #{classCnName}, </if>
+            <if test="classEnName != null">class_en_name = #{classEnName}, </if>
+            <if test="fkCreateUserId != null">fk_create_user_id = #{fkCreateUserId}, </if>
+            <if test="sortOrder != null">sort_order = #{sortOrder}, </if>
+            <if test="attention != null">attention = #{attention}, </if>
+            <if test="status != null">status = #{status}, </if>
+            <if test="deleteStatus != null">delete_status = #{deleteStatus}, </if>
+            <if test="createTime != null">create_time = #{createTime}, </if>
+            <if test="updateTime != null">update_time = #{updateTime}, </if>
+        </set>
+        where class_code = #{classCode}
+    </update>
+
+    <update id="delete">
+       update t_vac_class
+        <set>
+            <if test="deleteStatus != null">delete_status = #{deleteStatus}, </if>
+            <if test="updateTime != null">update_time = #{updateTime}, </if>
+        </set>
+        where class_code = #{value}
+    </update>
+
+    <update id="deleteBatch">
+        update t_vac_class  set delete_status = 1
+        where class_code in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="startVacClass">
+        update t_vac_class  set status = #{status}
+        where class_code in
+        <foreach item="id" collection="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrStockBaseDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		select * from t_mgr_stock_base where id = #{value}
+	</select>
+	<sql id="basecolumn">
+		id,
+		fk_vaccine_code,
+		product_name,
+		batchnum,
+		status,
+		expiry_date,
+		(select text from sys_dict where ttype='code_inoculation_site' AND value=inoculation_site) as inoculation_site,
+		factory_name,
+		factory_id,
+		(select text from sys_dict where ttype='dose_code' AND value=dosenorm) as dosenorm,
+		(select text from sys_dict where ttype='code_drug' AND value=drug) as drug,
+		(select text from sys_dict where ttype='vaccine_unit' AND value=dosemin_unit_code) as dosemin_unit_code,
+		(select text from sys_dict where ttype='code_inoculation_route' AND value=channel) as channel,
+		remark,
+		conversion,
+		price,
+		lot_release,
+		license_number,
+		type,
+		org_id
+	</sql>
+
+	<select id="queryList" resultType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		select
+		<include refid="basecolumn"/>
+		from t_mgr_stock_base  <include refid="whereBase"/>
+		ORDER BY
+		status
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_mgr_stock_base <include refid="whereBase"/>
+	</select>
+	<select id="updateStatus">
+		update t_mgr_stock_base set `status` = status^1 where id = #{id}
+	</select>
+	<select id="getAllData" resultType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		select * from t_mgr_stock_base  where status=0  order BY create_time desc;
+	</select>
+	<select id="queryListByCodeId" resultType="map">
+		SELECT
+			base.fk_vaccine_code as code,
+			fk_store_id,
+			SUM( amount ) AS total,
+			base.product_name,
+			base.expiry_date as expiryDate,
+			base.batchnum,
+			base.price
+		FROM
+			t_mgr_stock_info info
+			JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+		WHERE
+			fk_base_info IN (
+			SELECT id FROM t_mgr_stock_base base WHERE fk_vaccine_code = #{code}
+				<![CDATA[ and to_days(expiry_date) > to_days(now()) ]]>
+			 ) AND  info.amount>0  and base.status=0
+		GROUP BY
+			fk_store_id
+		HAVING
+			total > 0
+		ORDER BY
+			price,
+			expiry_date
+		LIMIT 0,1
+	</select>
+    <select id="queryByBatchnumAndExpiryDate" resultType="io.yfjz.entity.mgr.TMgrStockBaseEntity"
+            parameterType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		select * from   t_mgr_stock_base
+		<where>
+			<if test="fkVaccineCode!=null">
+				and fk_vaccine_code=#{fkVaccineCode}
+			</if>
+			<if test="batchnum!=null">
+				AND batchnum=#{batchnum}
+			</if>
+			<if test="expiryDate!=null">
+				AND TO_DAYS(expiry_date)=TO_DAYS(#{expiryDate})
+			</if>
+		</where>
+	</select>
+    <select id="getCodeInfo" resultType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		select * from t_mgr_stock_base where  fk_vaccine_code=#{code} AND  price  =0 ORDER BY create_time DESC  limit 0,1
+	</select>
+    <sql id="whereBase">
+		<where>
+			delete_status=0
+			<if test="searchProductName != null">
+				AND  product_name like concat('%',#{searchProductName},'%')
+			</if>
+			<if test="searchFactoryName != null">
+				AND  factory_name like concat('%',#{searchFactoryName},'%')
+			</if>
+			<if test="searchBatch != null">
+				AND  batchnum like concat('%',#{searchBatch},'%')
+			</if>
+			<if test="searchDate != null">
+				AND  expiry_date &lt;= #{searchDate}
+			</if>
+			<if test="searchType != null">
+				AND  `type` = #{searchType}
+			</if>
+		</where>
+	</sql>
+	<insert id="save" parameterType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		insert into t_mgr_stock_base
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			     id,
+				<if test="fkVaccineCode != null and fkVaccineCode!=''">`fk_vaccine_code` , </if>
+				<if test="productName !=null and productName!=''">`product_name` , </if>
+				<if test="batchnum != null and batchnum!=''">`batchnum` , </if>
+				<if test="expiryDate != null and batchnum!='' ">`expiry_date` , </if>
+				<if test="status != null and status!=''">`status` , </if>
+				<if test="fkCreateUserId != null and fkCreateUserId!=''">`fk_create_user_id` , </if>
+				<if test="createTime != null ">`create_time` , </if>
+				<if test="orgId != null and orgId!=''">`org_id` , </if>
+				<if test="inoculationSite != null and inoculationSite!=''">`inoculation_site` , </if>
+				<if test="factoryName != null and factoryName!=''">`factory_name` , </if>
+				<if test="factoryId != null and factoryId!=''">`factory_id` , </if>
+				<if test="dosenorm != null and dosenorm!=''">`dosenorm` , </if>
+				<if test="drug != null and drug!=''">`drug` , </if>
+				<if test="doseminUnitCode != null and doseminUnitCode!=''">`dosemin_unit_code` , </if>
+				<if test="remark != null and remark!=''">`remark` , </if>
+				<if test="conversion != null and conversion!=''">`conversion` , </if>
+				<if test="price != null and price!=''">`price` , </if>
+				<if test="lotRelease != null and lotRelease!=''">`lot_release` , </if>
+				<if test="licenseNumber != null and licenseNumber!=''">`license_number`, </if>
+				<if test="type != null">`type`, </if>
+				<if test="channel != null">`channel` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			    uuid(),
+				<if test="fkVaccineCode != null and fkVaccineCode!=''">#{fkVaccineCode} , </if>
+				<if test="productName != null and productName!=''">#{productName} , </if>
+				<if test="batchnum != null and batchnum!=''">#{batchnum} , </if>
+				<if test="expiryDate != null and batchnum!=''">#{expiryDate} , </if>
+				<if test="status != null and status!=''">#{status} , </if>
+				<if test="fkCreateUserId != null and fkCreateUserId!=''">#{fkCreateUserId} , </if>
+				<if test="createTime != null ">#{createTime} , </if>
+				<if test="orgId != null and orgId!=''">#{orgId} , </if>
+				<if test="inoculationSite != null and inoculationSite!=''">#{inoculationSite} , </if>
+				<if test="factoryName != null and factoryName!=''">#{factoryName} , </if>
+				<if test="factoryId != null and factoryId!=''">#{factoryId} , </if>
+				<if test="dosenorm != null and dosenorm!=''">#{dosenorm} , </if>
+				<if test="drug != null and drug!=''">#{drug} , </if>
+				<if test="doseminUnitCode != null and doseminUnitCode!=''">#{doseminUnitCode} , </if>
+				<if test="remark != null and remark!=''">#{remark} , </if>
+				<if test="conversion != null and conversion!=''">#{conversion} , </if>
+				<if test="price != null and price!=''">#{price} , </if>
+				<if test="lotRelease != null and lotRelease!=''">#{lotRelease} , </if>
+				<if test="licenseNumber != null and licenseNumber!=''">#{licenseNumber}, </if>
+				<if test="type != null">#{type},</if>
+				<if test="channel != null">#{channel}</if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		update t_mgr_stock_base 
+		<set>
+			<if test="fkVaccineCode != null and fkVaccineCode!='' ">`fk_vaccine_code` = #{fkVaccineCode}, </if>
+			<if test="productName != null and productName!=''">`product_name` = #{productName}, </if>
+			<if test="batchnum != null and batchnum!=''">`batchnum` = #{batchnum}, </if>
+			<if test="expiryDate != null">`expiry_date` = #{expiryDate}, </if>
+			<if test="status != null and status!=''">`status` = #{status}, </if>
+			<if test="fkCreateUserId != null and fkCreateUserId!=''">`fk_create_user_id` = #{fkCreateUserId}, </if>
+			<if test="createTime != null ">`create_time` = #{createTime}, </if>
+			<if test="orgId != null and orgId!=''">`org_id` = #{orgId}, </if>
+			<if test="inoculationSite != null and inoculationSite!=''">`inoculation_site` = #{inoculationSite}, </if>
+			<if test="factoryName != null and factoryName!=''">`factory_name` = #{factoryName}, </if>
+			<if test="factoryId != null and factoryId!=''">`factory_id` = #{factoryId}, </if>
+			<if test="dosenorm != null and dosenorm!=''">`dosenorm` = #{dosenorm}, </if>
+			<if test="drug != null and drug!=''">`drug` = #{drug}, </if>
+			<if test="doseminUnitCode != null and doseminUnitCode!=''">`dosemin_unit_code` = #{doseminUnitCode}, </if>
+			<if test="remark != null and remark!=''">`remark` = #{remark}, </if>
+			<if test="conversion != null and conversion!=''">`conversion` = #{conversion}, </if>
+			<if test="price != null and price!=''">`price` = #{price}, </if>
+			<if test="lotRelease != null and lotRelease!=''">`lot_release` = #{lotRelease}, </if>
+			<if test="licenseNumber != null and licenseNumber!=''">`license_number` = #{licenseNumber},</if>
+			<if test="type != null and type!=''">`license_number` = #{type},</if>
+			<if test="channel != null and channel!=''">`channel` = #{channel}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mgr_stock_base where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_stock_base where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="getAllBatchnum" resultType="io.yfjz.entity.mgr.TMgrStockBaseEntity">
+		select batchnum,fk_vaccine_code ,product_name from  t_mgr_stock_base where type=0 and delete_status=0
+	</select>
+</mapper>

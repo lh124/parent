@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.TChildAllergyDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildAllergyEntity">
+		select * from  t_child_allergy  where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildAllergyEntity">
+		SELECT
+		allergy.id,
+		check_date,
+		allergy.type,
+		allergy.syncstatus,
+		allergy.delete_status,
+		allergy.create_user_id,
+		info.chil_name AS chil_code,
+		vac.bio_cn_sortname AS bio_code,
+		describes,
+		allergy.remark,
+		allergy.create_user_name,
+		registrant
+		FROM
+		t_child_allergy allergy
+		LEFT JOIN t_vac_info vac ON allergy.bio_code = vac.bio_code
+		LEFT JOIN t_child_info info ON allergy.chil_code = info.chil_code
+		<where>
+			<if test="chilCode != null and chilCode != ''">
+				or allergy.chil_code=(select chil_code from  t_child_info where chil_name=#{chilCode}) and 	allergy.delete_status = 0
+			</if>
+			<if test="chilCode != null and chilCode != ''">
+				or allergy.chil_code=#{chilCode} and 	allergy.delete_status = 0
+			</if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_allergy
+		<where>
+
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=(select chil_code from  t_child_info where chil_name=#{chilCode}) and 	delete_status = 0
+			</if>
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=#{chilCode} and 	delete_status = 0
+			</if>
+
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="findAlleryForUpload" parameterType="string" resultType="java.util.HashMap">
+		select describes from t_child_allergy where chil_code=#{childCode} and `type`=0 and syncstatus = 0 and delete_status=0
+	</select>
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildAllergyEntity">
+		insert into t_child_allergy
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+						<if test="chilCode != null">`chil_code` , </if>
+					<if test="describes != null">`describes` , </if>
+					<if test="registrant != null">`registrant` , </if>
+					<if test="checkDate != null">`check_date` , </if>
+					<if test="type != null">`type` , </if>
+					<if test="syncstatus != null">`syncstatus` , </if>
+
+					<if test="createUserId != null">`create_user_id` , </if>
+					<if test="createUserName != null">`create_user_name` , </if>
+					<if test="createTime != null">`create_time` , </if>
+					<if test="bioCode != null">`bio_code` , </if>
+					<if test="remark != null">`remark` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						<if test="chilCode != null">#{chilCode} , </if>
+					<if test="describes != null">#{describes} , </if>
+					<if test="registrant != null">#{registrant} , </if>
+					<if test="checkDate != null">#{checkDate} , </if>
+					<if test="type != null">#{type} , </if>
+					<if test="syncstatus != null">#{syncstatus} , </if>
+
+					<if test="createUserId != null">#{createUserId} , </if>
+					<if test="createUserName != null">#{createUserName} , </if>
+					<if test="createTime != null">#{createTime} , </if>
+					<if test="bioCode != null">#{bioCode} , </if>
+					<if test="remark != null">#{remark} </if>
+			</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.child.TChildAllergyEntity">
+		update t_child_allergy
+		<set>
+			<if test="chilCode != null">`chil_code` = #{chilCode}, </if>
+			<if test="describes != null">`describes` = #{describes}, </if>
+			<if test="registrant != null">`registrant` = #{registrant}, </if>
+			<if test="checkDate != null">`check_date` = #{checkDate}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="syncstatus != null">`syncstatus` = #{syncstatus}, </if>
+			<if test="deleteStatus != null">`delete_status` = #{deleteStatus}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserName != null">`create_user_name` = #{createUserName}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="bioCode != null">`bio_code` = #{bioCode}, </if>
+			<if test="remark != null">`remark` = #{remark}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<delete id="delete">
+		delete from t_child_allergy where id = #{value}
+	</delete>
+
+	<delete id="deleteBatch">
+		delete from t_child_allergy where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://java.sun.com/jsf/composite" xmlns:v-tolerious="http://java.sun.com/jsf/core">
+<head>
+    <meta charset="utf-8">
+    <title>接种登记</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/register.css" media="all" />
+    <script src="${rc.contextPath}/statics/libs/My97DatePicker/4.8/WdatePicker.js"></script>
+
+    #parse("sys/header.html")
+    <!--选择城市控件-->
+    <link href="${rc.contextPath}/statics/plugins/city/css/city-picker.css" rel="stylesheet">
+    <link href="${rc.contextPath}/statics/plugins/city/css/main.css" rel="stylesheet">
+
+    <script>
+        var orgId="$shiro.getBaseInfo('orgId')";
+        var orgName="$shiro.getBaseInfo('orgName')";
+        var userName="$shiro.getBaseInfo('realName')";
+    </script>
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        /*登记弹框中两个jqgrid的div宽度*/
+        /*.re-wid{
+            width: 1519px;
+        }*/
+        #historyRecord>tbody>tr>td {
+            padding: 0px;
+            line-height: 1.8;
+            vertical-align: top;
+            border-top: 1px solid #ddd;
+        }
+
+        #recommendTable>tbody>tr>td {
+            padding: 0px;
+            line-height: 1.8;
+            vertical-align: top;
+            border-top: 1px solid #ddd;
+        }
+        #receiveTable>tbody>tr>td {
+            padding: 0px;
+            line-height: 1.8;
+            vertical-align: top;
+            border-top: 1px solid #ddd;
+        }
+
+        .box {
+            display: none;
+            width: 152px;
+            height: auto;
+            background:#FFFFDF;
+            text-align: left;
+            position: absolute;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+#parse("bus/dialog.html")
+#parse("child/updatainoRecorddialog.html")
+<!--判断导航栏显示-->
+<input type="hidden" id="dj01" value="register">
+
+<div class="layui-row" id="childrenBody" v-cloak>
+    <div class="row-box font0" id="navigationMonitoring"></div>
+    <!--登记主界面开始-->
+    <div v-show="showList" class="layui-col-space20">
+
+        <section class="layui-col-md10 layui-col-sm9">
+            <!--<div class="row-box mb30 font0" id="content23" style="border:1px solid #42eeb6;"></div>-->
+            <form class="form-inline mb50" role="form" id="conditionForm">
+                <div class="form-group mb10">
+                    <input type="text" class="form-control" v-model="queryString" @keyup.enter="query" id="queryString" style="width: 500px" placeholder="请输入儿童编码或儿童姓名或出生日期(yyyymmdd)查询"/>
+                    <input type="text" id="unused" style="display:none"/>
+                </div>
+                <!--<div class="form-group mb10">
+                    儿童编码:<input type="text" class="form-control" v-model="q.chilCode" @keyup.enter="query" id="chilCode" style="width: 130px" placeholder="儿童编码">
+                </div>
+
+                <div class="form-group mb10">
+                    &nbsp;儿童姓名:	<input type="text" class="form-control" v-model="q.chilName" @keyup.enter="query" id="chilName" style="width: 100px" placeholder="儿童姓名">
+
+                </div>
+
+                <div class="form-group mb10">
+                    &nbsp;出生日期:<input type="text" class="form-control" v-model="q.chilBirthdayStart" id="chilBirthdayStart" @keyup.enter="query" style="width: 100px" placeholder="">
+                </div>
+                <div class="form-group mb10">
+                    —<input type="text" class="form-control" v-model="q.chilBirthdayEnd" id="chilBirthdayEnd" @keyup.enter="query" style="width: 100px" placeholder="">
+                </div>-->
+                <a class="btn btn-primary mb10"  @click="query"><i class="fa fa-search"></i>&nbsp;查询</a>
+                <a class="btn btn-primary mb10"  @click="resetCondition"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                <a class="btn btn-primary mb10"  @click="queryFromPlat"><i class="fa fa-search"></i>&nbsp;省平台查询</a>
+
+                <!--<a class="btn btn-default" @click="downloadChild">平台下载</a>-->
+                <!--#if($shiro.hasPermission("tchildinfo:save"))
+                <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;新增</a>
+                #end-->
+                <!--#if($shiro.hasPermission("tchildinfo:update"))
+                <a class="btn btn-primary" @click="update"><i class="fa fa-pencil-square-o"></i>&nbsp;修改</a>
+                #end-->
+                <!--#if($shiro.hasPermission("tchildinfo:delete"))
+                <a class="btn btn-primary" @click="del"><i class="fa fa-trash-o"></i>&nbsp;删除</a>
+                #end-->
+            </form>
+            <div class="layui-row layui-col-space10">
+                <section class="layui-col-md4" id="resultTableWrap">
+                    <div class="borderWrap">
+                        <p class="section-title" style="font-weight: bold">查询结果</p>
+                        <div class="table-wrapper">
+                            <table id="selectResultTable" lay-filter="selectResult"></table>
+                        </div>
+                    </div>
+                </section>
+                <section class="layui-col-md8 pravite-message">
+                    <div class="borderWrap">
+                        <div class="section-title">
+                            <span style="font-weight: bold" >儿童信息</span>
+                            <ul class="fr clearfix">
+                                <li class="fl mr15 history-action-items" id="historyIno" onclick="getHistoryInoculate()" >
+                                    <i class="layui-icon layui-icon-search pr5"  ></i>查看历史接种记录
+                                </li>
+
+                            </ul>
+                        </div>
+                        <!-- <p class="section-title" style="font-weight: bold">儿童信息</p>
+                        -->
+                        <div class="layui-row pl15 pr15 mb5 mt10">
+                            <input type="hidden" id="chilcodes" v-model="message.childCode">
+                            <input type="hidden" id="updatastatus" value="1">
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1" style="width:80px">姓名<i class="disib"></i></span>
+                                <span class="message-value textset" >：<input onchange="updatachilinfo()"  id="updatachil_name"  v-model="message.name" type="text" style="border-width: 0; font-size:18px;font-weight:bold;"/></span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row">
+                                <span class="span1" style="width:80px;color: red">年龄<i class="disib"></i></span>
+                                <span class="message-value textset" style="color: red">：{{message.age}}</span>
+                            </div>
+                        </div>
+                        <!--<div class="layui-row pl15 pr15 mb15">
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1">出生日期<i class="disib"></i></span>
+                                <span class="message-value textset">：{{message.birthTime}}</span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row">
+                                <span class="span1">出生证号<i class="disib"></i></span>
+                                <span class="message-value textset">：{{message.bid}}</span>
+                            </div>
+                        </div>-->
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1" style="width:80px">出生日期<i class="disib"></i></span>
+                                <span class="message-value textset">：<input onchange="updatachilinfo()"  id="updatabirthday"  v-model="message.birthday" type="text" style="border-width: 0;"/></span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row" >
+                                <span class="span1" style="width:80px">儿童性别<i class="disib"></i></span>
+                                <span class="message-value textset">：
+                                    <input  v-model="message.sex" id="sexId" style="border-width: 0;width: 40px;position: relative" >
+                                    <select  id="updatasex" name="updatasex"  ondblclick="selectupdatasex()" style="position: absolute; float: left;margin-left: -41px;" >
+
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1" style="width:80px">父亲姓名<i class="disib"></i></span>
+                                <span class="message-value textset">：<input onchange="updatachilinfo()"  id="updatafather_name"  v-model="message.fatherName" type="text" style="border-width: 0;"/></span>
+                            </div>
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1" style="width:80px">手机<i class="disib"></i></span>
+                                <span class="message-value textset">：<input onchange="updatachilinfo()"  id="updatamobile"  v-model="message.mobile" type="text" style="border-width: 0;"/></span>
+                            </div>
+
+                        </div>
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1" style="width:80px">母亲姓名<i class="disib"></i></span>
+                                <span class="message-value textset">：<input onchange="updatachilinfo()"  id="updatamonther_name"  v-model="message.montherName" type="text" style="border-width: 0;"/></span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row">
+                                <span class="span1" style="width:80px">家庭电话<i class="disib"></i></span>
+                                <span class="message-value textset">：<input onchange="updatachilinfo()"  id="updatatel"  v-model="message.tel" type="text" style="border-width: 0;"/></span>
+                            </div>
+                        </div>
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1" style="width:80px">户籍属性<i class="disib"></i></span>
+                                <span class="message-value textset">：
+                                    <input  v-model="message.account" id="chilAccountId" style="border-width: 0;width: 66px;position: relative;">
+                                    <select  id="updatachilAccount" name="updatachilAccount"  ondblclick="selectupdataaccount()" style="position: absolute; float: left;margin-left: -68px;">
+
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="layui-col-md6 space-between">
+                                <span class="span1" style="width:80px">居住属性<i class="disib"></i></span>
+                                <span class="message-value textset">：
+                                      <input  v-model="message.chilResidence" id="chilResidenceId" style="border-width: 0;width: 66px;position: relative;">
+                                    <select  id="updatachilResidence" name="updatachilResidence"  ondblclick="selectupdataResidence()" style="position: absolute; float: left;margin-left: -68px;">
+
+                                    </select>
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md6 space-between layui-row">
+                                <span class="span1" style="width:80px">在册情况<i class="disib"></i></span>
+                                <span class="message-value textset">：
+                                     <input  v-model="message.here" id="hereId" style="border-width: 0;width: 66px;position: relative;">
+                                    <select  id="updatahere" name="updatahere"   onmouseover="display()" onmouseout="disappear()"  style="position: absolute; float: left;margin-left: -68px;">
+
+                                    </select>
+
+                                </span>
+                            </div>
+
+                            <div class="layui-col-md6 space-between layui-row">
+                                <span class="span1" style="width:100px">上次接种时间<i class="disib"></i></span>
+                                <span class="message-value textset" id="lastInoTime">： </span>
+                            </div>
+                            <div id="box"class="box"  style=" margin-left: 196px;">双击才能修改哦！</div>
+                        </div>
+
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md6 space-between layui-row">
+                                <span class="span1" style="width:80px">行政村<i class="disib"></i></span>
+                                <span class="message-value textset">：
+                                    <input  v-model="message.committee" id="committeeId" style="border-width: 0;width: 110px;position: relative;">
+                                    <select  id="updatachilcommittee"  ondblclick="updatecommittee()" name="updatachilcommittee" style="position: absolute; float: left;margin-left: -113px;">
+                                    </select>
+                                    <!--{{message.committee}}-->
+                                </span>
+                            </div>
+                            <div class="layui-col-md6 space-between layui-row">
+                                <span class="span1" style="width:80px">儿童编码<i class="disib"></i></span>
+                                <span class="message-value textset">：{{message.childCode}}<input id="barCodeInput" @keyup.enter="barCodeSave" type="text" style="border-width: 0;"/></span>
+                            </div>
+                        </div>
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md12 space-between">
+                                <span class="span1" style="width:80px">现居地址<i class="disib"></i></span>
+                                <span class="message-value textset">：<input onchange="updatachilinfo()"  id="updataaddress"  v-model="message.address" type="text" style="border-width: 0;width: 800px"/></span>
+                            </div>
+                            <!--条码查询-->
+                            <!--<div class="layui-col-md6 space-between layui-row">-->
+                            <!--<span class="span1" style="width:80px">条码绑定<i class="disib"></i></span>-->
+                            <!--<span class="message-value textset">：<input id="barCodeInput" @keyup.enter="barCodeSave" type="text" style="border-width: 0;"/></span>-->
+                            <!--</div>-->
+                        </div>
+                        <!--<div class="layui-row pl15 pr15 mb5">-->
+                        <!--<div class="layui-col-md12 space-between">-->
+                        <!--<span class="span1">居住地址<i class="disib"></i></span>-->
+                        <!--<span class="message-value textset">：<input onblur="updatachil_name()"  id="updataaddress"  v-model="message.address" type="text" style="border-width: 0;"/></span>-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash;条码查询&ndash;&gt;-->
+                        <!--<div class="layui-col-md6 space-between layui-row">-->
+                        <!--<span class="span1">条码绑定<i class="disib"></i></span>-->
+                        <!--<span class="message-value textset">：<input id="barCodeInput" @keyup.enter="barCodeSave" type="text" style="border-width: 0;"/></span>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md12 space-between">
+                                <span class="span1" style="width:80px">户籍地址<i class="disib"></i></span>
+                                <span class="message-value textset">：<input onchange="updatachilinfo()"  id="updatahabiaddress"  v-model="message.habiaddress" type="text" style="border-width: 0;width: 800px"/></span>
+                            </div>
+                        </div>
+                        <div class="layui-row pl15 pr15 mb5">
+                            <div class="layui-col-md12 space-between">
+                                <span class="span1" style="color: red;width: 80px;">备注<i class="disib"></i></span>
+                                <span class="message-value textset" style="color: red">：<input onchange="updatachilinfo()"  id="updataremark"  v-model="message.remark" type="text" style="border-width: 0px;width: 800px"/></span>
+                            </div>
+
+                        </div>
+                        <div class="pravite-message-bottom pt10">
+                            <p class="space-between layui-row pl15 pr15 mt10" style="color: red">
+                                <span class="span1" id="regnoabnormal" onclick="noabnormal()">异常反应<i class="disib"></i></span>
+                                <span class="message-value" id="abnormalHistory"><i class=" pl5 pr5">:</i></span>
+                            </p>
+                            <p class="space-between layui-row pl15 pr15 mt10" style="color: red">
+                                <span class="span1" onclick="allergy()">过敏史<i class="disib"></i></span>
+                                <span class="message-value" id="allergyHistory"><i class=" pl5 pr5">:</i></span>
+                            </p>
+                            <p class="space-between layui-row pl15 pr15 mt5" style="color: red">
+                                <span class="span1" onclick="taboo()">接种禁忌<i class="disib"></i></span>
+                                <span class="message-value" id="taboo"><i class=" pl5 pr5">:</i></span>
+                            </p>
+                            <p class="space-between layui-row pl15 pr15 mt5" style="color: red">
+                                <span class="span1" onclick="infection()">传染病史<i class="disib"></i></span>
+                                <span class="message-value" id="infectionHistory"><i class=" pl5 pr5">:</i></span>
+                            </p>
+                        </div>
+                        <!--
+                        <div class="pravite-message-bottom pt10">
+                            <p class="space-between layui-row pl15 pr15 mt15">
+                                <span class="span1 red">异常反应史<i class="disib"></i></span>
+                                <span class="message-value"><i class="red pl5 pr5">:</i>{{message.reactionHistory}}</span>
+                            </p>
+                            <p class="space-between layui-row pl15 pr15 mt5">
+                                <span class="span1 red">接种禁忌<i class="disib"></i></span>
+                                <span class="message-value"><i class="red pl5 pr5">:</i>{{message.taboo}}</span>
+                            </p>
+                            <p class="space-between layui-row pl15 pr15 mt5">
+                                <span class="span1 red">传染病史<i class="disib"></i></span>
+                                <span class="message-value"><i class="red pl5 pr5">:</i>{{message.contagionHistory}}</span>
+                            </p>
+                        </div>-->
+                    </div>
+                </section>
+            </div>
+            <section class="layui-col-md12 tc btn-box">
+                <button class="layui-btn layui-btn-radius register-btn" @click="register">登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;记</button>
+                <button class="layui-btn layui-btn-radius" @click="print">打&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;印</button>
+                <button class="layui-btn layui-btn-radius" @click="add">新&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;建</button>
+                <button class="layui-btn layui-btn-radius" @click="update">修&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;改</button>
+                <button class="layui-btn layui-btn-radius" @click="printBarCode">打印条码</button>
+                <button class="layui-btn layui-btn-radius" @click="allInoPlan">全程计划</button>
+                <button class="layui-btn layui-btn-radius" @click="schoolAdmission ">入园证明</button>
+                <button class="layui-btn layui-btn-radius" @click="prescription ">处&nbsp;&nbsp;方&nbsp;&nbsp;单</button>
+                <button class="layui-btn layui-btn-radius" id="single" onclick="single()"  data-target="#myModal">补&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;录</button>
+                <button class="layui-btn layui-btn-radius" id="preCheckNotice" @click="preCheckNotice "  >预检告知书</button>
+                <button class="layui-btn layui-btn-radius" id="downloadBack" @click="downloadBack"  >下载备份数据</button>
+
+            </section>
+            <section class="layui-col-md12 mt20">
+                <div>
+                    <div class="borderWrap" style="width: 50%;float:left">
+                        <div class="section-title">
+                            <span style="font-weight: bold">今日待登记列表&nbsp;/&nbsp;<i id="waitNumber"></i></span>
+                            <ul class="fr clearfix">
+                                <li class="fl mr15 history-action-items" @click="printWait">
+                                    <i class="layui-icon layui-icon-print pr5"></i>打印
+                                </li>
+                                <!-- <li class="fl mr15 history-action-items">
+                                     <i class="layui-icon layui-icon-add-1 pr5"></i>补录2
+                                 </li>
+                                 <li class="fl mr15 history-action-items">
+                                     <i class="layui-icon layui-icon-add-1 pr5"></i>补录3
+                                 </li>-->
+                            </ul>
+                        </div>
+                        <!--<table id="historyTable" lay-filter="history"></table>-->
+                        <table id="waitTable" lay-filter="history"></table>
+                        <div id="waitPage"></div>
+                    </div>
+                    <div class="borderWrap" style="width: 50%;float:left">
+                        <div class="section-title">
+                            <span style="font-weight: bold">今日已登记列表&nbsp;/&nbsp;<i id="registerNumber"></i></span>
+                            <ul class="fr clearfix"  @click="printRegister">
+                                <li class="fl mr15 history-action-items"> <i class="layui-icon layui-icon-print pr5"></i>打印</li>
+                                <!-- <li class="fl mr15 history-action-items">
+                                     <i class="layui-icon layui-icon-add-1 pr5"></i>补录2
+                                 </li>
+                                 <li class="fl mr15 history-action-items">
+                                     <i class="layui-icon layui-icon-add-1 pr5"></i>补录3
+                                 </li>-->
+                            </ul>
+                        </div>
+                        <!--<table id="historyTable" lay-filter="history"></table>-->
+                        <!--<div style="width: 1200px;">-->
+                        <div class="table-wrapper"> <table id="registerTable" ></table>
+                            <div id="registerPage"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!--登记主界面结束-->
+
+        <!--排队叫号界面开始-->
+        <queuer host="$shiro.getBaseInfo('queuer.host')"
+                type="$shiro.getBaseInfo('queuer.regType')"
+                tower="$shiro.getBaseInfo('regTowerId')"
+                user="$shiro.getBaseInfo('userId')">
+            <!--user="$shiro.getBaseInfo('userName')">-->
+
+        </queuer>
+        <!--排队叫号界面结束-->
+
+        <!--登记弹框界面开始-->
+        <div id="tmpl" class="tmpl layui-row none" style="overflow-y: auto">
+            <div class="tmpl-top" style="width: 100%;height: auto;">
+
+                <div class="layui-row ">
+                    <input type="hidden" id="updatastatus1" value="2">
+                    <ul class="pl15 pr15">
+                        <li style="display: inline;">儿童编码</li>
+                        <li style="display: inline; margin-right: 35px">:{{childCode}}</li>
+                        <li style="display: inline">姓名</li>
+                        <li style="display: inline;">:<input   id="updatachil_name1" onchange="updatachildialog()"  v-model="message.name" type="text" style="border-width: 0;width: 60px"/></li>
+                        <li style="display: inline">性别</li>
+                        <li style="display: inline;">:<input  v-model="message.sex" id="sexId1" style="border-width: 0;width: 40px;position: relative" >
+                            <select  id="updatasex1" name="updatasex1"  ondblclick="selectupdatasexdialog()" style="position: absolute; float: left;margin-left: -43px;" >
+
+                            </select></li>
+                        <li style="display: inline">出生日期</li>
+                        <li style="display: inline;">:<input   id="updatabirthday1" onchange="updatachildialog()"   v-model="message.birthday" type="text" style="border-width: 0;width: 88px"/></li>
+                        <li style="display: inline">年龄</li>
+                        <li style="display: inline;margin-right: 10px;color: red">:{{message.age}}</li>
+                        <li style="display: inline">母亲姓名</li>
+                        <li style="display: inline;">:<input   id="updatamontherName1" onchange="updatachildialog()"   v-model="message.montherName" type="text" style="border-width: 0;width: 60px"/></li>
+                        <li style="display: inline">父亲姓名</li>
+                        <li style="display: inline;margin-right: 35px">:<input   id="updatafatherName1" onchange="updatachildialog()"   v-model="message.fatherName" type="text" style="border-width: 0;width: 60px"/></li>
+                        <li style="display: inline">居住属性</li>
+                        <li style="display: inline;margin-right: 35px">:<input   v-model="message.chilResidence" id="chilResidenceId1" style="border-width: 0;width: 40px;position: relative" >
+                            <select  id="updatachilResidence1" ondblclick="selectupdataResidencedialog()"  name="updatachilResidence1"   style="position: absolute; float: left;margin-left: -44px;" >
+
+                            </select></li>
+                        <li style="display: inline">户籍属性</li>
+                        <li style="display: inline;margin-right: 35px">:<input  v-model="message.account" id="accountId1" style="border-width: 0;width: 66px;position: relative" >
+                            <select  id="updataaccount1" name="updataaccount1"  ondblclick="selectupdataaccountdialog()"  style="position: absolute; float: left;margin-left: -71px;" >
+
+                            </select></li>
+                        <li style="display: inline;">在册情况</li>
+                        <div id="box1"class="box"  style=" margin-left: 1417px;">双击才能修改哦！</div>
+                        <li style="display: inline;margin-right: 16px">:<input  v-model="message.here" id="hereId1" style="border-width: 0;width: 66px;position: relative" >
+                            <select  id="updatahere1" name="updatahere1"  onmouseover="display1()" onmouseout="disappear1()"   style="position: absolute; float: left;margin-left: -71px;" >
+
+                            </select></li>
+                        <li style="display: inline">行政村</li>
+                        <li style="display: inline" style="display: inline;margin-right: 35px">:
+                            <input  v-model="message.committee" id="committeeIds" style="border-width: 0;width: 110px;position: relative;">
+                            <select  id="updatachilcommittees"  ondblclick="updatecommittees()" name="updatachilcommittees" style="position: absolute; float: left;margin-left: -115px;">
+                            </select>
+                            <!--{{message.committee}}-->
+                        </li>
+                        <li style="display: inline-flex">联系方式</li>
+                        <li  style="display: inline-flex;">:
+                            <input  id="tel_2" onchange="updatachildialog()"    v-model="message.mobile" type="text" style="border-width: 0;width: 100px"/><span>/</span>
+                            <input  id="tel_1" onchange="updatachildialog()"   v-model="message.tel" type="text" style="border-width: 0;width: 100px"/>
+                        </li>
+                    </ul>
+
+                </div>
+                <!-- <div class="layui-row mb5 pl30 pr30 div-horizontal">
+                     <p class="space-between layui-row pl15 pr15 mt10">
+                         <span class="span1">异常反应<i class="disib"></i></span>
+                         <span class="message-value" id="abnormalHistory"><i class=" pl5 pr5">:</i></span>
+                     </p>
+                     <p class="space-between layui-row pl15 pr15 mt10">
+                         <span class="span1">过敏史<i class="disib"></i></span>
+                         <span class="message-value" id="allergyHistory"><i class=" pl5 pr5">:</i></span>
+                     </p>
+                     <p class="space-between layui-row pl15 pr15 mt5">
+                         <span class="span1">接种禁忌<i class="disib"></i></span>
+                         <span class="message-value" id="taboo"><i class=" pl5 pr5">:</i></span>
+                     </p>
+                     <p class="space-between layui-row pl15 pr15 mt5">
+                         <span class="span1">传染病史<i class="disib"></i></span>
+                         <span class="message-value" id="infectionHistory"><i class=" pl5 pr5">:</i></span>
+                     </p>
+                 </div>-->
+            </div>
+            <div class="layui-row layui-col-space10">
+                <!--<div class="layui-col-md6">--><!--左布局-->
+                <div style="width: 50%;position: absolute">
+                    <!-- <div class="tmpl-body" >-->
+
+                    <!-- <div  class="re-wid" style="margin-bottom: 10px;">-->
+                   <!-- <div class="register-box-table-wrap">-->
+                        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2" style="font-weight: bold">历史接种记录<span style="float: right;color: red" id="deleteino" onclick="deleteino()">删除</span><span class="layui-icon layui-icon-close pr5"  onclick="deleteino()" style="float: right;color: red"></span>  </p>
+                        <!--<li class="fl mr15 history-action-items" >-->
+                            <!--<i class="layui-icon layui-icon-close pr5"  ></i>删除-->
+                        <!--</li>-->
+                        <iframe name="inoculation"  style="width:100%;height:585px" frameborder="0"  id="inoculation_iframe" src="../child/tchildinoculate.html"></iframe>
+                       <!-- <table id="historyRecord"></table>-->
+                    <!--</div>-->
+
+
+                </div>
+                <!--右布局-->
+                <!--<div class="layui-col-md6">-->
+                <div style="float: right;width: 50%">
+                   <!-- <div  class="register-box-table-wrap">-->
+                        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2" style="font-weight: bold">推荐疫苗:&nbsp;&nbsp;&nbsp;<span style="color: red;">系统推荐仅供医生参考</span></p>
+                        <!--<div class="re-wid">-->
+                        <div style="width: 900px">
+                            <table id="recommendTable"></table>
+                        </div>
+                        <!--</div>-->
+                        <p class="pl30 pr30  bg-f2f2f2" style="font-weight: bold">可选疫苗: &nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="layui-btn" id="xsquanbu">显示全部</button></p>
+                        <!--<p class="pl30 pr30  bg-f2f2f2" style="font-weight: bold">可选疫苗: &nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="layui-btn" id="xsquanbu" @click="xsquanbu">显示全部</button></p>-->
+                        <!--<div class="re-wid">-->
+                        <div style="width: 900px">
+                            <table id="receiveTable"></table>
+                        </div>
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+            </div>
+
+            <div class="tmpl-footer">
+                <div class="layui-row tc pt20 pb20 bg-f2f2f2">
+                    <button class="layui-btn" @click="submitRegisterMessage" id="registerBtn">确定</button>
+                    <span class="pl30">
+						<button class="layui-btn cancel-btn" @click="cancelRegister">取消</button>
+					</span>
+                </div>
+            </div>
+        </div>
+        <!--登记弹框界面结束-->
+    </div>
+    <!--打印弹框选择开始-->
+    <!-- <div id="printDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+         <br/>
+         <h5 style="margin-left: 30px">请选择接种证打印模板：</h5>
+         <div  style="width:100%; text-align:center">
+             <div style="display: inline-block">
+                 接种证打印模板:
+                 <select  class="form-control"  id="modelName" name="modelName" >
+
+                 </select>
+                 &lt;!&ndash;
+                                         <input class="form-control"  id="modelName"   data-options="url:'$webPath/SetPrintForm/selectInoculatePrintSetModel.jhtml?remark=1&xml_name=selfDefinePrintInfo'	,valueField: 'xml_name',textField: 'model_name', multiple:false" />
+                 &ndash;&gt;
+             </div>
+         </div>
+         <br/>
+         <div style="text-align: center">
+             <button @click="printChildInfo(1,$('#modelName').val())" class="layui-btn" style="width: 200px;height: 50px;font-size: 20px" >打印</button>
+
+             &lt;!&ndash;<embed id="adobeReader" src="printChildInfo(1,$('#modelName').val())" width="0" height="0" >&ndash;&gt;
+         </div>
+         <br/>
+         <br/>
+         <br/>
+         <div style="text-align: center">
+             <font color="red">  请注意：不同的打印模板打印效果不同</font><br/>
+         </div>
+
+     </div>-->
+    <!--打印弹框选择开始-->
+    <div id="printDialog" class="printDialog layui-row none form-inline" title="打印选择" >
+        <ul id="myTab" class="nav nav-tabs">
+            <!--接种记录-->
+            <li class="active"><a href="#inoculate" data-toggle="tab">登记疫苗</a></li>
+            <!--儿童信息-->
+            <li><a href="#info" data-toggle="tab">儿童信息</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content" style="margin-top: 10px;margin-left: 10px">
+            <div class="tab-pane fade in active" name="div1" id="inoculate" style="margin-left: 20px">
+                <h5 style="margin-left: 30px;">请选择接种证打印模板：</h5>
+                <div  style="width:100%; text-align:center">
+                    <div style="display: inline-block">
+                        接种证打印模板:
+                        <select  class="form-control"  id="inocModelName" name="modelName" >
+
+                        </select>
+                    </div>
+                    <br/>
+                    <br/>
+                    <div style="display: inline-block">
+                        或输入打印行数:
+                        <input  class="form-control"  id="lineCount" name="lineCount" />&nbsp;&nbsp;<input id="lineCountCheck" type="checkbox"/>下半页
+                    </div>
+                    <br/>
+                    <div style="margin-top: 10px">接种记录打印字体大小：<input id="fontSize" style="width: 40px"></div>
+                </div>
+                <br/>
+                <div style="width: 680px">
+                    <table id="currentRegisterVacc"></table>
+                </div>
+                <br/>
+                <div style="text-align: center">
+                    <button onclick="printWaitInocBioName(3,1,$('#inocModelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打&nbsp;&nbsp;印</button>
+                </div>
+                <div style="text-align: left;margin-left:30px;color: red">
+                    请注意：<br/>
+                    <font color="red">1.“接种记录打印字体大小”默认值为"8"</font><br/>
+                    <font color="red">2.不同的打印模板打印效果不同。</font><br/>
+                    <font color="red">3.如果打印需要分页，请注意放置顺序：先放入接种记录（一）（二）再放入接种记录（三）（四）！</font><br/>
+                    <font color="red">4.指定行打印主要针对接种证上没有标识的疫苗</font><br/>
+                    <font color="red">5.指定行打印与选择打印模板无关</font>
+                    <br/>
+                </div>
+            </div>
+            <div class="tab-pane fade in" id="info" name="info" style="margin-left: 20px">
+                <h5 style="margin-left: 30px">请选择接种证打印模板：</h5>
+                <div  style="width:100%; text-align:center">
+                    <br/>
+                    <div style="display: inline-block">
+                        接种证打印模板:
+                        <select  class="form-control"  id="infoModelName" name="infoModelName" >
+
+                        </select>
+                    </div>
+                </div>
+                <br/>
+                <div style="text-align: center">
+                    &nbsp;&nbsp;&nbsp;<button onclick="printChildInfo(1,$('#infoModelName').val())" class="layui-btn" style="width: 120px;height: 50px;font-size: 16px" >打&nbsp;&nbsp;印</button>
+                </div>
+                <br/>
+                <br/>
+                <br/>
+                <div style="text-align: left;margin-left:30px;color: red">
+                    请注意：
+                    <font color="red">  不同的打印模板打印效果不同</font><br/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!--打印弹框选择结束-->
+    <div v-show="!showList" class="panel panel-default h-auto" id="childModel">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-inline" role="form" id="chilForm">
+            <br/>
+            <div class="form-group">
+                &nbsp;建档单位:	<input type="text" class="form-control" v-model="tChildInfo.chilCreatesite" name="chilCreatesite" readonly style="width: 200px" placeholder="">
+
+            </div>
+            <div class="form-group">
+                &nbsp;建档人:	<input type="text" class="form-control" v-model="tChildInfo.createUserName" readonly name="createUserName" style="width: 100px" placeholder="">
+
+            </div>
+            <div class="form-group">
+                建档日期:
+                <input type="text" class="form-control" v-model="tChildInfo.chilCreatedate" readonly  id='chilCreatedate' name="chilCreatedate" style="width: 170px; height: 35px;" />
+            </div>
+            <br/>
+            <br/>
+            <div class="form-group">
+                <span style="position: relative;"> &nbsp;儿童姓名:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model="tChildInfo.chilName" name="chilName"  style="width: 100px;margin-left: 18px" placeholder="">
+            </div>
+            <div class="form-group">
+                <span style="position: relative;"> &nbsp;性别:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>
+                <select v-model="tChildInfo.chilSex" class="form-control" name="chilSex" style="margin-left: 18px">
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <span style="position: relative;">&nbsp;出生日期:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>
+                <input type="text" class="form-control" v-model="tChildInfo.chilBirthday"  name="chilBirthday"  id='chilBirthday'  style="width: 170px; height: 35px;margin-left: 18px"/>
+            </div>
+            <br/>
+            <br/>
+            <div class="form-group">
+
+                <span style="position: relative;">  &nbsp;居住属性:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>
+                <select v-model="tChildInfo.chilResidence" class="form-control"  id="chilResidence" name="chilResidence" style="margin-left: 18px">
+                </select>
+            </div>
+            <div class="form-group">
+                <span style="position: relative;">  &nbsp;户籍属性:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>
+                <select v-model="tChildInfo.chilAccount" class="form-control"  id="chilAccount" name="chilAccount" style="margin-left: 18px">
+                </select>
+            </div>
+            <div class="form-group">
+                <span style="position: relative;">  &nbsp;在册情况:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>
+                <select v-model="tChildInfo.chilHere" class="form-control" onchange="openChangeRemark()" id="chilHere" name="chilHere" style="margin-left: 18px">
+
+                </select>
+
+            </div>
+            <div class="form-group">
+                <span style="position: relative;">  &nbsp;在册状态变更原因:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px"></span></span>
+                <select v-model="tChildInfo.chilLeaveremark" disabled class="form-control"  id="chilLeaveremark" name="chilLeaveremark" style="margin-left: 18px">
+
+                </select>
+
+            </div>
+
+            <br/>
+            <br/>
+            <div class="form-group">
+                <span style="position: relative;"> &nbsp;家庭电话:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model="tChildInfo.chilTel" id="chilTel" name="chilTel" style="width: 150px;margin-left: 18px" placeholder="">
+            </div>
+
+            <div class="form-group">
+                <span style="position: relative;"> &nbsp;母亲姓名:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>	<input type="text" class="form-control" v-model="tChildInfo.chilMother" name="chilMother" style="width: 100px;margin-left: 18px" placeholder="">
+
+            </div>
+
+            <div class="form-group" id="chilCommitteeIdParent">
+                <span style="position: relative;"> &nbsp;行政村/居委会:<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px">*</span></span>
+                <select  id="chilCommittee" title="请选择行政村/居委会" data-live-search="true" name="chilCommittee" >
+                </select>
+            </div>
+            <br/>
+            <br/>
+            <div class="form-group">
+                <span style="position: relative;">&nbsp;出生体重(kg):<span  style="color:red;padding-left: 5px;font-size: 20px;position: absolute;margin-top: 6px"></span></span>	<input type="text" class="form-control" v-model="tChildInfo.chilBirthweight" name="chilBirthweight" style="width: 100px;margin-left: 18px" placeholder="">
+
+            </div>
+
+
+
+
+            <div class="form-group">
+                &nbsp;手机:	<input type="text" class="form-control" v-model="tChildInfo.chilMobile" name="chilMobile" style="width: 150px" placeholder="">
+
+            </div>
+            <div class="form-group" id="chilBirthhospitalnameIdParent">
+                <span style="position: relative;margin-right: 9px;">&nbsp;出生医院:<span  style="color:red;margin-left: 2px;font-size: 20px;position: absolute;margin-top: 6px"></span></span>
+                <select   title="请选择出生医院..." name="chilBirthhospitalname"  id="chilBirthhospitalname"  data-live-search="true" >
+                    <!--<option value=""></option>-->
+                </select>
+            </div>
+            <br/>
+            <br/>
+            <div class="form-group">
+                &nbsp;接种证号:	<input type="text" class="form-control" v-model="tChildInfo.chilCardno" name="chilCardno" style="width: 150px" placeholder="">
+
+            </div>
+            <div class="form-group">
+                &nbsp;身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilNo" name="chilNo"  style="width: 200px" placeholder="">
+
+            </div>
+            <div class="form-group">
+                &nbsp;出生证号:	<input type="text" class="form-control" v-model="tChildInfo.chilBirthno" name="chilBirthno" style="width: 150px" placeholder="">
+
+            </div>
+            <br/>
+            <br/>
+
+            <div class="form-group">
+                民族:
+                <select v-model="tChildInfo.chilNatiId" class="form-control"  id="chilNatiId" name="chilNatiId" >
+
+                </select>
+            </div>
+            <div class="form-group">
+                &nbsp;学校:
+                <select v-model="tChildInfo.chilSchool" class="form-control"  id="chilSchool" name="chilSchool" >
+                </select>
+            </div>
+            <div class="form-group">
+                &nbsp;母亲身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilMotherno" name="chilMotherno" style="width: 200px" placeholder="">
+
+            </div>
+
+            <br/>
+            <br/>
+            <div class="form-group">
+                &nbsp;父亲姓名:	<input type="text" class="form-control" v-model="tChildInfo.chilFather" name="chilFather" style="width: 100px" placeholder="">
+
+            </div>
+            <div class="form-group">
+                &nbsp;父亲身份证号:	<input type="text" class="form-control" v-model="tChildInfo.chilFatherno" name="chilFatherno" style="width: 200px" placeholder="">
+
+            </div>
+
+            <br/>
+            <br/>
+
+            <div class="form-group " style="width: 1700px;">
+
+                <div  style ="position:relative">
+                    户籍地址:
+                    <div class="form-group " style="margin-left: 10px;">
+                        <input readonly type ="text" id="hbaddress" data-toggle ="city-picker"   style="  min-width: 360px;">
+                    </div>
+                    <div class="form-group " >
+                        <input type="text" class="form-control"   placeholder="详细地址" id="hbDetailed"  style="width: 300px"/>
+                    </div>
+                </div>
+                <!--<select class="selectpicker" onchange="datacityall($('#Province option:selected').val())" name="Province" id="Province" style="width: 120px">
+                </select>
+
+                (省)
+                <select class="selectpicker" onchange="datavallageall($('#City option:selected').val())" name="City" id="City" style="width: 200px" >
+                </select>
+
+                (市)
+                <select class="selectpicker" onchange="datatownall($('#Village option:selected').val())" name="Village" id="Village" style="width: 200px" >
+                </select>
+
+                (县/区)
+                <select class="selectpicker" name="Twon" id="Twon"  style="width: 200px">
+                </select>
+                (乡镇/街道)-->
+
+                <input type="hidden" class="form-control" v-model="tChildInfo.chilHabiaddress"  placeholder="" id="chilHabiaddress"  />
+
+            </div>
+
+            <br/>
+            <br/>
+
+            <div class="form-group " style="width: 1700px;">
+                <div  style ="position:relative">
+                    现居地址:
+                    <div class="form-group " style="margin-left: 10px;">
+                        <input readonly type ="text" id="nowaddress" data-toggle ="city-picker"    style="  min-width: 360px;">
+                    </div>
+                    <div class="form-group " >
+                        <input type="text" class="form-control"   placeholder="详细地址" id="nowDetailed"  style="width: 300px"/>
+                    </div>
+                </div>
+
+                <!--<select class="selectpicker" onchange="datacityall2($('#Province_home option:selected').val())" name="Province_home" id="Province_home" style="width: 120px" >
+                </select>
+
+                (省)
+                <select class="selectpicker" onchange="datavallageall2($('#City_home option:selected').val())" name="City_home" id="City_home" style="width: 200px" >
+                </select>
+                (市)
+                <select class="selectpicker" onchange="datatownall2($('#Village_home option:selected').val())" name="Village_home" id="Village_home" style="width: 200px" >
+                </select>
+                (县/区)
+                <select class="selectpicker" name="Twon_home" id="Twon_home"  style="width: 200px">
+                </select>
+                (乡镇/街道)
+                <input type="text" class="form-control"   placeholder="详细地址" id="detailed_home"  style="width: 300px"/>-->
+                <input type="hidden" class="form-control" v-model="tChildInfo.chilAddress"  placeholder="" id="chilAddress"  />
+
+            </div>
+
+            <br/>
+            <br/>
+
+            <div class="form-group">
+                &nbsp;备注:	<input type="text" class="form-control" v-model="tChildInfo.remark" name="remark" style="width: 800px" placeholder="">
+
+            </div>
+
+            <br/>
+            <br/>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                &nbsp;&nbsp;				&nbsp;&nbsp;<input type="button" class="btn btn-primary" @click="saveOrUpdate" id="saveOrUpdate" value="确定"/>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                &nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="back" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--补录弹框-->
+<!--
+<div id="myModal" class="tmpl layui-row none" style="overflow-y: auto">
+    <ul id="myTabs" class="nav nav-tabs">
+        &lt;!&ndash;接种记录&ndash;&gt;
+        <li class="active"><a href="#inoculatebl" data-toggle="tab" id="inoculatein">省内补录</a></li>
+        &lt;!&ndash;儿童信息&ndash;&gt;
+        <li><a href="#infos" data-toggle="tab" id="inoculateoutside">外省补录</a></li>
+    </ul>
+    <div id="myTabContents" class="tab-content" style="margin-left: 10px">
+        <div class="tab-pane fade in active" name="div1" id="inoculatebl" style="margin-left: 10px">
+            <div class="tmpl-body row"  style="width: 100%;height: 100%;">
+                    <div class="col-xs-2">
+                        &lt;!&ndash;<div style="float: left;width: 250px;">&ndash;&gt;
+                        <div>
+                            <input type="text" class="form-control" oninput="bioinput()" id="searchName"
+                                   style="width: 100%;float: left;" placeholder="请输入编号或名称查询">
+                        </div>
+                        <div style="width: 100%; margin-top: 40px;">
+                             <table id="BactCode"></table>
+                        </div>
+                    </div>
+                    <div class="col-xs-10">
+                        &lt;!&ndash;<div style="float: right;width:1051px;max-width: 80%">&ndash;&gt;
+                        <table id="historyTable1"></table>
+                    </div>
+            </div>
+        </div>
+        <div class="tab-pane fade in" name="div1" id="infos" style="margin-left: 10px">
+            <table id="outsideInoculate"></table>
+
+        </div>
+    </div>
+    <div class="layui-form-item" style="padding-top: 20px">
+        &lt;!&ndash;<label class="layui-form-label">疫苗类别:</label>&ndash;&gt;
+        <div class="layui-input-block" id="inputbio">
+            <input type="radio" name="empBio" value="1" onclick="searchNames()"  checked><span id="cbio">常用疫苗</span>
+            <input type="radio" name="empBio" value="2" onclick="searchName()" > <span id="abio">全部疫苗</span>
+            <input type="radio" name="empAddress" value="3" onclick="outsideinput()"    > <span id="bsaddress">本接种单位</span>
+            <input type="radio" name="empAddress" value="4"  onclick="outsideinput()" checked > <span id="wsaddress">外省</span>
+                <span id="wsjzdw" style="position: relative">接种单位:</span> <input type="text" id="address"  class="form-control" style="width: 200px;float: right;margin-right: 71%">
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+<div class="modal fade" id="jzdw_myModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            <div class="modal-header form-inline">
+                接种单位
+            </div>
+            <div class="modal-body" >
+                <div class="container">
+                    &lt;!&ndash;<input list="datalist1"  id="makeupCo"  style="width: 200px" class="form-control" onfocus="setfocus(this)" placeholder="请选择或输入"/>&ndash;&gt;
+                    &lt;!&ndash;<datalist  id="datalist1" onchange="changeF(this)" >&ndash;&gt;
+                    &lt;!&ndash;</datalist>&ndash;&gt;
+                    <input type="text" name="makeupCo" id="makeupCo" style="width: 200px" class="form-control" oninput="setinput(this)" onfocus="setfocus(this)" placeholder="请选择或输入"/>
+                    <select name="makeupCoSe"  id="typenum" onchange="changeF(this)" size="10" style="display:none;">
+                    </select>
+                </div>
+            </div>
+            <!--<div class="modal-footer">-->
+                <!--&lt;!&ndash;<input type="button" class="btn btn-primary" id="createFileSureBut11" onclick="colsedialog1(this)"  value="确定"/>&ndash;&gt;-->
+                <!--&lt;!&ndash;<input type="button" class="btn btn-primary" id="createFileSureBut22" onclick="colsedialog2(this)" value="关闭"/>&ndash;&gt;-->
+            <!--</div>-->
+        </div>
+    </div>
+</div>
+
+
+<!--<script type="text/javascript">-->
+<!--document.write("<scr"+"ipt src=\"../statics/js/child/allprovince.js\"></sc"+"ript>")-->
+<!--</script>-->
+<script src="${rc.contextPath}/statics/libs/sockjs.min.js"></script>
+<script src="${rc.contextPath}/statics/libs/stomp.min.js"></script>
+<script src="${rc.contextPath}/statics/js/queue/queue.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/plugins/layui/layui.js"></script>
+<!--<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/addrecord.js"></script>-->
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/createchild.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/updatachild.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/noabnormal.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/monitordialog.js"></script>
+<script src="${rc.contextPath}/statics/js/child/childvalidator.js?_${date.systemTime}"></script>
+<script src="${rc.contextPath}/statics/js/bus/registerAndInoculate.js?_${date.systemTime}"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/mouseoverinocdata.js"></script>
+<script  type="text/javascript" src="${rc.contextPath}/statics/plugins/city/js/city-picker.data.js"></script>
+<script  type="text/javascript" src="${rc.contextPath}/statics/plugins/city/js/city-picker.js"></script>
+<script  type="text/javascript" src="${rc.contextPath}/statics/plugins/city/js/main.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/statics/js/bus/register.js"></script>
+</body>
+
+</html>

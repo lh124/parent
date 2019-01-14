@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<head>
+<title>疫苗运输温度记录表</title>
+#parse("sys/header.html")
+</head>
+<body>
+<div class="tab-pane fade in active" id="ret">
+    <div class="grid-btn" id="content">
+        <form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForm">
+            <div class="form-group">
+                <label >开始时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="startDate" placeholder="开始时间">
+            </div>
+            <div class="form-group">
+                <label >结束时间:</label>
+                <input type="text" class="form-control" style="width: 150px"    id="endDate" placeholder="结束时间" data-date-format="yyyy-mm-dd">
+            </div>
+            <a class="btn btn-warning"  onclick="queryWork()"><i class="fa fa-search" ></i>&nbsp;查询</a>
+            <a class="btn btn-primary"  onclick="workExcel()"><i class="fa fa-arrow-down" ></i>&nbsp;导出</a>
+            <a class="btn btn-primary" onclick="printWork()"><i class="fa fa-print" ></i>&nbsp;打印</a>
+        </form>
+    </div>
+    <div>
+        <h5>疫苗运输情况</h5>
+        <table id="vacTransport"></table>
+    </div>
+    <div>
+        <h5>温度运输情况</h5>
+        <table id="tempTransport"></table>
+    </div>
+</div>
+<script src="${rc.contextPath}/statics/js/report/vac_transport_temp.js?_${date.systemTime}"></script>
+</body>
+</html>

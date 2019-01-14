@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>当前排队</title>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/public.css" media="all">
+    <style>
+        html,body,.container {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            background: #000;
+            overflow: hidden;
+        }
+        .container {
+            position: relative;
+        }
+        .content {
+            position: absolute;
+            width: 70%;
+            left: 50%;
+            top: 50%;
+            margin-left: -35%;
+            margin-top: -300px;
+            text-align: center;
+            color: red;
+        }
+        .pos {
+            font-size: 70px;
+            margin:0  0 50px 0 ;
+            color: red;
+        }
+        .now-msg {
+            margin-bottom: 30px;
+            font-size: 60px;
+            color: #33b457;
+        }
+        dt {
+            font-size: 50px;
+            color: #e2d42e;
+            text-align: left;
+        }
+        dl .now-msg {
+            color: #e2d42e;
+            font-size: 40px;
+        }
+        .waitNum {
+            position: absolute;
+            left: 0;
+            bottom: 40px;
+            width: 100%;
+            text-align: center;
+            color: #33b457;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <p class="pos">一号工作台</p>
+            <div class="now-msg clearfix">
+                <span class="fl">请</span>
+                <span class="order">A0001</span>
+                <span class="name fr">张三</span>
+            </div>
+            <dl class="mt50">
+                <dt class="mb10">等待中：</dt>
+                <dd>
+                    <div class="now-msg clearfix">
+                        <span class="order fl">A0001</span>
+                        <span class="name fr">张三</span>
+                    </div>
+                </dd>
+            </dl>
+
+        </div>
+        <p class="waitNum">
+            等候人数: <i class="num">5</i>人
+        </p>
+    </div>
+</body>
+</html>

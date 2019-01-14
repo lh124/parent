@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrWastageDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrWastageEntity">
+		select * from t_mgr_wastage where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.mgr.TMgrWastageEntity">
+		select * from t_mgr_wastage 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_mgr_wastage 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.mgr.TMgrWastageEntity">
+		insert into t_mgr_wastage
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+
+			<if test="stockInfoId != null and stockInfoId  != ''">`stock_info_id` , </if>
+
+			<if test="type != null">`type` , </if>
+
+			<if test="amount != null">`amount` , </if>
+
+			<if test="personAmount != null">`person_amount` , </if>
+
+			<if test="orgId != null and orgId  != ''">`org_id` , </if>
+
+			<if test="remark != null and remark  != ''">`remark` , </if>
+
+			<if test="applyUser != null and applyUser  != ''">`apply_user` , </if>
+			<if test="createTime != null">`create_time` , </if>
+
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+				<if test="stockInfoId != null and stockInfoId  != ''">#{stockInfoId} , </if>
+
+			<if test="type != null">#{type} , </if>
+
+			<if test="amount != null">#{amount} , </if>
+
+			<if test="personAmount != null">#{personAmount} , </if>
+
+			<if test="orgId != null and orgId  != ''">#{orgId} , </if>
+
+			<if test="remark != null and remark  != ''">#{remark} , </if>
+
+			<if test="applyUser != null and applyUser  != ''">#{applyUser} , </if>
+
+			<if test="createTime != null">#{createTime} , </if>
+
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrWastageEntity">
+		update t_mgr_wastage 
+		<set>
+	        <if test="stockInfoId != null and stockInfoId  != ''">`stock_info_id` = #{stockInfoId}, </if>
+		        <if test="type != null">`type` = #{type} , </if>
+		        <if test="amount != null">`amount` = #{amount} , </if>
+		        <if test="personAmount != null">`person_amount` = #{personAmount} , </if>
+		        <if test="orgId != null and orgId  != ''">`org_id` = #{orgId}, </if>
+		        <if test="remark != null and remark  != ''">`remark` = #{remark}, </if>
+		        <if test="applyUser != null and applyUser  != ''">`apply_user` = #{applyUser}, </if>
+		        <if test="status != null">`status` = #{status} , </if>
+		        <if test="deleteStatus != null">`delete_status` = #{deleteStatus} , </if>
+		        <if test="createTime != null">`create_time` = #{createTime} , </if>
+		        <if test="updateTime != null">`update_time` = #{updateTime} </if>
+			</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_mgr_wastage where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_wastage where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

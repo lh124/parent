@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>批量补录</title>
+    #parse("sys/header.html")
+    <style>
+        body{
+            margin: 0px;
+        }
+        .layui-layer-content{
+             overflow: hidden;
+        }
+        .aStyle{
+            margin-left: 10px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="row" id="selectCondition" style="width: 100%;height: auto;">
+        <div class="col-xs-3">
+            <input type="hidden" id="orgId" value="$shiro.getBaseInfo('orgId')">
+            <select id="times" data-live-search="true" onchange="queryData()">
+            </select>
+            <button class="btn btn-primary" style="margin-top: 5px" onclick="deleteRecord()">删除</button>
+        </div>
+        <div class="col-xs-9">
+            <form id="batchForm" class="form-inline" role="form" autocomplete="off">
+                <div class="form-group">
+                    &nbsp;出生日期:<input type="text" class="form-control"  id="chilBirthdayStart" name="chilBirthdayStart" style="width: 110px" placeholder="">
+                </div>
+                <div class="form-group">
+                    —<input type="text" class="form-control"  id="chilBirthdayEnd" name="chilBirthdayEnd"  style="width: 110px" placeholder="">
+                </div>
+
+                <div class="form-group" id="chilCommitteeIdParent">
+                    &nbsp;居委会/行政村:
+                    <select  class="selectpicker" id="chilCommittees" name="chilCommittees" title=""  multiple data-live-search="true"></select>
+                </div>
+                <div style="margin-top: 8px">
+                <div class="form-group" >
+                    &nbsp;在册情况:
+                    <select  class="selectpicker" id="infostatus" name="infostatus" title=""  multiple data-live-search="true"></select>
+                </div>
+
+                <div class="form-group">
+                    &nbsp;疫苗类别:
+                    <select  class="selectpicker" id="biotypes" name="biotypes" title=""  multiple data-live-search="true"></select>
+                </div>
+                    &nbsp;
+                <a class="btn btn-primary" onclick="query()">查询</a>
+                <a class="btn btn-primary" onclick="reset()">重置</a>
+                </div>
+
+            </form>
+        </div>
+        <div style="margin-left: 15px;">
+            <input class="aStyle" type="file" name="batchInoculate" id="uploadFile"  style="width: 150px;display:none;display: inline"/>
+            <a class="btn btn-primary aStyle" onclick="inputExl()"><i class="fa fa-file-excel-o"></i>&nbsp;导入</a>
+            <a class="btn btn-primary aStyle" onclick="changeChildInfo()" >变更儿童信息</a>
+            <a class="btn btn-primary aStyle" onclick="batchInoculate()" >疫苗补录</a>
+            <a class="btn btn-primary aStyle"  onclick="printTable()">打印</a>
+            <a class="btn btn-primary aStyle" onclick="outputExl()"><i class="fa fa-file-excel-o"></i>&nbsp;导出</a>
+        </div>
+    </div>
+    <div class="row">
+        <table id="batchGrid"></table>
+        <div id="batchGridPage"></div>
+    </div>
+</body>
+<script src="${rc.contextPath}/statics/js/schedule/batchInoculate.js?_${date.systemTime}"></script>
+</html>

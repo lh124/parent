@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.child.TChildAbnormalDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.child.TChildAbnormalEntity">
+		select * from t_child_abnormal where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.child.TChildAbnormalEntity">
+		select
+		abnormal.`id`,
+		`chil_code` ,
+		vac.bio_cn_sortname as `aefi_bact_code`,
+		dict.text as `aefi_code`,
+		`aefi_date`,
+		abnormal.`syncstatus` ,
+		abnormal.`delete_status` ,
+		abnormal.`create_user_id` ,
+		abnormal.`create_user_name`,
+		abnormal.`create_time`,
+		depart.name as org_id
+		from t_child_abnormal abnormal
+		left join sys_dict dict on dict.ttype='code_AEFI' and abnormal.aefi_code = dict.value
+		left join sys_depart depart on depart.id=abnormal.org_id
+		left join t_vac_info vac on vac.bio_code = abnormal.aefi_bact_code
+		<where>
+
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=(select chil_code from  t_child_info where chil_name=#{chilCode}) and abnormal.delete_status = 0
+			</if>
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=#{chilCode} and abnormal.delete_status = 0
+			</if>
+
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_abnormal
+		<where>
+			<if test="chilCode != null and chilCode != ''">
+				or chil_code=(select chil_code from  t_child_info where chil_name=#{chilCode}) and  delete_status = 0
+			</if>
+			<if test="chilCode != null and chilCode.trim() != ''">
+				or chil_code=#{chilCode} and delete_status = 0
+			</if>
+		</where>
+	</select>
+
+	<!--异常反应-->
+	<select id="findAefis" parameterType="string" resultType="Map">
+		SELECT id,chil_code,date_format(aefi_date, '%Y-%m-%d') as  aefi_date,
+		CASE WHEN aefi_code is null THEN '' else aefi_code END as aefi_code,
+		CASE WHEN aefi_bact_code is null THEN '' else aefi_bact_code END as aefi_bact_code
+		from t_child_abnormal
+		WHERE chil_code = #{childCode} and `type` = 0 and syncstatus = 0 and delete_status = 0
+	</select>
+	<insert id="save" parameterType="io.yfjz.entity.child.TChildAbnormalEntity">
+		insert into t_child_abnormal
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+						<if test="chilCode != null">`chil_code` , </if>
+					<if test="aefiBactCode != null">`aefi_bact_code` , </if>
+					<if test="aefiCode != null">`aefi_code` , </if>
+					<if test="aefiDate != null">`aefi_date` , </if>
+					<if test="type != null">`type` , </if>
+					<if test="syncstatus != null">`syncstatus` , </if>
+					<if test="deleteStatus != null">`delete_status` , </if>
+					<if test="createUserId != null">`create_user_id` , </if>
+					<if test="createUserName != null">`create_user_name` , </if>
+					<if test="createTime != null">`create_time` , </if>
+					<if test="orgId != null">`org_id` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						<if test="chilCode != null">#{chilCode} , </if>
+					<if test="aefiBactCode != null">#{aefiBactCode} , </if>
+					<if test="aefiCode != null">#{aefiCode} , </if>
+					<if test="aefiDate != null">#{aefiDate} , </if>
+					<if test="type != null">#{type} , </if>
+					<if test="syncstatus != null">#{syncstatus} , </if>
+					<if test="deleteStatus != null">#{deleteStatus} , </if>
+					<if test="createUserId != null">#{createUserId} , </if>
+					<if test="createUserName != null">#{createUserName} , </if>
+					<if test="createTime != null">#{createTime} , </if>
+					<if test="orgId != null">#{orgId} </if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.child.TChildAbnormalEntity">
+		update t_child_abnormal 
+		<set>
+			<if test="chilCode != null">`chil_code` = #{chilCode}, </if>
+			<if test="aefiBactCode != null">`aefi_bact_code` = #{aefiBactCode}, </if>
+			<if test="aefiCode != null">`aefi_code` = #{aefiCode}, </if>
+			<if test="aefiDate != null">`aefi_date` = #{aefiDate}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="syncstatus != null">`syncstatus` = #{syncstatus}, </if>
+			<if test="deleteStatus != null">`delete_status` = #{deleteStatus}, </if>
+			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
+			<if test="createUserName != null">`create_user_name` = #{createUserName}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="orgId != null">`org_id` = #{orgId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_abnormal where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_abnormal where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

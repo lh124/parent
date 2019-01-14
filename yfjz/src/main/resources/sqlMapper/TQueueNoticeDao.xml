@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.queue.TQueueNoticeDao">
+
+
+	<select id="queryObject" resultType="io.yfjz.entity.queue.TQueueNoticeEntity">
+		select * from t_queue_notice where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.queue.TQueueNoticeEntity">
+		select * from t_queue_notice 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_queue_notice 
+	</select>
+
+	<insert id="save" parameterType="io.yfjz.entity.queue.TQueueNoticeEntity">
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select uuid()
+        </selectKey>
+        insert into t_queue_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+`id`,
+<if test="type != null and type  != ''">`type` , </if>
+<if test="show != null">`show`  , </if>
+<if test="content != null and content  != ''">`content` </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+#{id},
+<if test="type != null and type  != ''">#{type} , </if>
+<if test="show != null">#{show} , </if>
+<if test="content != null and content  != ''">#{content} </if>
+	</trim>
+    </insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.queue.TQueueNoticeEntity">
+		update t_queue_notice 
+		<set>
+	<if test="type != null and type  != ''">`type` = #{type}, </if>
+	<if test="show != null">`show` = #{show} , </if>
+	<if test="content != null and content  != ''">`content` = #{content}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_queue_notice where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_queue_notice where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

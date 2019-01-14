@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>取号</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="${rc.contextPath}/statics/images/favicon.ico">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/public/base.css" media="all">
+    <link rel="stylesheet" href="${rc.contextPath}/statics/css/scan.css" media="all">
+    <script src="${rc.contextPath}/statics/libs/vue.min.js"></script>
+    <script src="${rc.contextPath}/statics/libs/jquery.min.js"></script>
+    <script src="${rc.contextPath}/statics/libs/sockjs.min.js"></script>
+    <script src="${rc.contextPath}/statics/libs/stomp.min.js"></script>
+    <link rel="stylesheet" href="${rc.contextPath}/statics/plugins/layui/css/layui.css" media="all">
+    #parse("sys/header.html")
+</head>
+<body>
+
+<div id="createNumber">
+    <div class="scan-tips"></div>
+    <div class="content">
+        <h2>请扫码取号</h2>
+        <button id="button" @click="getNumber">取号</button>
+    </div>
+</div>
+</body>
+<script>
+    var createNumberVm = new Vue({
+        el:'#createNumber',
+        data:function(){
+            var self = this;
+            return{
+                client:(function(){
+                    return self.init(self.host,self.type)
+                })()
+            }
+        },
+        methods:{
+            //初始化stompClient
+            init:function(host){
+                if(this.client && this.client.connected){
+                    return;
+                }
+                var client=Stomp.client("$shiro.getBaseInfo('queuer.host')");
+                client.connect({},host,this.connected_cb,this.disconnect_cb);
+                return client;
+            },
+            //连接成功的回调函数
+            connected_cb:function(frame){
+                this.subscribe(this.type)
+            },
+            //失去连接或连接失败的回调
+            disconnect_cb:function(){
+                this.client = null;
+                this.client = this.init(this.host,this.type);
+            },
+            //订阅
+            subscribe:function(topic){
+                this.client.subscribe('/topic/yfjz.>',this.onMessage,{});
+            },
+            //消息处理
+            onMessage:function(frame){
+                var self = this;
+                var msg = JSON.parse(frame.body);
+                switch (msg.action){
+                    case "CALL":
+                        if(msg.step == 'register'){
+                            if(typeof extools !== 'undefined'){
+                                extools.tts("请"+msg.noText+"号，"+(msg.childName==null?"":msg.childName)+"。到"+target.data.towerName+"登记");
+                            }
+                        }else if(msg.step == 'inoculate'){
+                            if(typeof extools !== 'undefined'){
+                                extools.tts("请"+msg.noText+"号，"+(msg.childName==null?"":msg.childName)+"。到"+target.data.towerName+"接种");
+                            }
+                        }else if(msg.step == 'precheck'){
+                            if(typeof extools !== 'undefined'){
+                                extools.tts("请"+msg.noText+"号，"+(msg.childName==null?"":msg.childName)+"。到"+target.data.towerName+"预检");
+                            }
+                        }else if(msg.step == 'healthcare'){
+                            if(typeof extools !== 'undefined'){
+                                extools.tts("请"+msg.noText+"号，"+(msg.childName==null?"":msg.childName)+"。到"+target.data.towerName+"体检");
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            },
+            copy:function(source) {
+                return JSON.parse(JSON.stringify(source));
+            },
+            getNumber:function(){
+                $.get("createNo", function(result){
+                    if(result.code == 0){
+                        if(typeof extools !== 'undefined') {
+                            extools.tts("您的号码是\"" + result.noText + "\",请到大厅等候!");
+                        }
+                    }else{
+                        layer.msg(result.msg);
+                    }
+                });
+            }
+
+        },
+
+    })
+</script>
+</html>

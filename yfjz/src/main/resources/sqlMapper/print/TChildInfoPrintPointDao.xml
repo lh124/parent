@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.print.TChildInfoPrintPointDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.print.TChildInfoPrintPointEntity">
+		select * from t_child_info_print_point where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.print.TChildInfoPrintPointEntity">
+		select * from t_child_info_print_point 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryListMap" resultType="java.util.HashMap">
+		select * from t_child_info_print_point
+		<where>
+			<if test="printType!=null">
+				printType = #{printType}
+			</if>
+		</where>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_child_info_print_point 
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.print.TChildInfoPrintPointEntity">
+		insert into t_child_info_print_point
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+	        `id`,
+		
+				            <if test="childProperties != null and childProperties  != ''">`child_properties` , </if>
+			
+				            <if test="propertiesX != null and propertiesX  != ''">`properties_X` , </if>
+			
+				            <if test="propertiesY != null and propertiesY  != ''">`properties_Y` , </if>
+			
+				            <if test="printtype != null and printtype  != ''">`printType` , </if>
+			
+				            <if test="status != null">`status` , </if>
+			
+				            <if test="deleteStatus != null">`delete_status` , </if>
+			
+				            <if test="createTime != null">`create_time` , </if>
+			
+				            <if test="updateTime != null">`update_time` </if>
+			
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+	        uuid(),
+						            <if test="childProperties != null and childProperties  != ''">#{childProperties} , </if>
+		
+					            <if test="propertiesX != null and propertiesX  != ''">#{propertiesX} , </if>
+		
+					            <if test="propertiesY != null and propertiesY  != ''">#{propertiesY} , </if>
+		
+					            <if test="printtype != null and printtype  != ''">#{printtype} , </if>
+		
+					            <if test="status != null">#{status} , </if>
+		
+					            <if test="deleteStatus != null">#{deleteStatus} , </if>
+		
+					            <if test="createTime != null">#{createTime} , </if>
+		
+					            <if test="updateTime != null">#{updateTime} </if>
+		
+			</trim>
+	</insert>
+	 
+	<!--<update id="update" parameterType="io.yfjz.entity.print.TChildInfoPrintPointEntity">
+		update t_child_info_print_point 
+		<set>
+	        <if test="childProperties != null and childProperties  != ''">`child_properties` = #{childProperties}, </if>
+		        <if test="propertiesX != null and propertiesX  != ''">`properties_X` = #{propertiesX}, </if>
+		        <if test="propertiesY != null and propertiesY  != ''">`properties_Y` = #{propertiesY}, </if>
+		        <if test="printtype != null and printtype  != ''">`printType` = #{printtype}, </if>
+		        <if test="status != null">`status` = #{status} , </if>
+		        <if test="deleteStatus != null">`delete_status` = #{deleteStatus} , </if>
+		        <if test="createTime != null">`create_time` = #{createTime} , </if>
+		        <if test="updateTime != null">`update_time` = #{updateTime} </if>
+			</set>
+		where id = #{id}
+	</update>-->
+	<!--修改儿童信息坐标-->
+	<update id="update"  parameterType="java.util.HashMap">
+		update t_child_info_print_point
+		<set>
+			<!--<if test="bio_name != null and bio_name != ''" >
+				CNAME = #{CNAME},
+			</if>-->
+			<if test="properties_X != null and properties_X != ''">
+				properties_X = #{properties_X},
+			</if>
+			<if test="properties_Y != null and properties_Y != ''">
+				properties_Y = #{properties_Y},
+			</if>
+
+		</set>
+		where child_properties =  #{child_properties} and printType = #{printType}
+	</update>
+	
+	<delete id="delete">
+		delete from t_child_info_print_point where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_child_info_print_point where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

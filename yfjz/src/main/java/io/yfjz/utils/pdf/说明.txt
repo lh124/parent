@@ -1,0 +1,12 @@
+1.在jasperreports.properties文件中配置生成的源文件存放地址，填写地址时把正斜线替换成反斜线，统一存放到reports文件夹下面
+例如：src_path=D:/jytcProject/newYfjz20180907/yfjz/src/main/webapp/reports
+2.调用方法
+PDFUtils.commonPrintPDF(request,response,"vaccineChange",columns,list,excelTite);
+参数：HttpServletRequest request, HttpServletResponse response, String fileName, String[] namesArray, List list, String tableName
+3.参数说明
+request：HttpServletRequest对象
+response：HttpServletResponse对象
+fileName：生成的jrxml文件名称
+namesArray：列名和属性名 传入String数组，例如：{ "疫苗/产品名称,productName","生产厂家,factoryName", "批号,batchnum"}
+list：List数据集合
+tableName：报表的标题 如： ‘XX统计报表’

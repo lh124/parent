@@ -1,0 +1,260 @@
+/**
+ * @作者： 贝国刚
+ * @日期： 2016年10月24日, AM 11:33:37
+ */
+@charset "utf-8";
+
+*{padding: 0;margin: 0;font-family: "微软雅黑";}
+ul, ol{list-style: none;}
+a{text-decoration: none;}
+/*===========================顶部logo=============================*/
+.header{
+	background: -webkit-linear-gradient(left,#1957ab,#0581fd, #1957ab,#1957ab); /* Safari 5.1 - 6.0 */
+	  background: -o-linear-gradient(left,#1957ab,#0581fd, #1957ab,#1957ab); /* Opera 11.1 - 12.0 */
+	  background: -moz-linear-gradient(left,#1957ab,#0581fd, #1957ab,#1957ab); /* Firefox 3.6 - 15 */
+	  background: linear-gradient(left,#1957ab,#0581fd, #1957ab,#1957ab); /* 标准的语法 */
+	  overflow: hidden;
+}
+.header h1{font-size:18px;color:#fff;line-height: 50px;}
+#logo{
+	float: left;
+	width: 80px;
+	
+}
+#logo >img{
+	height: 40px;
+	margin: 5px;
+}
+
+/*工具栏*/
+#toptool{
+	height: 50px;
+	width: 540px;
+	position: absolute;
+	top: 0;right: 0;
+}
+#toptool >li{
+	float: left;
+	width: 75px;
+	height: 50px;
+	margin-left: 28px;
+	line-height: 50px;
+	font-size: 14px;
+	color: #f5f5f5;
+	padding: 0 5px;
+	position: relative;
+}
+#toptool li:hover ul{
+	display: block;
+	/*color: #1957ab;
+	cursor: pointer;
+	background: #ACD6EC;*/
+}
+#toptool li.userinfo{width: 160px;}
+#toptool li.info,
+#toptool li.setup{width: 70px;}
+#toptool li.exit:hover{
+	cursor: pointer;
+	font-weight: bold;
+}
+#toptool li span.icon{
+	float: left;
+	width: 20px;
+	height: 20px;
+	line-height: 50px;
+	margin-top: 15px;
+	background: url('img/index_top.png')no-repeat left center;
+}
+#toptool li span.l{
+	float: right;
+	width: 10px;
+	height: 15px;
+	line-height: 50px;
+	margin-top: 15px;
+	background: url('img/index_top.png')no-repeat left center;
+	background-position: -95px -14px;
+}
+#toptool li.userinfo span.icon{
+	background-position: -69px -11px;
+}
+#toptool li.info span.icon{
+	background-position: -124px -14px;
+}
+#toptool li.setup span.icon{
+	background-position: -152px -14px;
+}
+#toptool li.exit span.icon{
+	background-position: -184px -14px;
+}
+/**  下拉样式*/
+#toptool li ul{
+	display: none;
+	width: 150px;
+	text-align: center;
+	position: fixed;
+	top: 40px;
+	right: 84px;
+	z-index: 999;
+	border: 1px solid #1957ab;
+	background: url(img/q.png)no-repeat center 0px ;
+	background-size: 15px;
+	padding-top: 9px;
+}
+#toptool li ul li{
+	height: 30px;
+	line-height: 30px;
+	background-color: #ACD6EC;
+}
+/* #toptool li ul li:hover{
+	background-color: #1957ab;
+} */
+#toptool li ul li a{
+	color: #1957ab;
+}
+#toptool li ul li:hover a{
+	/*color: #1957ab;*/
+	font-weight: bold;
+	text-decoration: underline;
+}
+/**   风格切换*/
+#style{
+	width: 600px;
+	height: 400px;
+	position: relative;
+}
+#style ul li{
+	float: left;
+	width: 90px;
+	height: 100px;
+	margin:10px ;
+	border: 1px solid transparent;
+	padding: 5px;
+	position: relative;
+	z-index: 10;
+}
+#style ul li.cur span.check{
+	position: absolute;
+	top: 0;right: 0;
+	width: 25px;
+	height: 25px;
+	z-index: 9999;
+	background:#63B63A url(img/check.png)no-repeat;
+	background-size: 25px;
+	box-shadow:  0 0 5px #000;
+}
+#style ul li:hover{
+	border: 1px solid #ccc;
+}
+#style ul li div{
+	width: 100px;
+	height: 100px;
+	position: relative;
+	
+}
+#style ul li img{
+	width: 100%;
+	height: 100%;
+	
+}
+#style ul li p{
+	text-align: center;
+}
+
+/*===========================首页导航菜单=============================*/
+.list {
+	width: 100%;
+	height: 100%;
+	background-color: #f3f3f3;
+}
+.list ul li {
+	border-bottom: 0;
+}
+.list ul li a.one{
+	border-top:1px solid #ccc;
+	color: #323232;
+	background: url(img/btn2.png);
+}
+.list ul li:last-child a.one{
+	border-bottom:1px solid #ccc;
+}
+.list ul li a.click{
+	color: #fff;
+	background: url(img/btn.png);
+}
+.list ul li a.click2{
+	color: #fff;
+	background-color: #68b0f9;
+}
+.list ul li a {
+	padding-left: 10px;
+	color: #333;
+	font-size: 14px;
+	display: block;
+	font-weight: bold;
+	height: 36px;
+	line-height: 36px;
+	position: relative;
+}
+.list ul li ul{display: none;width: 100%;overflow-y: auto;}
+
+.list ul li ul li ul {
+	display: none;
+	width: 100%;
+	overflow-y: auto;
+	background-color: #f3f3f3;
+}
+
+.list ul li ul li a{ }
+.list ul li ul li ul li .nbsp {width: 35px;  }
+.last{ background-color:#d6e6f1;  }
+.list ul li ul li ul li a{ color:#323232;}
+.icon {
+	float: left;
+	width: 20px;
+	height: 20px;
+	line-height: 30px;
+	margin: 10px 2px 5px 5px;
+	position: relative;
+	z-index: 999;
+}
+.nbsp{
+	float: left;
+	width: 20px;
+	height: 1px;
+}
+a:hover{
+	text-decoration: underline;
+}
+/*===========================子菜单，悬浮块=============================*/
+.nav-list{
+	border: 1px solid #acd6ec;
+	width: 200px;
+	border-radius: 3px;
+	background-color: #fcfeff;
+	text-align: center;
+	margin-top:100px ;
+	margin-left: 80px;
+}
+.nav-list ul li{
+	margin: 24px;
+}
+.nav-list ul li>a{
+	border: 1px solid transparent;
+	display: block;
+	border-radius: 3px;
+}
+.nav-list ul li>a.cur,
+.nav-list ul li>a:hover{
+	border: 1px solid #ccc;
+}
+.nav-list>h2{
+	background-color: #acd6ec;
+	font-size: 16px;
+	padding: 5px;
+	color: #0d284e;
+	text-align: left;
+}
+.nav-list p{
+	font-size: 16px;
+	color: #666;
+}

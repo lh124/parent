@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.sys.ScheduleJobLogDao">
+    <select id="queryObject" resultType="io.yfjz.entity.sys.ScheduleJobLogEntity" >
+		select * from schedule_job_log where log_id = #{value}
+	</select>
+
+    <select id="queryList" resultType="io.yfjz.entity.sys.ScheduleJobLogEntity" >
+        select * from schedule_job_log
+        <where>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+        </where>
+        order by log_id desc
+        <if test="offset != null and limit != null ">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(1) from schedule_job_log
+        <where>
+            <if test="jobId != null">
+                and job_id = #{jobId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="io.yfjz.entity.sys.ScheduleJobLogEntity">
+		insert into schedule_job_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobId != null">job_id,</if>
+            <if test="beanName != null">bean_name,</if>
+            <if test="methodName != null">method_name,</if>
+            <if test="params != null">params,</if>
+            <if test="status != null">status,</if>
+            <if test="error != null">error,</if>
+            <if test="times != null">times,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobId != null">#{jobId},</if>
+            <if test="beanName != null">#{beanName},</if>
+            <if test="methodName != null">#{methodName},</if>
+            <if test="params != null">#{params},</if>
+            <if test="status != null">#{status},</if>
+            <if test="error != null">#{error},</if>
+            <if test="times != null">#{times},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+	</insert>
+
+</mapper>

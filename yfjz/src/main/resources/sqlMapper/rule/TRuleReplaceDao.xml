@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.rule.TRuleReplaceDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.rule.TRuleReplaceEntity">
+		select * from t_rule_replace where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.rule.TRuleReplaceEntity">
+		select * from t_rule_replace WHERE 1=1
+		<if test="consultId != null and consultId != ''">
+			AND plan_consult_id = #{consultId}
+		</if>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_rule_replace  WHERE 1=1
+		<if test="consultId != null and consultId != ''">
+			AND plan_consult_id = #{consultId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="io.yfjz.entity.rule.TRuleReplaceEntity">
+		insert into t_rule_replace
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		id,
+				<if test="planConsultId != null">`plan_consult_id` , </if>
+				<if test="bioClassId != null">`bio_class_id` , </if>
+				<if test="agentTimes != null">`agent_times` , </if>
+				<if test="replaceType != null">`replace_type` , </if>
+				<if test="endMonth != null">`end_month` , </if>
+				<if test="startMonth != null">`start_month` , </if>
+				<if test="intervalDay != null">`interval_day` </if>
+			</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		uuid(),
+				<if test="planConsultId != null">#{planConsultId} , </if>
+				<if test="bioClassId != null">#{bioClassId} , </if>
+				<if test="agentTimes != null">#{agentTimes} , </if>
+				<if test="replaceType != null">#{replaceType} , </if>
+				<if test="endMonth != null">#{endMonth} , </if>
+				<if test="startMonth != null">#{startMonth} , </if>
+				<if test="intervalDay != null">#{intervalDay} </if>
+			</trim>
+	</insert>
+	 
+	<update id="update" parameterType="io.yfjz.entity.rule.TRuleReplaceEntity">
+		update t_rule_replace 
+		<set>
+			<if test="planConsultId != null">`plan_consult_id` = #{planConsultId}, </if>
+			<if test="bioClassId != null">`bio_class_id` = #{bioClassId}, </if>
+			<if test="agentTimes != null">`agent_times` = #{agentTimes}, </if>
+			<if test="replaceType != null">`replace_type` = #{replaceType}, </if>
+			<if test="endMonth != null">`end_month` = #{endMonth}, </if>
+			<if test="startMonth != null">`start_month` = #{startMonth}, </if>
+			<if test="intervalDay != null">`interval_day` = #{intervalDay}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_rule_replace where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_rule_replace where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+<!-- 根据月龄查询还未到达接种月龄的疫苗ID -->
+	<select id="selectNotInoculateBioId" resultType="java.lang.String">
+		SELECT
+			DISTINCT bio_class_id
+		FROM
+			t_rule_replace
+		WHERE
+			start_month <![CDATA[>]]> #{moonAge}
+		AND bio_class_id NOT IN (
+			SELECT
+				bio_class_id
+			FROM
+				t_rule_replace
+			WHERE
+				start_month <![CDATA[<=]]> #{moonAge}
+		)
+	</select>
+	<select id="selectReplaceCode" parameterType="java.util.HashMap" resultType="java.lang.String">
+		SELECT DISTINCT
+		bio_class_id
+		FROM
+		t_rule_replace
+		WHERE
+		plan_consult_id = (
+			SELECT
+			id
+			FROM
+			t_rule_plan_consult
+			WHERE
+			class_id = #{classId}
+			AND injection_times = #{times}
+		)
+		<if test="monthAge != null">
+			AND start_month <![CDATA[ <= ]]> #{monthAge}
+			AND end_month <![CDATA[ >= ]]> #{monthAge}
+		</if>
+		;
+	</select>
+</mapper>

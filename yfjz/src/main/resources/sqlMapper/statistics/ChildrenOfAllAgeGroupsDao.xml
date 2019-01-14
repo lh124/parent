@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.ChildrenOfAllAgeGroupsDao">
+    
+    <select id="queryChildrenOfAllAgeGroups" resultType="Map">
+        SELECT
+        inf.chil_birthday,
+        inf.chil_here ,
+        YEAR ( from_days( datediff( now( ), inf.chil_birthday ) ) ) as age,
+        inf.chil_committee,
+        com.name,
+        count(1) as quantity
+        FROM
+        t_child_info inf  right join
+        t_base_committee com on com.code = inf.chil_committee
+        WHERE
+        inf.chil_here IN
+        <foreach item="value" index="index" collection="here" open="(" separator="," close=")">
+            #{value}
+        </foreach>
+        AND YEAR ( from_days( datediff(
+        <choose>
+            <when test="data != null">
+                #{data}
+            </when>
+            <otherwise>
+                now( )
+            </otherwise>
+        </choose>
+        , inf.chil_birthday ) ) ) <![CDATA[ <= ]]>  6
+        and inf.delete_status = '0'
+        <if test="committee != null">
+            and chil_committee IN
+            <foreach item="value" index="index" collection="committee" open="(" separator="," close=")">
+                #{value}
+            </foreach>
+        </if>
+        group by chil_committee,age
+    </select>
+
+    <!-- 根据建卡时间范围查询出生医院和月龄儿童数量 -->
+    <select id="queryCountJianKaChilQuantity" resultType="Map">
+        SELECT
+            TIMESTAMPDIFF( MONTH, inf.chil_birthday, DATE_FORMAT( now( ), '%Y-%m-%d' ) ) AS months,
+            ifnull(inf.chil_birthhospital,"") as chil_birthhospital,
+            ifnull(hos.hospital_name,inf.chil_birthhospital) as hospital_name,
+            count( 1 ) AS quantity
+        FROM
+            t_child_info inf
+            LEFT JOIN t_base_hospital hos ON hos.hospital_code = inf.chil_birthhospital
+        WHERE
+            inf.delete_status = '0'
+            AND inf.create_card_time BETWEEN #{startDate} AND #{endDate}
+        GROUP BY
+            inf.chil_birthhospital,months
+
+    </select>
+    <!--/*AND inf.create_card_time BETWEEN DATE_FORMAT(#{startDate}, '%Y-%m-%d')  AND DATE_FORMAT(#{endDate}, '%Y-%m-%d')*/-->
+
+    <!-- 根据建卡时间查询统计 卡介苗和乙肝疫苗 第一剂接种数 -->
+    <select id="queryCountJianKanChilTheFirstDose" resultType="Integer">
+        SELECT
+        count( 1 ) AS num
+        FROM
+        t_child_info inf
+        LEFT JOIN t_rule_plan plan ON plan.child_id = inf.chil_code
+        AND plan.injection_times = '1'
+        AND inf.delete_status = '0'
+        WHERE
+        inf.chil_birthhospital = #{chil_birthhospital}
+        AND plan.state <![CDATA[ <> ]]> '0'
+        AND inf.create_card_time BETWEEN #{startDate}  AND #{endDate}
+         AND plan.class_id = '5e9730f69ea111e7833e00ffc8c43f74'
+    </select>
+    <!-- 根据建卡时间查询统计 卡介苗和乙肝疫苗 及时接种数 -->
+    <select id="queryCountJianKanChilTimelyVaccination" resultType="Integer">
+        SELECT
+        count( 1 ) AS num
+        FROM
+        t_child_info inf
+        LEFT JOIN t_rule_plan plan ON plan.child_id = inf.chil_code
+        AND plan.injection_times = '1'
+        AND inf.delete_status = '0'
+        WHERE
+        inf.chil_birthhospital = #{chil_birthhospital}
+        AND plan.state  = '2'
+        AND inf.create_card_time BETWEEN #{startDate}  AND #{endDate}
+        AND plan.class_id = '5e9730f69ea111e7833e00ffc8c43f74'
+    </select>
+
+</mapper>

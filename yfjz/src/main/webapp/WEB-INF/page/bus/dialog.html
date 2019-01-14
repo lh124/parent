@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--登记弹框-->
+
+<div id="dj_myModal1" class="tmpl layui-row none" style="overflow-y: auto">
+    <div class="tmpl-body"  >
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">未登记人数</p>
+        <table id="dj_content1"></table>
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">已登记人数</p>
+        <table id="dj_content2"></table>
+    </div>
+</div>
+
+<!--接种弹框-->
+
+<div id="jz_myModal2" class="tmpl layui-row none" >
+    <div class="tmpl-body"  >
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">未接种人数</p>
+        <table id="jz_content3"></table>
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">已接种人数</p>
+        <!--<div class="re-wid">-->
+        <table id="jz_content4"></table>
+        <!--</div>-->
+    </div>
+</div>
+
+<!--留观-->
+<div id="lg_myModal5" class="tmpl layui-row none" style="overflow-y: auto">
+    <div class="tmpl-body"  >
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">已留观人数</p>
+        <table id="lg_content5"></table>
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">未留观人数</p>
+        <table id="lg_content6"></table>
+    </div>
+</div>
+<!--预检-->
+<div id="yj_myModal4" class="tmpl layui-row none" style="overflow-y: auto">
+    <div class="tmpl-body"  >
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">未预检人数</p>
+        <table id="yj_content8"></table>
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">已完成预检人数</p>
+        <table id="yj_content10"></table>
+    </div>
+</div>
+<!--儿保-->
+
+<div id="eb_myModal3" class="tmpl layui-row none" style="overflow-y: auto">
+    <div class="tmpl-body"  >
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">待儿保人数</p>
+        <table id="eb_content7"></table>
+        <p class="pl30 pr30 pt10 pb10 bg-f2f2f2">已完成儿保人数</p>
+        <table id="eb_content9"></table>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="myModal_here" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 300px;margin-top: 341px;height: 200px">
+            <div class="modal-header" style="background-color: #37B083;height: 38px;">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">变更原因</h4>
+            </div>
+            <div class="modal-body" style="padding:0px"><textarea  id="updataReason"  style="height: 95px;width: 289px;"></textarea></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnReason">提交更改</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="myModal_here1" class="tmpl layui-row none" style="overflow-y: auto">
+    <div class="tmpl-body"  >
+        <textarea  id="updataReason1" style="line-height: 1.5;height: 95px;width: 289px;"  rows="3" cols="25"></textarea>
+    </div>
+</div>
+
+</body>
+</html>

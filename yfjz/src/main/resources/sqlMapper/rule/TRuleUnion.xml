@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.rule.TRuleUnionDao">
+	
+ 	<select id="queryTotalByBioTime" resultType="int" parameterType="java.util.HashMap">
+		select count(*) from t_child_inoculate
+		WHERE
+		chil_code = #{childId}
+		AND delete_status = 0 <!-- 排除已删除的 -->
+		<if test="startTime != null">
+			AND inoc_date <![CDATA[ >= ]]>#{startTime}
+		</if>
+		<if test="endTime != null">
+			AND inoc_date <![CDATA[ < ]]>#{endTime}
+		</if>
+		AND (inoc_union_code is null or inoc_union_code='') <!-- 排除替代疫苗 -->
+		<if test="property == null">
+			AND (inoc_property = 0 or inoc_property = 1)<!-- 基础和加强针 -->
+		</if>
+		AND inoc_bact_code IN
+		<foreach collection="bios" item="item" index="index"   open="(" close=")" separator=",">
+	        #{item}
+	    </foreach>;
+	</select>
+	<!-- 按儿童接种时间排序，根据查询条件取出第n条接种记录 -->
+ 	<select id="queryInoByBioTime" resultType="io.yfjz.entity.rule.ChildInoData" parameterType="java.util.HashMap">
+		select id,
+		chil_code as chilCode,
+		inoc_bact_code as inocBactCode,
+		inoc_time as inocTime,
+		inoc_date as inocDate,
+		inoc_opinion as inocOpinion,
+		inoc_regulatory_code as inocRegulatoryCode
+		from t_child_inoculate 
+		WHERE
+			chil_code = #{childCode} 
+		AND delete_status = 0 <!-- 排除已删除的 -->
+		<if test="startTime != null">
+			AND inoc_date <![CDATA[ >= ]]>#{startTime}
+		</if>
+		<if test="endTime != null">
+			AND inoc_date <![CDATA[ < ]]>#{endTime}
+		</if>
+		AND (inoc_union_code is null or inoc_union_code='') <!-- 排除替代疫苗 -->
+		AND (inoc_property = 0 or inoc_property = 1)<!-- 基础和加强针 -->
+		AND inoc_bact_code IN 
+		<foreach collection="bios" item="item" index="index"   open="(" close=")" separator=",">
+	        #{item}
+	    </foreach>
+	    ORDER BY inoc_date ASC 
+	    limit ${n},1;
+	</select>
+
+<!-- 获取儿童信息 -->
+	<select id="getChildByCode" resultType="io.yfjz.entity.rule.ChildData">
+		SELECT
+			chil_code AS chilCode,
+			chil_name AS chilName,
+			chil_sex AS chilSex,
+			chil_birthday AS chilBirthday,
+			chil_committee AS committee
+		FROM
+			t_child_info
+		WHERE
+			chil_code = #{childCode}
+	</select>
+	<!-- 获取最后插入的儿童信息 -->
+	<select id="getLastCreateChild" resultType="io.yfjz.entity.rule.ChildData">
+		SELECT
+			chil_code AS chilCode,
+			chil_name AS chilName,
+			chil_sex AS chilSex,
+			chil_birthday AS chilBirthday,
+			chil_committee AS committee
+		FROM
+			t_child_info
+		ORDER BY create_time DESC
+		LIMIT 1
+	</select>
+<!-- 获取全部正常儿童信息 -->
+	<select id="getAllChild" resultType="io.yfjz.entity.rule.ChildData">
+		SELECT
+			chil_code AS chilCode,
+			chil_name AS chilName,
+			chil_sex AS chilSex,
+			chil_birthday AS chilBirthday
+		FROM
+			t_child_info
+		WHERE
+			`delete_status` = 0
+	</select>
+	<!-- 获取未初始化儿童信息 -->
+	<select id="getNoPlanChildsByPage" resultType="io.yfjz.entity.rule.ChildData">
+		SELECT
+			chil_code AS chilCode,
+			chil_name AS chilName,
+			chil_sex AS chilSex,
+			chil_birthday AS chilBirthday
+		FROM
+			t_child_info
+		WHERE
+			`delete_status` = 0
+			AND  NOT EXISTS (SELECT child_id FROM t_rule_plan WHERE t_child_info.chil_code = t_rule_plan.child_id)
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	<!-- 获取未初始化的儿童数 -->
+	<select id="queryNoPlanChildsTotal" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			t_child_info
+		WHERE
+			`delete_status` = 0
+			AND NOT EXISTS (SELECT child_id FROM t_rule_plan WHERE t_child_info.chil_code = t_rule_plan.child_id)
+	</select>
+	<!-- 获取未初始化的儿童数 -->
+	<select id="queryChildsTotal" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			t_child_info
+		WHERE
+			`delete_status` = 0
+	</select>
+	<!--根据条件获取满足条件的所有儿童信息-->
+	<select id="getAllChildsByCondition" resultType="io.yfjz.entity.rule.ChildData" parameterType="java.util.HashMap">
+		SELECT
+			chil_code AS chilCode,
+			chil_name AS chilName,
+			( CASE  info.chil_sex WHEN '1' THEN '男' ELSE '女' END) AS chilSex,
+			chil_birthday AS chilBirthday,
+			(SELECT `name` FROM t_base_committee WHERE `code` = info.chil_committee limit 1) AS committee,
+			chil_father AS fatherName,
+			chil_mother AS matherName,
+			chil_tel AS chilTel,
+			chil_mobile AS chilMobile,
+			chil_address AS address,
+		    chil_here AS chilHere
+
+		FROM
+			t_child_info info
+		WHERE
+			`delete_status` = 0
+		<if test="chilBirthdayStart != null">
+			AND TO_DAYS(chil_birthday) <![CDATA[ >= ]]> TO_DAYS( #{chilBirthdayStart})
+		</if>
+		<if test="chilSex != null and chilSex != ''">
+			and chil_sex = #{chilSex}
+		</if>
+		<if test="chilBirthdayEnd != null">
+			AND TO_DAYS(chil_birthday) <![CDATA[ <= ]]> TO_DAYS( #{chilBirthdayEnd})
+		</if>
+		<if test="chilResidence != null">
+			AND chil_residence = #{chilResidence}
+		</if>
+		<if test="chilAccount != null">
+			AND chil_account = #{chilAccount}
+		</if>
+		<if test="chilSchool != null">
+			AND chil_school = #{chilSchool}
+		</if>
+		<if test="curdepartment != null">
+			AND chil_curdepartment = #{curdepartment}
+		</if>
+		<if test="chilCommittees != null">
+			AND chil_committee IN
+			<foreach collection="chilCommittees" item="committee" index="index" open="(" close=")" separator=",">
+				#{committee}
+			</foreach>
+		</if>
+		<if test="infostatus != null">
+			AND chil_here IN
+			<foreach collection="infostatus" item="infostatu" index="index" open="(" close=")" separator=",">
+				#{infostatu}
+			</foreach>
+		</if>
+		ORDER BY chil_committee,chil_birthday asc ;
+	</select>
+
+	<select id="getRandomChildCode" parameterType="java.util.HashMap" resultType="java.lang.String">
+		SELECT
+		child.chil_code
+		FROM
+		t_child_info child
+		WHERE
+		`delete_status` = 0
+		<if test="chilCommittees != null">
+			AND child.chil_committee IN
+			<foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<!-- 个案状态 -->
+		<if test="infostatus != null">
+			and  child.chil_here IN
+			<foreach collection="infostatus" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		<if test="chilBirthdayStart != null and chilBirthdayEnd != null ">
+			<![CDATA[ AND (TO_DAYS(child.chil_birthday) <=  TO_DAYS(#{chilBirthdayEnd})   AND   TO_DAYS(child.chil_birthday) >=  TO_DAYS(#{chilBirthdayStart}) )   ]]>
+		</if>
+		<if test="chilResidence != null and chilResidence != ''">
+			and child.chil_residence =#{chilResidence}
+		</if>
+		<if test="chilAccount != null and chilAccount != ''">
+			AND child.chil_account = #{chilAccount}
+		</if>
+		<if test="curdepartment != null">
+			AND child.chil_curdepartment = #{curdepartment}
+		</if>
+
+		<if test="limit != null">
+			ORDER BY  ROUND(((select count(*) from t_child_info)-#{limit})*RAND()) limit #{limit}
+		</if>
+
+	</select>
+	<!--查询库存有的，儿童没有接种过的二类苗-->
+	<select id="getBio2ByStock" parameterType="java.util.HashMap" resultType="java.util.Map">
+		SELECT
+			base.fk_vaccine_code AS code,
+			base.batchnum AS batchnum
+		FROM
+			t_mgr_stock_info info
+			LEFT JOIN t_mgr_stock_base base ON info.fk_base_info = base.id
+		WHERE
+			base.type = 0
+			AND base.STATUS = 0
+			AND to_days( base.expiry_date ) > to_days( now())
+			AND info.person_amount > 0
+		<if test="bios != null">
+			AND base.fk_vaccine_code IN
+			<foreach collection="bios" item="item" index="index"   open="(" close=")" separator=",">
+				#{item}
+			</foreach>
+		</if>
+		  AND base.fk_vaccine_code NOT IN(SELECT inoc_bact_code FROM t_child_inoculate WHERE delete_status=0 AND chil_code = #{childCode})
+		LIMIT 1
+	</select>
+</mapper>

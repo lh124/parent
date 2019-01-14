@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+<title>儿童全程服务记录统计</title>
+#parse("sys/header.html")
+    <style>
+        .myBody{
+            padding: 15px 20px;
+        }
+    </style>
+</head>
+<body class="myBody">
+<div class="tab-pane fade in active" id="ret">
+    <div class="grid-btn" id="content">
+        <form class="form-inline" style="margin-top: 10px;margin-bottom: 10px"  id="searchForm">
+            <div class="form-group">
+                <label >开始时间:</label>
+                <input type="text" class="form-control" style="width: 150px" id="startDate" placeholder="开始时间">
+            </div>
+            <div class="form-group">
+                <label >结束时间:</label>
+                <input type="text" class="form-control" style="width: 150px"    id="endDate" placeholder="结束时间" data-date-format="yyyy-mm-dd">
+            </div>
+            <div class="form-group">
+                <label >儿童姓名:</label>
+                <input type="text" class="form-control" style="width: 150px"    id="childName" placeholder="儿童姓名" >
+            </div>
+            <a class="btn btn-warning"  onclick="queryWork()"><i class="fa fa-search" ></i>&nbsp;查询</a>
+            <a class="btn btn-primary"  onclick="workExcel()"><i class="fa fa-arrow-down" ></i>&nbsp;导出</a>
+            <a class="btn btn-primary" onclick="printWork()"><i class="fa fa-print" ></i>&nbsp;打印</a>
+        </form>
+    </div>
+    <div>
+        <table id="serviceGrid"></table>
+        <div id="servicePage"></div>
+    </div>
+</div>
+<script src="${rc.contextPath}/statics/js/report/childServiceStatistics.js?_${date.systemTime}"></script>
+</body>
+</html>

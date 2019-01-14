@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>贵州省免疫规划目标儿童动态管理一览表</title>
+    #parse("sys/header.html")
+    <link rel="stylesheet" href="../statics/plugins/layui/css/layui.css" media="all"/>
+    <script type="text/javascript" src="../statics/plugins/layui/layui.js"></script>
+    <script type="application/javascript">
+        var orgId = "$shiro.getBaseInfo('orgId')";
+    </script>
+    <style>
+        .basic-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .basic-table th {
+            text-align: center;
+            vertical-align: middle;
+        }
+        #printSytle p {
+            margin-top: 10px;
+        }
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #000 !important;
+        }
+        .table > thead > tr > th,
+        .table > tbody > tr > th,
+        .table > tfoot > tr > th,
+        .table > thead > tr > td,
+        .table > tbody > tr > td,
+        .table > tfoot > tr > td {
+            padding: 8px;
+            line-height: 1.42857143;
+            vertical-align:middle;
+            border-top: 1px solid #ddd;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="dynamicChildren">
+<div class="row" id="unprintdiv" style="padding: 15px 0 0 15px;">
+    <form class="form-inline">
+        <!--<div class="form-group">
+            &lt;!&ndash;<label class="col-sm-4 control-label" for="queryNian">查询年份:</label>
+            <div class="col-sm-8">
+                <input type="text" class="layui-input" id="queryNian" placeholder="请选择年">
+            </div>&ndash;&gt;
+            查询年份:
+            <input type="text" class="form-control" id="yearDate" placeholder="请选择年">
+        </div>
+        <div class="form-group">
+            月份:
+            <select class="form-control" style="width: 200px" id="monthDate" @change="changeQuery" name="month">
+                <option value="01">一月</option>
+                <option value="02">二月</option>
+                <option value="03">三月</option>
+                <option value="04">四月</option>
+                <option value="05">五月</option>
+                <option value="06">六月</option>
+                <option value="07">七月</option>
+                <option value="08">八月</option>
+                <option value="09">九月</option>
+                <option value="10">十月</option>
+                <option value="11">十一月</option>
+                <option value="12">十二月</option>
+            </select>
+        </div>-->
+        <div class="form-group">
+            <label>开始时间:</label>
+            <input type="text" class="form-control" style="width: 150px" id="yearDate">
+        </div>
+        <div class="form-group">
+            <label>&nbsp;&nbsp;结束时间:</label>
+            <input type="text" class="form-control" style="width: 150px" id="monthDate">
+        </div>
+        <div class="form-group" id="chilCommitteeIdParent">
+            &nbsp;居委会/行政村:
+            <select  class="selectpicker" id="chilCommittees" name="chilCommittees" title=""  multiple data-live-search="true"></select>
+        </div>
+
+        <button type="button" class="btn btn-warning" @click="query">
+            <span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;查询
+        </button>
+        <button type="button" class="btn btn-primary" @click="excel">
+            <span class="glyphicon glyphicon-log-out"></span>&nbsp;&nbsp;导出
+        </button>
+        <button type="button" class="btn btn-info" @click="print">
+            <span class="glyphicon glyphicon-print"></span>&nbsp;&nbsp;打印
+        </button>
+    </form>
+</div>
+    <div id="printSytle" style="display: none;margin: 15px">
+        <h3 align="center">贵州省免疫规划目标儿童动态管理一览表</h3>
+        <p align="center">（<span id="year"></span>年<span id="month"></span>月）</p>
+        <p>填报单位：_________县（市、区）___________乡镇（街道办）____________村（居委会）</p>
+        <p style="overflow: hidden;"><span style="float:left">填报人：__________________</span> <span style="float: right; margin-right: 20px;">填报日期：_______年______月_____日</span></p>
+    </div>
+<div id="setPrintTableStyle" style="margin-top:20px;padding-left: 20px;padding-right: 20px;">
+    <table class="table table-bordered basic-table">
+        <thead>
+        <tr>
+            <th width="53" rowspan="3" scope="col" style="vertical-align: middle;">编号</th>
+            <th width="73" rowspan="3" scope="col" style="vertical-align: middle;">父亲姓名</th>
+            <th width="73" rowspan="3" scope="col" style="vertical-align: middle;">母亲姓名</th>
+            <th width="79" rowspan="3" scope="col" style="vertical-align: middle;">儿童姓名</th>
+            <th width="40" rowspan="3" scope="col" style="vertical-align: middle;">性别</th>
+            <th width="77" rowspan="3" align="center" scope="col" style="vertical-align: middle;">出生日期</th>
+            <th width="120" rowspan="3" scope="col" style="vertical-align: middle;">家庭详细地址</th>
+            <th width="100" rowspan="3" scope="col" style="vertical-align: middle;">联系电话</th>
+            <th colspan="4" width="150" scope="col">分娩情况</th>
+            <th width="100" rowspan="3" scope="col" style="vertical-align: middle;">乙肝首针接种情况</th>
+            <th width="60" rowspan="3" scope="col" style="vertical-align: middle;">分类</th>
+            <th width="108" rowspan="3" scope="col" style="vertical-align: middle;">备注</th>
+        </tr>
+        <tr>
+            <th colspan="2" width="75" >住院</th>
+            <th colspan="2" width="75">在家</th>
+        </tr>
+        <tr>
+            <th  width="37.5">县级以上</th>
+            <th  width="37.5">乡级</th>
+            <th  width="37.5">外省</th>
+            <th  width="37.5">本省</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item,index) in listData">
+            <td>{{index+1}}</td>
+            <td>{{item.chil_father}}</td>
+            <td>{{item.chil_mother}}</td>
+            <td>{{item.chil_name}}</td>
+            <td>{{item.chilSex}}</td>
+            <td>{{item.chil_birthday}}</td>
+            <td>{{item.chil_address}}</td>
+            <td>{{item.chilTel}}</td>
+            <td>{{item.xianji}}</td>
+            <td>{{item.xiang}}</td>
+            <td>{{item.waisheng}}</td>
+            <td>{{item.bensheng}}</td>
+            <td>{{item.inotime}}</td>
+            <td>{{item.type}}</td>
+            <td>{{item.remarks}}</td>
+          </tr>
+        </tbody>
+    </table>
+</div>
+    <div id="tableBelow" style="margin: 15px">
+        注：1、“分娩情况” 填写：如为“住院” 分娩，请填写具体分娩医院名称：如为“在家”分娩；在相应栏目内划“√”。2、“乙肝首针接种情况”栏目内请填写具体接种日期，如未接种，填写“否”。3、“分类”填写：A、新出生儿童 B、新发现在儿童C、新流入儿童 D、本地流出儿童。如为C、D、，请在备注栏填写流入、流出时间和地区（省、县、乡）。4、此表由承担摸底工作的机构每月填写（报）1次，无目标对象应进行“零”报告。
+    </div>
+</div>
+</body>
+<script src="${rc.contextPath}/statics/js/statistics/dynamicChild.js?_${date.systemTime}"></script>
+</html>

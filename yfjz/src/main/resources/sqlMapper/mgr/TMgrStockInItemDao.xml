@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.mgr.TMgrStockInItemDao">
+
+	<select id="queryObject" resultType="io.yfjz.entity.mgr.TMgrStockInItemEntity">
+		select * from t_mgr_stock_in_item where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.yfjz.entity.mgr.TMgrStockInItemEntity">
+		select * from t_mgr_stock_in_item 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_mgr_stock_in_item
+		<where>
+			<if test="totalId!=null">
+				and total_id=#{totalId}
+			</if>
+		</where>
+	</select>
+	<select id="queryItemList" resultType="map">
+		select
+		item.id,
+		base.id as baseId,
+		item.fk_equipment_id as equipId,
+		item.total_id as totalId,
+		base.conversion,
+		base.product_name as productName,
+		base.price,
+		base.factory_name as factoryName,
+		(select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) as dosenorm,
+		(select text from sys_dict where ttype='code_drug' AND value=base.drug) as drug,
+		(select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) as doseminUnitCode,
+		base.batchnum,
+		DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) AS expiryDate,
+		item.amount,
+		item.person_amount as personAmount,
+		item.use_amount as useAmount,
+		item.receive_amount as receiveAmount,
+		equip.name as equipmentName,
+		item.provider,
+		item.provider_factory as providerFactory
+		from t_mgr_stock_in_item item
+		left join t_mgr_equipment equip on item.fk_equipment_id=equip.id
+		join t_mgr_stock_base base on item.fk_stock_info_id=base.id
+		<where>
+			<if test="totalId!=null">
+				and item.total_id=#{totalId}
+			</if>
+		</where>
+		ORDER  BY base.`type`
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+	<select id="queryItemListMap" resultType="map">
+		select
+		base.product_name as productName,
+		base.price,
+		base.batchnum,
+		base.factory_name as factoryName,
+		(select text from sys_dict where ttype='dose_code' AND value=base.dosenorm) as dosenorm,
+		(select text from sys_dict where ttype='code_drug' AND value=base.drug) as drug,
+		(select text from sys_dict where ttype='vaccine_unit' AND value=base.dosemin_unit_code) as doseminUnitCode,
+		item.amount,
+		item.destory_amount as destoryAmount,
+		item.person_amount as personAmount,
+		item.use_amount as useAmount,
+		item.receive_amount as receiveAmount,
+		equip.name as equipmentName,
+		item.provider,
+		item.provider_factory as providerFactory
+		from t_mgr_stock_in_item item
+		left join t_mgr_equipment equip on item.fk_equipment_id=equip.id
+		join t_mgr_stock_base base on item.fk_stock_info_id=base.id
+		<where>
+			<if test="totalId!=null">
+				and item.total_id=#{totalId}
+			</if>
+		</where>
+		ORDER  BY base.`type`
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
+	<select id="queryReceiveVaccineRecord" resultType="map">
+		SELECT
+		item.id,
+		tower.tower_name AS towerName,
+		tower.tower_name AS belong,
+		sys.real_name as username,
+		base.fk_vaccine_code,
+		tower.id as towerId,
+		base.id baseId,
+		base.product_name AS productName,
+		base.batchnum,
+		base.conversion,
+		DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) as expiryDate,
+		sum( item.amount )*conversion  AS returnAmount,
+		sum( item.destory_amount ) AS damagePersonAmount,
+		sum( item.use_amount ) AS usePersonAmount,
+		sum( item.receive_amount )*conversion AS receivePersonAmount,
+		sum( item.amount )*conversion+sum( item.destory_amount ) AS remainAmount
+
+		FROM
+		t_mgr_stock_in_total total
+		JOIN t_mgr_stock_in_item item ON total.id = item.total_id
+		join sys_user sys on total.fk_create_user_id=sys.user_id
+		join t_base_tower tower on item.tower_id=tower.id
+		join t_mgr_stock_base base on item.fk_stock_info_id=base.id
+		WHERE
+		in_type = 1
+		<![CDATA[ and TO_DAYS(item.create_time)>=TO_DAYS(#{startDate})
+		and TO_DAYS(item.create_time)<=TO_DAYS(#{endDate})  ]]>
+		GROUP BY
+		tower.tower_name,
+		sys.real_name,
+		fk_stock_info_id
+
+		ORDER BY
+		tower.tower_name,
+		sys.real_name,
+		base.fk_vaccine_code
+	</select>
+	<select id="insertModify" parameterType="io.yfjz.entity.mgr.ModifyStock">
+		insert into t_mgr_modify_stock  VALUES (uuid(),#{createUser},#{createTime},#{preAmount},#{baseId},#{nowAmount},#{remark},#{itemId})
+	</select>
+    <select id="getModifyList" resultType="map">
+			SELECT
+			    modi.id,
+				stock_in_code AS stockInId,
+				base.product_name AS productName,
+				base.batchnum,
+				DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) as expiryDate,
+				base.conversion,
+				base.factory_name AS factoryName,
+				modi.pre_amount preAmount,
+				modi.now_amount nowAmount,
+				modi.create_time createTime,
+				modi.create_user createUser,
+				modi.remark
+			FROM
+				t_mgr_modify_stock modi
+				JOIN t_mgr_stock_base base ON modi.base_id = base.id
+				JOIN t_mgr_stock_in_item item ON item.id = modi.item_id
+				JOIN t_mgr_stock_in_total total ON item.total_id = total.id
+		<where>
+			<if test=" modifyUser != null and modifyUser!='' and modifyUser!='-1'">
+				and modi.create_user=#{modifyUser}
+			</if>
+			<if test=" vaccine != null and vaccine!='' and vaccine!='-1'">
+			    and base.fk_vaccine_code=#{vaccine}
+			</if>
+			<if test="startDate!=null">
+				and modi.create_time &gt;=#{startDate}
+			</if>
+			<if test="endDate !=null">
+				and modi.create_time &lt;=#{endDate}
+			</if>
+		</where>
+		order by base.product_name
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	 <select id="getModifyListTotal" resultType="int">
+			SELECT
+			  count(*)
+			FROM
+				t_mgr_modify_stock modi
+				JOIN t_mgr_stock_base base ON modi.base_id = base.id
+				JOIN t_mgr_stock_in_item item ON item.id = modi.item_id
+				JOIN t_mgr_stock_in_total total ON item.total_id = total.id
+		<where>
+			<if test=" modifyUser != null and modifyUser!='' and modifyUser!='-1'">
+				and modi.create_user=#{modifyUser}
+			</if>
+			<if test=" vaccine != null and vaccine!='' and vaccine!='-1'">
+				and base.fk_vaccine_code=#{vaccine}
+			</if>
+			<if test="startDate!=null">
+				and modi.create_time &gt;=#{startDate}
+			</if>
+			<if test="endDate !=null">
+				and modi.create_time &lt;=#{endDate}
+			</if>
+		</where>
+	</select>
+    <select id="queryOtherUseVaccine" resultType="map">
+		SELECT
+		ur.id,
+		sys.real_name username,
+		tower.tower_name towerName,
+		(select pos_id from t_mgr_store where id=ur.receive_store_id) as receiveTowerId,
+		(select tower_name from t_base_tower where id=(select pos_id from t_mgr_store where id=ur.receive_store_id)) as belong,
+		base.id baseId,
+		base.fk_vaccine_code vacCode,
+		base.product_name productName,
+		base.conversion,
+		DATE_FORMAT( base.expiry_date, '%Y-%m-%d' ) as expiryDate,
+		base.batchnum,
+		sum(ur.use_person_amount) useAmount
+		FROM
+		t_mgr_use_record ur
+		JOIN sys_user sys ON ur.create_user_id = sys.user_id
+		JOIN t_base_tower tower ON ur.now_tower_id = tower.id
+		JOIN t_mgr_stock_base base ON ur.base_info_id = base.id
+		WHERE
+		TO_DAYS( ur.create_time ) &gt;= TO_DAYS( #{startDate} )
+		AND TO_DAYS( ur.create_time ) &lt;= TO_DAYS(#{endDate} )
+		GROUP BY tower_name,baseId
+	</select>
+    <insert id="save" parameterType="io.yfjz.entity.mgr.TMgrStockInItemEntity">
+		insert into t_mgr_stock_in_item
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			`id`,
+			<if test="fkStockInfoId != null and fkStockInfoId  != ''">`fk_stock_info_id` ,</if>
+			<if test="amount != null">`amount` ,</if>
+			<if test="fkEquipmentId != null">`fk_equipment_id` ,</if>
+			<if test="status != null">`status` ,</if>
+			<if test="provider != null and provider  != ''">`provider` ,</if>
+			<if test="personAmount != null">`person_amount` ,</if>
+			<if test="providerFactory != null and providerFactory  != ''">`provider_factory` ,</if>
+			<if test="totalId != null and totalId  != ''">`total_id`,</if>
+			<if test="createTime != null ">`create_time`,</if>
+			<if test="destoryAmount != null ">`destory_amount`,</if>
+			<if test="useAmount != null ">`use_amount`,</if>
+			<if test="receiveAmount != null ">`receive_amount`,</if>
+			<if test="towerId != null ">`tower_id`</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			uuid(),
+			<if test="fkStockInfoId != null and fkStockInfoId  != ''">#{fkStockInfoId} ,</if>
+			<if test="amount != null">#{amount} ,</if>
+			<if test="fkEquipmentId != null">#{fkEquipmentId} ,</if>
+			<if test="status != null">#{status} ,</if>
+			<if test="provider != null and provider  != ''">#{provider} ,</if>
+			<if test="personAmount != null">#{personAmount} ,</if>
+			<if test="providerFactory != null and providerFactory  != ''">#{providerFactory} ,</if>
+			<if test="totalId != null and totalId  != ''">#{totalId},</if>
+			<if test="createTime != null ">#{createTime},</if>
+			<if test="destoryAmount != null ">#{destoryAmount},</if>
+			<if test="useAmount != null ">#{useAmount},</if>
+			<if test="receiveAmount != null ">#{receiveAmount},</if>
+			<if test="towerId != null ">#{towerId}</if>
+
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="io.yfjz.entity.mgr.TMgrStockInItemEntity">
+		update t_mgr_stock_in_item
+		<set>
+			<if test="fkStockInfoId != null and fkStockInfoId  != ''">`fk_stock_info_id` = #{fkStockInfoId},</if>
+			<if test="amount != null">`amount` = #{amount} ,</if>
+			<if test="status != null">`status` = #{status} ,</if>
+			<if test="provider != null and provider  != ''">`provider` = #{provider},</if>
+			<if test="personAmount != null">`person_amount` = #{personAmount} ,</if>
+			<if test="providerFactory != null and providerFactory  != ''">`provider_factory` = #{providerFactory},</if>
+			<if test="totalId != null and totalId  != ''">`total_id` = #{totalId}</if>
+		</set>
+		where id = #{id}
+	</update>
+	<delete id="delete">
+		delete from t_mgr_stock_in_item where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_mgr_stock_in_item where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+
+</mapper>

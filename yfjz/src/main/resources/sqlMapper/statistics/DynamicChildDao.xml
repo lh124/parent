@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.yfjz.dao.statistics.DynamicChildDao">
+
+    <select id="queryList" resultType="map">
+        /* #新生儿*/
+        SELECT
+        info.chil_father,
+        info.chil_mother,
+        info.chil_name,
+        ( CASE  info.chil_sex WHEN '1' THEN '男' ELSE '女' END) AS chilSex,
+        info.chil_birthday,
+        IF( info.chil_address!=null or  info.chil_address!='' ,info.chil_address,info.chil_habiaddress) AS  chil_address ,
+          (case  when chil_tel is null then
+         chil_mobile ELSE  chil_tel END) AS  chilTel,
+        (select hospital_name from t_base_hospital where hospital_code=info.chil_birthhospital) AS chil_birthhospital,
+        (SELECT inoc.inoc_date FROM t_child_inoculate inoc WHERE inoc.chil_code = info.chil_code AND inoc.inoc_bact_code in ('0201','0202','0203') AND inoc.inoc_time LIMIT 1) as inotime,
+        'A' as type,
+        '' as remarks
+        FROM
+        t_child_info info
+        WHERE
+        info.delete_status =0
+        <![CDATA[
+        AND TO_DAYS(info.chil_birthday) >= TO_DAYS(#{firstDay})
+        AND TO_DAYS(info.chil_birthday) <= TO_DAYS(#{lastDay})
+        ]]>
+        <if test="chilCommittees != null">
+            and info.chil_committee in
+            <foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        UNION
+        /*#新发现*/
+        SELECT
+        info.chil_father,
+        info.chil_mother,
+        info.chil_name,
+           ( CASE  info.chil_sex WHEN '1' THEN '男' ELSE '女' END) AS chilSex,
+
+        info.chil_birthday,
+        IF( info.chil_address!=null or  info.chil_address!='' ,info.chil_address,info.chil_habiaddress) AS  chil_address ,
+         (case  when chil_tel is null then
+         chil_mobile ELSE  chil_tel END) AS  chilTel,
+       (select hospital_name from t_base_hospital where hospital_code=info.chil_birthhospital) AS chil_birthhospital,
+        (SELECT inoc.inoc_date FROM t_child_inoculate inoc WHERE inoc.chil_code = info.chil_code AND inoc.inoc_bact_code in ('0201','0202','0203') AND inoc.inoc_time LIMIT 1) as inotime,
+        'B' as type,
+        '' as remarks
+
+        FROM
+        t_child_info info
+        WHERE
+        info.delete_status =0
+        AND info.chil_residence =1
+        <![CDATA[
+        AND TO_DAYS(info.chil_birthday) < TO_DAYS(#{firstDay})
+        AND TO_DAYS(info.chil_createdate) >= TO_DAYS(#{firstDay})
+        AND TO_DAYS(info.chil_createdate) <= TO_DAYS(#{lastDay})
+           ]]>
+        <if test="chilCommittees != null">
+            and info.chil_committee in
+            <foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        UNION
+        /*流入*/
+        SELECT
+        info.chil_father,
+        info.chil_mother,
+        info.chil_name,
+          ( CASE  info.chil_sex WHEN '1' THEN '男' ELSE '女' END) AS chilSex,
+
+        info.chil_birthday,
+        IF( info.chil_address!=null or  info.chil_address!='' ,info.chil_address,info.chil_habiaddress) AS  chil_address ,
+        (case  when chil_tel is null then
+         chil_mobile ELSE  chil_tel END) AS  chilTel,
+        (select hospital_name from t_base_hospital where hospital_code=info.chil_birthhospital) AS chil_birthhospital,
+        (SELECT inoc.inoc_date FROM t_child_inoculate inoc WHERE inoc.chil_code = info.chil_code AND inoc.inoc_bact_code in ('0201','0202','0203') AND inoc.inoc_time LIMIT 1) as inotime,
+        'C' as type,
+        (case when (SELECT `text` from sys_dict where move.chhe_chil_provinceremark = `value` and ttype='chil_leaveremark_code' ) is null then move.chhe_chil_provinceremark else (SELECT `text` from sys_dict where move.chhe_chil_provinceremark = `value` and ttype='chil_leaveremark_code' ) end) as remarks
+        /*move.chhe_chil_provinceremark as remarks*/
+
+        FROM
+        t_child_info info
+        INNER JOIN
+        t_child_move move on info.chil_code = move.chil_code
+        WHERE
+        info.delete_status =0
+        AND move.delete_status =0
+        <![CDATA[
+        AND TO_DAYS(move.chhe_changedate) >= TO_DAYS(#{firstDay})
+        AND TO_DAYS(move.chhe_changedate) <= TO_DAYS(#{lastDay})
+        ]]>
+        AND move.chhe_depa_id = #{orgId}
+        AND move.chhe_here  ='1'
+		and move.chhe_prehere !='1'
+        <if test="chilCommittees != null">
+            and info.chil_committee in
+            <foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+       UNION
+        /*流出*/
+        SELECT
+        info.chil_father,
+        info.chil_mother,
+        info.chil_name,
+          ( CASE  info.chil_sex WHEN '1' THEN '男' ELSE '女' END) AS chilSex,
+
+        info.chil_birthday,
+        IF( info.chil_address!=null or  info.chil_address!='' ,info.chil_address,info.chil_habiaddress) AS  chil_address ,
+        (case  when chil_tel is null then
+         chil_mobile ELSE  chil_tel END) AS  chilTel,
+        (select hospital_name from t_base_hospital where hospital_code=info.chil_birthhospital) AS chil_birthhospital,
+        (SELECT inoc.inoc_date FROM t_child_inoculate inoc WHERE inoc.chil_code = info.chil_code AND inoc.inoc_bact_code in ('0201','0202','0203') AND inoc.inoc_time LIMIT 1) as inotime,
+        'D' as type,
+        (case when (SELECT `text` from sys_dict where move.chhe_chil_provinceremark = `value` and ttype='chil_leaveremark_code' ) is null then move.chhe_chil_provinceremark else (SELECT `text` from sys_dict where move.chhe_chil_provinceremark = `value` and ttype='chil_leaveremark_code' ) end) as remarks
+
+       /* move.chhe_chil_provinceremark as remarks*/
+
+        FROM
+        t_child_info info
+        INNER JOIN
+        t_child_move move on info.chil_code = move.chil_code
+        WHERE
+        info.delete_status =0
+        AND move.delete_status =0
+        <![CDATA[
+        AND TO_DAYS(move.chhe_changedate) >= TO_DAYS(#{firstDay})
+        AND TO_DAYS(move.chhe_changedate) <= TO_DAYS(#{lastDay})
+        ]]>
+        AND move.chhe_depa_id = #{orgId}
+        AND move.chhe_here  IN ('2','3')
+		and move.chhe_prehere !='2'
+        <if test="chilCommittees != null">
+            and info.chil_committee in
+            <foreach collection="chilCommittees" item="item" index="index"   open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+</mapper>
